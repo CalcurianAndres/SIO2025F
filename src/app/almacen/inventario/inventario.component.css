@@ -1,0 +1,49 @@
+@font-face {
+    font-family: Roboto;
+    src: url('../../../assets/Roboto/Roboto-Black.ttf')
+}
+
+.mt-5{
+    margin: 15px;
+    margin-top: 25px;
+}
+
+
+.grupos{
+    display: block;
+    width: 100%;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(241,241,241,1) 65%);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: Roboto;
+    font-size: 20px;
+}
+
+.flechas{
+    position: relative;
+    float: right;
+    color: rgb(56, 56, 56);
+    top: 5px;
+}
+
+.grupos:hover{
+    cursor: pointer;
+    background-color: rgb(121, 121, 121);
+}
+
+.small{
+    width: 180px;
+}
+.xsmall{
+    width: 40px;
+}
+.ssmall{
+    width: 80px;
+}
+
+.edicion{
+    cursor: pointer;
+    color: #3ec487;
+}

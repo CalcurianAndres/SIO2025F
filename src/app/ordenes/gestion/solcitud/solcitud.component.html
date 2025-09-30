@@ -1,0 +1,228 @@
+<div class="modal" [ngClass]="{'is-active':solicitud}">
+    <div class="modal-background" (click)="onClose()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">
+                Solicitud de Material
+            </div>
+            <hr>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Producto / Orden de producción:</label>
+                            <div class="select">
+                                <select (change)="TraerMateriales($event.target.value)">
+                                    <option value="">Selecciona OP</option>
+                                    <option class="option" value="Otro">Otros Materiales</option>
+                                    <option class="option" value="repuesto">Repuestos</option>
+                                    <ng-container *ngIf="usuario.Gestiones != 5">
+                                        <option class="option" value='{{Orden.sort}}' *ngFor="let Orden of orden.reverse()">{{Orden.sort}}</option>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="Repuesto">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label"><br>Maquina</label>
+                                    <div class="select">
+                                        <select [(ngModel)]="maquina_selected">
+                                            <option value="{{maquina._id}}" *ngFor="let maquina of Maquinas">{{maquina.nombre}}</option>
+                                        </select>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label"><br>Categoria</label>
+                                <div class="select">
+                                    <select [(ngModel)]="categoria_selected">
+                                        <option value="{{categoria._id}}" *ngFor="let categoria of Categorias">{{categoria.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="column" *ngIf="Otro">
+                        <div class="field">
+                            <label class="label">Asociar a otra OP:</label>
+                            <div class="select">
+                                <select [(ngModel)]="asociacion">
+                                    <option class="option" value="#">Sin asignar</option>
+                                    <ng-container *ngIf="usuario.Gestiones != 5">
+                                        <option class="option" value='{{Orden.sort}}' *ngFor="let Orden of orden">{{Orden.sort}}</option>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns" *ngIf="Repuesto">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Repuesto</label>
+                            <div class="select">
+                                <select (change)="seleccionarRepuesto($event.target)">
+                                    <option value="#">Seleccionar repuesto</option>
+                                    <option value="{{repuesto._id}}" *ngFor="let repuesto of cargarRepuestos();index as i">{{repuesto.nombre}} - Nº{{repuesto.parte}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                    </div>
+                    <div class="column">
+
+                    </div>
+                    <div class="column"></div>
+                </div>
+                <ng-container *ngIf="Repuesto">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Repuesto</th>
+                                <th>Cantidad</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let confirmar of temporal; index as i">
+                                <td>{{confirmar.nombre}} - Nº:{{confirmar.parte}}</td>
+                                <td>
+                                    <input type="number" class="input" (change)="cambiarCantidadesR(i,$event.target.value)">
+                                </td>
+                                <td>
+                                    <button class="button is-danger" (click)="quitarMaterialR(i)">Quitar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="field">
+                        <label class="label">Motivo</label>
+                        <div class="select">
+                            <select id="__motivo" [(ngModel)]="motivo__">
+                                <option value="Mantenimiento correctivo">Mantenimiento correctivo</option>
+                                <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
+                                <option value="Realización de prueba">Realización de prueba</option>
+                            </select>
+                        </div>
+                    </div>
+                </ng-container>
+                <hr>
+                <table class="table is-fullwidth" *ngIf="Otro">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Grupo</label>
+                                <div class="select">
+                                    <select (change)="mostrarMaterial($event.target.value)">
+                                        <option value="#">Grupo</option>
+                                        <option value="{{grupo._id}}" *ngFor="let grupo of grupos">{{grupo.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Material</label>
+                                <div class="select">
+                                    <select (change)="AdjuntarMaterial($event.target.value)" id="_material_" disabled>
+                                        <option value="#">Material</option>
+                                        <option value="{{almacen.material._id}}" *ngFor="let almacen of almacenado">{{almacen.material.nombre}} <ng-container *ngIf="almacen.material.ancho">
+                                            {{almacen.material.ancho}} x {{almacen.material.largo}} - (Cal: {{almacen.material.calibre}}, Gramaje: {{almacen.material.gramaje}})
+                                        </ng-container> ({{almacen.material.marca}})</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Cantidad</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let confirmar of por_confirmar; index as i">
+                                <td>{{confirmar.material.nombre}} <ng-container *ngIf="confirmar.material.ancho">
+                                    {{confirmar.material.ancho}} x {{confirmar.material.largo}}
+                                </ng-container> ({{confirmar.material.marca}})</td>
+                                <td>
+                                    <input type="number" class="input" (change)="cambiarCantidades(i,$event.target.value)">
+                                </td>
+                                <td>
+                                    <button class="button is-danger" (click)="quitarMaterial(i)">Quitar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="field">
+                        <label class="label">Motivo</label>
+                        <textarea class="textarea" placeholder="Motivo" rows="2" id="_motivo" [(ngModel)]="motivo__"></textarea>
+                    </div>
+                    <hr>
+                </table>
+                <table class="table is-fullwidth" *ngIf="orden.length > 0 && materiales && !Otro && !Repuesto">
+                    <thead>
+                        <th>Material</th>
+                        <th>Cantidad Solicitada</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let material of materiales; index as i">
+                            <td>
+                                {{material.producto.nombre}} 
+                                <ng-container *ngIf="material.producto.ancho">
+                                    {{material.producto.ancho}} x {{material.producto.largo}}
+                                </ng-container>
+                                ({{material.producto.marca}})
+                            </td>
+                            <td> 
+                                <input type="number" class="input" value="0" min="0" id="{{i}}" name="{{material.producto._id}}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cinta de embalaje 3430 (Rela)</td>
+                            <td>
+                                <input type="number" class="input" value="0" min="0" id="100" name="61fd721fd9115415a4416f66">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="field" *ngIf="materiales && !Otro && !Repuesto">
+                    <div class="select">
+                      <!-- <textarea class="textarea is-small has-fixed-size" placeholder="Motivo de la solicitud"></textarea> -->
+                        <select name="" id="razon" class="selevt">
+                            <option value="Fallas asociadas al sustrato">Fallas asociadas al sustrato</option>
+                            <option value="Fallas asociadas a la tinta">Fallas asociadas a la tinta</option>
+                            <option value="Inconsistencias en el inventario físico">Inconsistencias en el inventario físico</option>
+                            <option value="Fallas asociadas al operador de impresión">Fallas asociadas al operador de impresión</option>
+                            <option value="Fallas asociadas al operador de corte">Fallas asociadas al operador de corte</option>
+                            <option value="Fallas asociadas al operador de troquelado">Fallas asociadas al operador de troquelado</option>
+                            <option value="Fallas asociadas al operador de Pegado">Fallas asociadas al operador de Pegado</option>
+                            <option value="Fallas del proceso de impresión">Fallas del proceso de impresión </option>
+                            <option value="Fallas del proceso de pegado">Fallas del proceso de pegado</option>
+                            <option value="Fallas operativa de maquina">Fallas operativa de maquina</option>
+                            <option value="Fallas en el sistema">Fallas en el sistema</option>
+                            <option value="Error de estimación de material">Error de estimación de material</option>
+                            <option value="Error de estimación de material">Remplazo por devolución</option>
+                        </select>
+                    </div>
+                  </div>
+
+                <hr *ngIf="materiales">
+
+                <ng-container *ngIf="!Repuesto">
+                    <button class="button is-primary" (click)="FinalizarSolicitu()" *ngIf="Otro">Realizar Solicitud</button>
+                    <button class="button is-primary" (click)="FinalizarSolicitud()" *ngIf="!Otro">Realizar Solicitud</button>
+                </ng-container>
+                <ng-container *ngIf="Repuesto">
+                    <button class="button is-primary" (click)="FinalizarSolicitudR()">Realizar Solicitud</button>
+                </ng-container>
+        </div>
+    </div>
+</div>

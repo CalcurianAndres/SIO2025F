@@ -1,0 +1,71 @@
+<div class="modal" [ngClass]="{'is-active':modal_despacho}">
+    <div class="modal-background" (click)="closemodal()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="columns">
+                <div class="column is-half">
+                    <div class="titulo">
+                        Despachos Realizados
+                    </div>
+                    <table class="table is-fullwidth">
+                        <tr>
+                            <th>N°</th>
+                            <th>Fecha</th>
+                            <th>Documento</th>
+                            <th>Certificado</th>
+                            <th>Cantidad</th>
+                        </tr>
+                        <ng-container *ngFor="let despachos of despachos_filtrado;index as i">
+                            <tr>
+                                <td>{{i +1}}</td>
+                                <td>{{despachos.fecha}}</td>
+                                <ng-container *ngFor="let orden of despachos.despacho;index as i">
+                                    <td *ngIf="orden.op === despachos_orden">
+                                        {{orden.documento}}
+                                    </td>
+                                    <td *ngIf="orden.op === despachos_orden">
+                                        {{orden.certificado}}
+                                    </td>
+                                    <td *ngIf="orden.op === despachos_orden">
+                                        {{puntoYcoma(orden.cantidad)}}
+                                        <!-- {{sumaCantidades(orden.cantidad,orden._id,i)}} -->
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                        <tr *ngIf="!ready">
+                            <br>
+                            <th colspan="4">
+                                <button class="button is-primary" (click)="showPercent()">% de rendimiento</button>
+                            </th>
+                        </tr>
+                        <tr *ngIf="ready">
+                            <th colspan="3">TOTAL</th>
+                            <th>{{puntoYcoma(Total_Despachado)}}</th>
+                        </tr>
+                    </table>
+                    <span class="titulo" *ngIf="ready">
+                        Rendimiento
+                    </span><br>
+                    <span class="xlarge" *ngIf="ready">Sustrato asignado: <span class="bold">{{puntoYcoma(asignadas)}}Und</span></span><br>
+                    <span class="xlarge" *ngIf="ready">Sustrato procesado: <span class="bold">{{puntoYcoma(hojas)}}Und</span></span><br>
+                    <span class="xlarge" *ngIf="ready">Rendimiento: <span class="bold">{{puntoYcoma(rendimiento(asignadas,hojas))}}%</span></span>
+                </div>
+                <div class="column is-1">
+
+                </div>
+                <div class="column">
+                    <div class="espacio">
+
+                    </div>
+                    <div class="chart-container">
+                        <canvas  id="chart_rendimiento" >{{ chart_rendimiento }}</canvas>
+                    </div>
+                </div>
+                <div class="column is-1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

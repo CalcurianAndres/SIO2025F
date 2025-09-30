@@ -1,0 +1,68 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+  .titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.image{
+    z-index: 1;
+}
+
+.wds{
+    width: 250px;
+}
+.wdl{
+    width: 179px;
+}
+.logo{
+    position: relative;
+    float: right;
+}
+
+.fabricante{
+    height: 310px;
+    overflow-y:auto;
+    border-radius: 5px;
+}
+
+.ver{
+    position: absolute;
+    bottom: 2px;
+}
+
+.ver:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* .fabricante::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+} */
+
+.fabricante::-webkit-scrollbar{
+    width: 7px;
+    height: 10px;
+}
+
+.fabricante::-webkit-scrollbar-thumb{
+    background:#ddd;
+    border-radius: 5px;
+}
+
+.fabricante::-webkit-scrollbar-track{
+    background-color: #f3f3f3;
+    /* border: 1px solid #ccc; */
+}
+
+.chiquito{
+    color: red;
+}

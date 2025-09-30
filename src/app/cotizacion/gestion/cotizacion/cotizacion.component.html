@@ -1,0 +1,653 @@
+<div class="carousel-root">
+    <div class="carousel-container">
+        <!-- track: se arrastra y se transforma -->
+        <div #carousel class="carousel-track">
+            <!-- cada card -->
+            <div class="carousel-card" #carouselCard *ngFor="let s of slides; let i = index" [attr.data-index]="i">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title is-5">{{ s.title }}</p>
+                        <p class="subtitle is-6" *ngIf="s.subtitle">{{ s.subtitle }}</p>
+                        <div class="content">
+                            <ng-container *ngIf="s.numba === 1">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Cliente</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Rif</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Persona contacto</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="s.numba === 2">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top: 50px;">
+                                            Tamaño del producto (cm):
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top: 300px;">
+                                            X
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top:300px">
+                                            X
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                </div>
+
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top:300px">
+                                            Ejemplares por hoja (und):
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="text" class="input" [(ngModel)]="ejemplares">
+                                    </div>
+                                </div>
+
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top: 300px;">
+                                            Tipo de sustrato:
+                                        </span>
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span class="select">
+                                            <select [(ngModel)]="sustrato_selected" (change)="calcularPrecioSustrato()">
+                                                <option value="">Seleccionar Sustrato</option>
+                                                <option value="Otro">Otro</option>
+                                                <option value="{{sustrato._id}}"
+                                                    *ngFor="let sustrato of sustrato;index as i">{{sustrato.nombre}}
+                                                    ({{sustrato.marca}}) {{sustrato.gramaje}}g/m² {{sustrato.calibre}}pt
+                                                    ({{sustrato.ancho}} x {{sustrato.largo}})</option>
+                                            </select>
+                                        </span>
+                                    </div>
+                                    <div class="control" *ngIf="precios.sustrato > 0 || precios.sustrato === -1">
+                                        <label for="" class="label">&nbsp;</label>
+                                        ({{precios.sustrato}}$)
+                                    </div>
+                                </div>
+
+                                <div class="field is-grouped" *ngIf="sustrato_selected == 'Otro'">
+                                    <div class="control">
+                                        <label for="" class="label">Nombre</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">Ancho (cm)</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">Largo (cm)</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">Calibre (pt)</label>
+                                        <input type="number" name="" id="" class="input">
+                                    </div>
+                                    <div class="control" style="width: 120px;">
+                                        <label for="" class="label">Gramaje (g/m²)</label>
+                                        <input type="number" name="" id="" class="input">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Precio (USD)</label>
+                                        <input type="number" name="" id="" class="input">
+                                    </div>
+                                </div>
+
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top:300px">
+                                            Cantidad de colores:
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="number" name="" id="" class="input"
+                                            [(ngModel)]="cantidad_planchas">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <span style="margin-top: 300px;">
+                                            Consumo / (1.000 hojas):
+                                        </span>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <input type="number" name="" id="" class="input" [(ngModel)]="kilos_tintas">
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="s.numba === 3">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Grupo de producto</label>
+                                        <div class="select">
+                                            <select [(ngModel)]="grupo_selected">
+                                                <option value="">Selecciona un grupo</option>
+                                                <option value="{{i}}" *ngFor="let grupo of grupos; index as i">
+                                                    {{grupo.nombre}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="field" *ngIf="grupo_selected">
+                                    <div class="control"
+                                        *ngFor="let maquina of grupos[grupo_selected].tipos; index as i">
+                                        <label for="" class="label">{{maquina}}</label>
+                                        <div class="select">
+                                            <select name="" id="" [(ngModel)]="maquinas_selected[i]">
+                                                <option value="">Seleccionar maquina</option>
+                                                <option [ngValue]="maquina"
+                                                    *ngFor="let maquina of filtrarMaquinaPorGrupo(maquina)">
+                                                    {{maquina.nombre}}</option>
+                                            </select>
+                                        </div>
+                                        <br> <br>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="s.numba === 4">
+                                <!-- <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Cant. Hojas desperdicio</label>
+                                        <input type="number" name="" id="" class="input" style="width: 100px;"
+                                            [(ngModel)]="cantidad_desperdicio">
+                                    </div>
+                                </div>
+                                <hr> -->
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Otro material</label>
+                                        <div class="select">
+                                            <select [(ngModel)]="grupo_selected2">
+                                                <option value="{{grupo.nombre}}" *ngFor="let grupo of gruposMP">
+                                                    {{grupo.nombre}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="field is-grouped" *ngIf="grupo_selected2">
+                                    <div class="control">
+                                        <label for="" class="label">Material</label>
+                                        <div class="select">
+                                            <select [(ngModel)]="material_selected">
+                                                <option value="">Selecciona un material</option>
+                                                <option value="{{i}}"
+                                                    *ngFor="let Material of filtrarMateiralPorGrupo(); index as i">
+                                                    {{Material.nombre}} ({{Material.marca}})</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="control">
+
+                                        <label for="" class="label">
+                                            <ng-container *ngIf="this.grupo_selected2 === 'Cajas Corrugadas'">
+                                                Cabida de productos
+                                            </ng-container>
+                                            <ng-container *ngIf="this.grupo_selected2 === 'Soportes de Embalaje'">
+                                                Por caja
+                                            </ng-container>
+                                            <ng-container
+                                                *ngIf="this.grupo_selected2 != 'Soportes de Embalaje' && this.grupo_selected2 != 'Cajas Corrugadas' && this.grupo_selected2 != 'Pega'">
+                                                Por cada 1000 hojas
+                                            </ng-container>
+                                            <ng-container
+                                                *ngIf="this.grupo_selected2 != 'Soportes de Embalaje' && this.grupo_selected2 != 'Cajas Corrugadas' && this.grupo_selected2 === 'Pega'">
+                                                Por cada 1000 productos
+                                            </ng-container>
+                                        </label>
+                                        <input type="number" class="input" [(ngModel)]="cantidad_added"
+                                            style="width: 100px;">
+                                    </div>
+                                    <p class="control" style="margin-left: -13px;">
+                                        <label for="" class="label">&nbsp;</label>
+                                    </p>
+                                    <div class="control" *ngIf="material_selected && (cantidad_added > 0)">
+                                        <label for="" class="label">&nbsp;</label>
+                                        <button class="button" style="background-color: transparent; border: none;"
+                                            (click)="add_material()">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-circle-plus"
+                                                    style="color: rgb(108, 108, 253);"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <hr>
+
+                                </div>
+                                <hr>
+                                <table class="table is-fullwidth is-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Material
+                                            </th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let materiales of Materiales_Agregados; index as i">
+                                            <td>{{materiales.material.nombre}} ({{materiales.material.marca}})</td>
+                                            <td>{{materiales.cantidad}}</td>
+                                            <td>{{materiales.material.ultimoPrecio}}</td>
+                                            <td><i class="fa-solid fa-trash-can" style="color: rgb(251, 101, 101);"
+                                                    (click)="Materiales_Agregados.splice(i, 1)"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-container>
+
+                            <ng-container *ngIf="s.numba === 5">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Cant. escalas</label>
+                                        <input type='number' name="" id="" class="input" style="width: 100px;"
+                                            [(ngModel)]="cantidad_escalas"
+                                            (change)="cantidad_por_escala[cantidad_por_escala.length - 1] = 0">
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="field is-grouped"
+                                    *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                    <div class="control">
+                                        <label for="" class="label">Escala {{i+1}}</label>
+                                        <input type="text" name="" id="" class="input" style="width: 150px;"
+                                            (ngModelChange)="cantidad_por_escala[i] = $event"
+                                            (input)="onInputChange($event, i)" placeholder="0,0">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Hojas desperdicio</label>
+                                        <input type="number" name="" id="" class="input"
+                                            [(ngModel)]="cantidad_desperdicio[i]" style="width: 150px;">
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="s.numba === 6">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label for="" class="label">Precio de transporte</label>
+                                        <input type="number" name="" id="" class="input" style="width: 100px;"
+                                            [(ngModel)]="precio_transporte">
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Mostrar precio por cada:</label>
+                                        <input type="number" class="input" [(ngModel)]="division">
+                                    </div>
+                                </div>
+                                <hr>
+                                <table class="table is-striped is-bordered costos">
+                                    <thead>
+                                        <tr>
+                                            <th [attr.colspan]="(cantidad_escalas * 2) + 1"
+                                                style="text-align: center; background-color: rgb(223, 223, 223);">
+                                                Costos de materiales
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th rowspan="2" class="is-selected"
+                                                style="width: 200px; text-align: center; margin-top: 100%;">Material
+                                            </th>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <th class="is-selected" colspan="2" style="text-align: center;">
+                                                    {{cantidad_por_escala[i] | number:
+                                                    '1.0-0'}}</th>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <ng-container *ngFor="let escala of [].constructor(cantidad_escalas)">
+                                                <th style="width: 120px; font-size: smaller;">Cantidad</th>
+                                                <th style="width: 120px; font-size: smaller;">Precio ($)</th>
+                                            </ng-container>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="planchas">
+                                            <td>Plancha</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">{{cantidad_planchas +
+                                                    barniz_existente}} Und
+                                                </td>
+                                                <td [ngClass]=" ['col-par', 'col-' + (i % 2)]"
+                                                    style="text-align: right; font-size: smaller;">
+                                                    {{calcularPlanchas()
+                                                    |
+                                                    number:'1.2-2'}} </td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <td>Tinta</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">
+                                                    {{calcularPrecioTinta(cantidad_por_escala[i], i).cantidad |
+                                                    number:'1.2-2'}} kg</td>
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="text-align: right; font-size: smaller;">
+                                                    {{calcularPrecioTinta(cantidad_por_escala[i], i).precio |
+                                                    number:'1.2-2'}} </td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <td>Sustrato</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">
+                                                    {{calculoPrecioSustrato(cantidad_por_escala[i], i).cantidad |
+                                                    number:'1.0-0'}} und</td>
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="text-align: right; font-size: smaller;">
+                                                    {{calculoPrecioSustrato(cantidad_por_escala[i], i).precio |
+                                                    number:'1.2-2'}} </td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr *ngFor="let material of Materiales_Agregados;index as m">
+                                            <td>{{material.material.nombre}}</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">
+                                                    {{calculoPrecioMaterial(cantidad_por_escala[i], m, i).cantidad |
+                                                    number:'1.2-2'}} {{material.material.unidad}}</td>
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="text-align: right; font-size: smaller;">
+                                                    {{calculoPrecioMaterial(cantidad_por_escala[i], m, i).precio |
+                                                    number:'1.2-2'}} </td>
+                                            </ng-container>
+                                        </tr>
+                                        <!-- Fila de Totales -->
+                                        <tr class="fila-total">
+                                            <td>Subtotal materiales</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td></td>
+                                                <td style="font-size: smaller; text-align: right;">{{
+                                                    getTotalPorEscala(i) | number:'1.2-2'
+                                                    }}</td>
+                                            </ng-container>
+                                        </tr>
+
+                                        <!-- Fila de Totales con margen -->
+                                        <tr class="fila-total-margen">
+                                            <td style="font-size: smaller;">
+                                                Total con margen
+                                                <br>
+                                                <small>
+                                                    Margen:
+                                                    <input type="number" [(ngModel)]="margenGanancia"
+                                                        style="width:60px" /> %
+                                                </small>
+                                            </td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td></td>
+                                                <td style="font-size: smaller; text-align: right;">{{
+                                                    getTotalConMargen(i) | number:'1.2-2'
+                                                    }}</td>
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th [attr.colspan]="(cantidad_escalas * 2) + 1"
+                                                style="text-align: center; background-color: rgb(223, 223, 223);">
+                                                Costos operacionales
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th rowspan="2" class="is-selected"
+                                                style="width: 200px; text-align: center; margin-top: 100%;">Máquina
+                                            </th>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <th class="is-selected" colspan="2" style="text-align: center;">
+                                                    {{cantidad_por_escala[i] | number:'1.0-0'}}</th>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <ng-container *ngFor="let escala of [].constructor(cantidad_escalas)">
+                                                <th style="width: 150px; font-size: smaller;">Cantidad</th>
+                                                <th style="width: 150px; font-size: smaller;">Precio ($)</th>
+                                            </ng-container>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let maquina of maquinas_selected; index as y">
+                                            <td>{{maquina.nombre}}</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">
+                                                    {{calcularPreciosMaquina(cantidad_por_escala[i], y).cantidad |
+                                                    number:'1.2-2'}} h
+                                                </td>
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller; text-align: right;">
+                                                    {{calcularPreciosMaquina(cantidad_por_escala[i], y).precio |
+                                                    number:'1.2-2'}}
+                                                </td>
+                                            </ng-container>
+                                        </tr>
+
+                                        <!-- Totales -->
+                                        <tr class="fila-total">
+                                            <td>Subtotal maquinas</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td></td>
+                                                <td style="font-size: smaller; text-align: right;">{{
+                                                    getTotalMaquinasPorEscala(i) |
+                                                    number:'1.2-2' }}</td>
+                                            </ng-container>
+                                        </tr>
+
+                                        <!-- Totales con margen -->
+                                        <tr class="fila-total-margen">
+                                            <td style="font-size: smaller;">
+                                                Total con margen
+                                                <br>
+                                                <small>
+                                                    Margen:
+                                                    <input type="number" [(ngModel)]="margenGananciaMaquinas"
+                                                        style="width:60px" /> %
+                                                </small>
+                                            </td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td></td>
+                                                <td style="font-size: smaller; text-align: right;">{{
+                                                    getTotalMaquinasConMargen(i) |
+                                                    number:'1.2-2' }}</td>
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th [attr.colspan]="(cantidad_escalas * 2) + 1"
+                                                style="text-align: center; background-color: rgb(223, 223, 223);">
+                                                Costos transportes
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="is-selected" style="width: 200px; text-align: center;">Escala
+                                            </th>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <th class="is-selected" style="width: 150px; text-align: center;"
+                                                    colspan="2">{{
+                                                    cantidad_por_escala[i] | number:'1.0-0'}}</th>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <td>Total transporte</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td style="width: 150px; text-align: right;" colspan="2">
+                                                    {{precio_transporte}}$</td>
+                                            </ng-container>
+                                        </tr>
+                                    </thead>
+                                    <thead>
+                                        <tr>
+                                            <th [attr.colspan]="(cantidad_escalas * 2) + 1"
+                                                style="text-align: center; background-color: rgb(223, 223, 223);">
+                                                Subtotal costos
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="is-selected" style="width: 200px; text-align: center;">Escala
+                                            </th>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <th class="is-selected" style="width: 150px; text-align: center;"
+                                                    colspan="2">{{
+                                                    cantidad_por_escala[i] | number:'1.0-0'}}</th>
+                                            </ng-container>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="fila-total-resumen">
+                                            <td><strong>Subtotales</strong></td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td colspan="2" style="text-align: right;"><strong>{{
+                                                        getTotalConMargen(i) +
+                                                        getTotalMaquinasConMargen(i) + precio_transporte |
+                                                        number:'1.2-2' }}
+                                                        $</strong></td>
+                                            </ng-container>
+                                        </tr>
+                                        <!-- <tr class="fila-total-resumen">
+                                            <td><strong>Totales / {{division}}</strong></td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td colspan="2" style="text-align: right"><strong>{{
+                                                        ((getTotalConMargen(i) +
+                                                        getTotalMaquinasConMargen(i) + precio_transporte) * division) /
+                                                        cantidad_por_escala[i] |
+                                                        number:'1.2-2' }}
+                                                        $</strong></td>
+                                            </ng-container>
+                                        </tr> -->
+                                        <tr>
+                                            <td>
+                                                Otros:
+                                                <br>
+                                                <small>
+                                                    adicional:
+                                                    <input type="number" [(ngModel)]="otro" style="width:60px" /> %
+                                                </small>
+                                            </td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td style="text-align: right;" colspan="2">
+                                                    <strong>
+                                                        {{
+                                                        (getTotalConMargen(i) +
+                                                        getTotalMaquinasConMargen(i) + precio_transporte) * (1 + (otro /
+                                                        100)) |
+                                                        number:'1.2-2' }}
+                                                    </strong>
+                                                </td>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <th [attr.colspan]="(cantidad_escalas * 2) + 1"
+                                                style="text-align: center; background-color: rgb(223, 223, 223);">
+                                                Total por escala
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="is-selected" style="width: 200px; text-align: center;">Escala
+                                            </th>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <th class="is-selected" style="width: 150px; text-align: center;"
+                                                    colspan="2">{{
+                                                    cantidad_por_escala[i] | number:'1.0-0'}}</th>
+                                            </ng-container>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Precio / escalas</strong></td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td style="text-align: right;" colspan="2">
+                                                    <strong>
+                                                        {{
+                                                        (((getTotalConMargen(i) +
+                                                        getTotalMaquinasConMargen(i) + precio_transporte) * division) /
+                                                        cantidad_por_escala[i]) * (1 + (otro/100)) |
+                                                        number:'1.2-2' }}
+                                                    </strong>
+
+                                                </td>
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- flechas -->
+    <button class="carousel-btn left" (click)="moveSlide(-1)" aria-label="Anterior">❮</button>
+    <button class="carousel-btn right" (click)="moveSlide(1)" aria-label="Siguiente">❯</button>
+
+    <!-- puntos -->
+    <div class="carousel-dots">
+        <button class="dot" *ngFor="let s of slides; let i = index" [class.is-active]="i === index" (click)="goTo(i)"
+            aria-label="Ir al slide {{ i + 1 }}"></button>
+    </div>
+</div>

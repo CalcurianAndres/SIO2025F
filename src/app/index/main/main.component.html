@@ -1,0 +1,41 @@
+<section class="hero is-small is-primary">
+    <!-- <img src="../assets/BANNER-SIO-1092x270-v03.jpg"> -->
+</section>
+
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="columns menu">
+        <div class="column" *ngIf="usuario.Nueva_orden != 0">
+            <img src="../../../assets/BANNER-ORDENES.png" alt="" routerLink="/orden">
+        </div>
+        <div class="column" *ngIf="usuario.Almacen != 0">
+            <img src="../../../assets/BANNER-ALMACEN.png" routerLink="/almacen">
+        </div>
+        <div class="column" *ngIf="usuario.Maquinaria != 0">
+            <img src="../../../assets/BANNER-PRODUCTOS-Y-MAQUINARIA.png" routerLink="/gestiones">
+        </div>
+        <div class="column" *ngIf="usuario.Consulta != 0">
+            <img src="../../../assets/BANNER-CONSULTA.png" routerLink="/ordenes">
+        </div>
+        <div class="column" *ngIf="usuario.Gestiones != 0">
+            <img src="../../../assets/BANNER-GESTIONES.png"  routerLink="/ordenes/gestion">
+        </div>
+        <div class="column" *ngIf="usuario.Planificacion != 0">
+            <img src="../../../assets/BANNER-PLANIFICACION.png" routerLink="/planificacion">
+        </div>
+        <div class="column" *ngIf="usuario.Estadisticas === 1">
+            <img src="../../../assets/BANNER-ESTADISTICAS.png" routerLink="/estadisticas">
+        </div>
+        <div class="column" *ngIf="usuario.Estadisticas != 1">
+        </div>
+        <div class="column" *ngIf="usuario.Precios === 1">
+            <img src="../../../assets/BANNER-VENTAS.png" routerLink="/ventas">
+        </div>
+        <div class="column" *ngIf="usuario.laboratorio == 1 || usuario.laboratorio == 2">
+            <img src="../../../assets/BANNER-LABORATORIO.png" alt="" routerLink="/laboratorio">
+        </div>
+        <div class="column" *ngIf="usuario.Nueva_orden != 0">
+            <img src="../../../assets/BANNER-COMPRAS.png" alt="" routerLink="/compras">
+        </div>
+    </div>
+</div>

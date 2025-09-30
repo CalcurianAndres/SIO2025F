@@ -1,0 +1,196 @@
+<div class="containe mt-5">
+    <div class="titulo">
+        <i class="fas fa-clipboard-list"></i> Reporte de inventario
+    </div>
+    <div class="card">
+        <div class="card-content">
+    
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="control">
+                        <label class="radio">
+                            <input type="radio" name="tipo" value="general" checked (change)="tipo($event.target.value)">
+                            General
+                        </label> <br>
+                        <label class="radio">
+                            <input type="radio" name="tipo" value="facturado" (change)="tipo($event.target.value)">
+                            Facturado
+                        </label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="select" *ngIf="tipo_ === 'general'">
+                        <select name="" id="" [(ngModel)]="grupo">
+                            <option value="#">Seleccione Grupo</option>
+                            <option value="{{grupo._id}}" *ngFor="let grupo of grupos">{{grupo.nombre}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Desde:</label>
+                        <div class="control">
+                            <input type="date" class="input is-small" #desde>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Hasta:</label>
+                        <div class="control">
+                            <input type="date" class="input is-small" #hasta>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label for="" class="label"> </label>
+                        <div class="control" *ngIf="tipo_ === 'general'">
+                            <button class="button is-primary is-small" (click)="realizarBusqueda(desde.value, hasta.value)">
+                                <span class="icon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <span>
+                                    Buscar
+                                </span>
+                            </button>
+                        </div>
+                        <div class="control" *ngIf="tipo_ != 'general'">
+                            <button class="button is-primary is-small" (click)="getDespachosFacturados(desde.value, hasta.value)">
+                                <span class="icon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <span>
+                                    Buscar
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="card" *ngIf="cargando">
+    <div class="card-content">
+        <span class="load">Cargando...</span>
+        <progress class="progress is-small is-success" max="100">1%</progress>
+    </div>
+    <!-- <div class="card-content">
+        <div class="carga_">
+            <div class="loader">
+                <span style="--i:2"></span>
+                <span style="--i:3"></span>
+                <span style="--i:1"></span>
+                <span style="--i:4"></span>
+                <span style="--i:5"></span>
+                <span style="--i:6"></span>
+                <span style="--i:7"></span>
+                <span style="--i:8"></span>
+                <span style="--i:9"></span>
+                <span style="--i:10"></span>
+            </div>
+            <span class="text">Cargando, esto puede tomar un tiempo.</span>
+        </div>
+    </div> -->
+</div>
+
+<div class="card" *ngIf="!cargando && tipo_ === 'general' && materiales.length > 0">
+    <div class="card-content">
+        <!-- <span class="subtitulo">Grupo</span><br> -->
+        <span class="subtitulo">Desde: {{desde.value | date: 'dd/MM/yyyy': 'UTC'}} Hasta: {{hasta.value | date: 'dd/MM/yyyy': 'UTC'}}</span>
+        <table class="table is-fullwidth">
+            <tr>
+                <th class="is-selected">Material</th>
+                <th class="is-selected">Saldo inicial</th>
+                <th class="is-selected">Entradas</th>
+                <th class="is-selected">Salidas</th>
+                <th class="is-selected">Devoluciones</th>
+                <th class="is-selected">Saldo total</th>
+            </tr>
+            <tr *ngFor="let material of materiales;index as i">
+                <td>{{material.nombre}} ({{material.marca}})
+                    <ng-container *ngIf="grupo == '61f92a1f2126d717f004cca6'">
+                        ({{material.ancho}}x{{material.largo}}) {{material.gramaje}}g, cal:{{material.calibre}}
+                    </ng-container>
+                </td>
+                <td>
+                    <ng-container *ngIf="saldos_iniciales[i] > 0">
+                        {{puntoYcoma(saldos_iniciales[i])}} {{unidades[i]}}
+                    </ng-container>
+                    <ng-container *ngIf="saldos_iniciales[i] <= 0">
+                        0 {{unidades[i]}}
+                    </ng-container>
+                </td>
+                <td>{{puntoYcoma(material.cantidad)}} {{unidades[i]}}</td>
+                <td>{{puntoYcoma(material.salida)}} {{unidades[i]}}</td>
+                <td>{{puntoYcoma(material.devoluciones)}} {{unidades[i]}}</td>
+                <td>
+                    {{puntoYcoma(saldos_finales[i])}} {{unidades[i]}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="card"  *ngIf="!cargando && general.length > 0">
+    <div class="card-content">
+        <div *ngFor="let factura of facturados;index as i">
+        <span class="subtitulo">OP: {{factura.op}}</span> <br>
+        <b>Documento:</b> {{factura.documento}} <br>
+        <b>Fecha: </b> {{fechas[i]}}
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th class="is-selected">Materiales</th>
+                    <th class="is-selected">Asignaciones</th>
+                    <th class="is-selected">Devoluciones</th>
+                    <th class="is-selected">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let asignacion of asignaciones">
+                    <ng-container *ngIf="asignacion.orden === factura.op">
+                        <tr >
+                            <td>{{asignacion.material.nombre}}
+                                <ng-container *ngIf="asignacion.material.ancho">
+                                     ({{asignacion.material.ancho}}x{{asignacion.material.largo}})
+                                </ng-container>
+                            </td>
+                            <td>{{puntoYcoma(asignacion.cantidad)}}{{asignacion.material.unidad}}</td>
+                            <td>{{puntoYcoma(asignacion.devolucion)}}{{asignacion.material.unidad}}</td>
+                            <td>{{puntoYcoma((asignacion.cantidad - asignacion.devolucion).toFixed(2))}}{{asignacion.material.unidad}}</td>
+                        </tr>
+                    </ng-container>
+                </ng-container>
+            </tbody>
+        </table>
+        <hr>
+        </div>
+        <div>
+            <span class="subtitulo">Total</span> <br>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="is-selected">Material</th>
+                        <th class="is-selected">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let general of general">
+                        <td>{{general.material.nombre}}
+                            <ng-container *ngIf="general.material.ancho">
+                                ({{general.material.ancho}}x{{general.material.largo}})
+                            </ng-container>
+                        </td>
+                        <td>{{puntoYcoma(general.total)}} {{general.material.unidad}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

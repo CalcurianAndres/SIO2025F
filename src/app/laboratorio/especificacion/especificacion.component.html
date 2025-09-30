@@ -1,0 +1,1300 @@
+<div class="container">
+    <div class="titulo">
+        Especificación del producto
+    </div>
+    <button class="button is-small is-success" (click)=Editar_Especificacion() *ngIf="!Edicion">
+        <span class="icon">
+            <i class="fas fa-edit"></i>
+        </span>
+        <span>Editar</span>
+    </button><br><br>
+    <div class="card">
+        <div class="card-content">
+            <div class="columns">
+                <div class="column">
+                </div>
+                <div class="column is-3">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th class="is-selected">
+                                    Código de especificación
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    E-{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-{{productos.producto.edicion}}
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="2">
+                            1. Identificación de producto
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">1.1. Cliente</td>
+                        <td>{{productos.producto.cliente.nombre}}</td>
+                    </tr>
+                    <tr>
+                        <td class="indice">1.2. Producto</td>
+                        <td>{{productos.producto.producto}}</td>
+                    </tr>
+                    <tr>
+                        <td class="indice">1.3. Código del producto</td>
+                        <td>
+                            {{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="2">2. Dimensiones del producto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">2.1. Tamaño del producto desplegado (mm)</td>
+                        <td>
+                            <span *ngIf="!Edicion">
+                                {{productos.producto.tamano_desplegado[0]}} x {{productos.producto.tamano_desplegado[1]}} ± {{productos.producto.tamano_desplegado[2]}}
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <label for="" class="label">Ancho:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_desplegado[0]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <div class="control">
+                                            <label for="" class="label">Largo:</label>
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_desplegado[1]"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <div class="control">
+                                            <label for="" class="label">±:</label>
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_desplegado[2]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">2.2. Tamaño del producto cerrado (mm)</td>
+                        <td>
+                            <span *ngIf="!Edicion">
+                                <ng-container *ngIf="productos.producto.tamano_cerrado.length < 1">
+                                    No aplica
+                                </ng-container>
+                                <ng-container *ngIf="productos.producto.tamano_cerrado.length > 1">
+                                    {{productos.producto.tamano_cerrado[0]}} x {{productos.producto.tamano_cerrado[1]}}
+                                    <ng-container *ngIf="productos.producto.tamano_cerrado[2]">
+                                        x {{productos.producto.tamano_cerrado[2]}}
+                                    </ng-container>
+                                    ± {{productos.producto.tamano_cerrado[3]}}
+                                </ng-container>
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <label for="" class="label">Ancho:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_cerrado[0]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <label for="" class="label">Largo:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_cerrado[1]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <label for="" class="label">Alto:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_cerrado[2]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-2">
+                                    <div class="field">
+                                        <label for="" class="label">±:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_cerrado[3]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <b>2.3. diseño del producto</b> <br>
+                            <div class="img">
+                                <img src="http://localhost:8080/api/imagen/producto/{{productos.producto.img}}" alt="Diseño del producto" width="500" height="500">
+                            </div><br>
+                            <span class="descripcionImg">
+                                <b>Imagen 1:</b> Diseño del producto
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="3">3. Materia prima</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">3.1. Tipo de sustrato a utilizar</td>
+                        <td colspan="3">{{Sustrato.nombre}}</td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.2. Espesor / Calibre (μm):</td>
+                        <td>
+                            <table class="table is-fullwidth is-bordered">
+                                <tr style="text-align: center;">
+                                    <th>Mínimo</th>
+                                    <th>Nominal</th>
+                                    <th>Maximo</th>
+                                </tr>
+                                <tr style="text-align: center;">
+                                    <td >
+                                        {{Sustrato.calibre_e[0]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                    <td >
+                                        {{Sustrato.calibre_e[1]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                    <td >
+                                        {{Sustrato.calibre_e[2]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="text-align: center;"> 
+                            <b>Método de ensayo:</b> <br>
+                            COVENIN 946-79 <br>
+                            TAPPI T411
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.3. Peso / Gramaje (g/m²):</td>
+                        <td>
+                            <table class="table is-fullwidth is-bordered">
+                                <tr style="text-align: center;">
+                                    <th>Mínimo</th>
+                                    <th>Nominal</th>
+                                    <th>Maximo</th>
+                                </tr>
+                                <tr style="text-align: center;">
+                                    <td>
+                                        {{Sustrato.gramaje_e[0]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                    <td>
+                                        {{Sustrato.gramaje_e[1]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                    <td>
+                                        {{Sustrato.gramaje_e[2]}}
+                                        <!-- <input type="text" class="input is-small"> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="text-align: center;" > 
+                            <b>Método de ensayo:</b> <br>
+                            COVENIN 945-84 <br>
+                            TAPPI T410
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.4. Colores aprobados:</td>
+                        <td colspan="2">
+                            <ul>
+                                <li *ngFor="let color of colores">○ {{color.color}}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.5. Tintas aprobadas (Marcas):</td>
+                        <td colspan="2">
+                            <ng-container *ngFor="let color of colores">
+                                ○ <b>{{color.color}}:</b> {{color.nombre}} ({{color.marca}}) <br>
+                                <ng-container *ngIf="color.preparacion.length > 0">
+                                    <b>    Preparación local (1kg): </b> <br>
+                                    <span *ngFor="let ingrediente of color.preparacion;index as i">
+                                            {{ingrediente.cantidad}}g {{ingrediente.nombre}} <br>
+                                    </span>
+                                </ng-container>
+                            </ng-container>
+                            <span class="red__">
+                                <!-- <br> <b>NOTA:</b> FALTA PREPARACIÓN DE TINTAS -->
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.6. Barnices aprobados:</td>
+                        <td colspan="2">
+                            <ul>
+                                <li *ngFor="let barniz of barniz">{{barniz}}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">3.7. Dirección de fibra de la etiqueta:</td>
+                        <td>
+                            <span *ngIf="!Edicion">
+                                Paralela al largo total del producto ({{productos.producto.tamano_desplegado[productos.producto.direccion_fibra]}} mm)
+                            </span>
+                            <br>
+                            <div class="select is-small" *ngIf="Edicion">
+                                <select name="" id="" (change)="direccion_dfibra($event.target.value)">
+                                    <option value="0">{{productos.producto.tamano_desplegado[0]}}</option>
+                                    <option value="1">{{productos.producto.tamano_desplegado[1]}}</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <b>Método de ensayo:</b><br>
+                            COVENIN 26-79 <br>
+                            TAPPI T-409 om-98
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="6">4. Pre-impresión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">4.1. Nombre del archivo del diseño del producto:</td>
+                        <td colspan="6">
+                            <!-- AD-PL-002-2_15062022.ai -->
+                            <span *ngIf="!Edicion">
+                                AD-{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}_{{productos.producto.diseno_producto[0]}}.{{productos.producto.diseno_producto[1]}}
+                            </span>
+                            <br>
+                            <span *ngIf="Edicion">
+                                <label for="" class="label">Fecha aceptada:</label>
+                                <input type="date" class="input is-small short" (change)="aprobacion($event.target.value)">
+                                 <label for="" class="label">Formato:</label>
+                                <div class="select is-small">
+                                    <select name="" id="" (change)="__formato($event.target.value)">
+                                        <option value="">.</option>
+                                        <option value="ai">ai</option>
+                                        <option value="psd">psd</option>
+                                    </select>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">4.2. Código del montaje</td>
+                        <td *ngFor="let e of [].constructor(montajes); let i = index">
+                            <span>
+                                <b>Montaje {{montaje(i)}}:</b>
+                            </span><br>
+                            M-{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-{{montaje(i)}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">4.3. Nombre del archivo del montaje del producto:</td>
+                        <td *ngFor="let e of [].constructor(montajes); let i = index">
+                            <span *ngIf="!Edicion">
+                                <span *ngIf="i != 1">
+                                    M-{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-{{montaje(i)}}_{{productos.producto.diseno_montaje[0+i]}}.{{productos.producto.diseno_montaje[1+i]}}
+                                </span>
+                                <span *ngIf="i === 1">
+                                    M-{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-{{montaje(i)}}_{{productos.producto.diseno_montaje[2]}}.{{productos.producto.diseno_montaje[3]}}
+                                </span>
+                            </span>
+                            <span *ngIf="Edicion">
+                                <label for="" class="label">Fecha aceptada:</label>
+                                <br><input type="date" class="input is-small short" (change)="monateje($event.target.value,i)">
+                                 <label for="" class="label">Formato:</label>
+                                <div class="select is-small">
+                                    <select name="" id="" (change)="__formato_monateje($event.target.value,i)">
+                                        <option value="">.</option>
+                                        <option value="ai">ai</option>
+                                        <option value="psd">psd</option>
+                                    </select>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">4.4. Código de películas:</td>
+                        <td *ngFor="let e of [].constructor(montajes); let n = index">
+                            <ng-container *ngFor="let color of colores;index as i">
+                                <p *ngIf="color.color === 'Negro'">Pelicula N°{{i+1}}: Negro:{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-
+                                    <!-- {{NumToLet(i_montajes)}} -->
+                                    <ng-container *ngIf="n == 0">A</ng-container>
+                                    <ng-container *ngIf="n == 1">B</ng-container>
+                                    <ng-container *ngIf="n == 2">C</ng-container>
+                                    <ng-container *ngIf="n == 3">D</ng-container>
+                                    <ng-container *ngIf="n == 4">E</ng-container>
+                                    -1 </p>
+                                    <p *ngIf="color.color === 'Cyan'">Pelicula N°{{i+1}}: Cyan:{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-
+                                        <ng-container *ngIf="n == 0">A</ng-container>
+                                        <ng-container *ngIf="n == 1">B</ng-container>
+                                        <ng-container *ngIf="n == 2">C</ng-container>
+                                        <ng-container *ngIf="n == 3">D</ng-container>
+                                        <ng-container *ngIf="n == 4">E</ng-container>
+                                        -2 </p>
+                                    <p *ngIf="color.color === 'Magenta'">Pelicula N°{{i+1}}: Magenta:{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-
+                                        <ng-container *ngIf="n == 0">A</ng-container>
+                                        <ng-container *ngIf="n == 1">B</ng-container>
+                                        <ng-container *ngIf="n == 2">C</ng-container>
+                                        <ng-container *ngIf="n == 3">D</ng-container>
+                                        <ng-container *ngIf="n == 4">E</ng-container>
+                                        -3 </p>
+                                    <p *ngIf="color.color === 'Amarillo'">Pelicula N°{{i+1}}: Amarillo:{{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-
+                                        <ng-container *ngIf="n == 0">A</ng-container>
+                                        <ng-container *ngIf="n == 1">B</ng-container>
+                                        <ng-container *ngIf="n == 2">C</ng-container>
+                                        <ng-container *ngIf="n == 3">D</ng-container>
+                                        <ng-container *ngIf="n == 4">E</ng-container>
+                                        -4 </p>
+                                    <div *ngIf="color.color != 'Amarillo' && color.color != 'Magenta' && color.color != 'Cyan' && color.color != 'Negro' ">
+                                            Pelicula N°{{i+1}}: {{color.color}}:
+                                            <ng-container>
+                                                {{productos.producto.cliente.codigo}}-{{productos.producto.codigo}}-{{productos.producto.version}}-
+                                            <ng-container *ngIf="n == 0">A</ng-container>
+                                            <ng-container *ngIf="n == 1">B</ng-container>
+                                            <ng-container *ngIf="n == 2">C</ng-container>
+                                            <ng-container *ngIf="n == 3">D</ng-container>
+                                            <ng-container *ngIf="n == 4">E</ng-container>
+                                            <!-- -{{intervalo(i,color.color)}} -->
+                                            <!-- <ng-container *ngIf="i_montajes == 0">
+                                                -{{sumaTintas(i, TintaProducto.producto.color)}}
+                                            </ng-container>    
+                                            <ng-container *ngIf="i_montajes != 0">
+                                                -{{sumaTintas(i, TintaProducto.producto.color) - 2}}
+                                            </ng-container>     -->
+                                            </ng-container>
+                                    </div>
+                            </ng-container>
+                            <!-- Película N° 1: Negro: PL-002-2-A-1 <br>
+                            Película N° 2: Blanco Opaco: PL-002-2-A-5<br>
+                            Película N° 3: Laca IPA (Ref.): PL-002-2-A-6<br>
+                            Película N° 4: Pantone 348: PL-002-2-A-7<br>
+                            Película N° 5: Pantone 3435: PL-002-2-A-8 -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">4.5. Tipo / Marca de plancha:</td>
+                        <td colspan="6">
+                            <ng-container *ngFor="let plancha of Planchas">
+                                <span *ngIf="plancha.nombre === 'Planchas Litográficas'">
+                                    Positiva / {{plancha.marca}}
+                                </span>
+                            </ng-container>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">4.6. Tiempo de exposición de quemado de plancha (s):</td>
+                        <td colspan="6">
+                            <ng-container *ngFor="let plancha of Planchas">
+                                <span *ngIf="plancha.nombre === 'Planchas Litográficas'">
+                                    {{plancha.teq}}
+                                </span>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="6">5. Impresión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">5.1. Maquina impresora aprobada</td>
+                        <td colspan="6">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let impresora of this.productos.producto.impresora_aprobada">
+                                    <p>
+                                        {{impresora}}
+                                    </p>
+                                </ng-container>
+                            </ng-container>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <div class="select">
+                                        <select name="" id="" (change)="Seleccionarimpresora($event.target.value)">
+                                            <option value="#">Seleccionar impresora</option>
+                                            <ng-container *ngFor="let maquina of productos.maquinas">    
+                                                <option value="{{maquina.nombre}}" *ngIf="maquina.tipo === 'IMPRIMIR'">
+                                                    {{maquina.nombre}}
+                                                </option>
+                                            </ng-container>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="column is-8">
+                                    <div class="columns" *ngFor="let impresora of this.productos.producto.impresora_aprobada;index as i">
+                                        <div class="column is-5">
+                                            {{impresora}}
+                                        </div>
+                                        <div class="column is-1 red__">
+                                            <i class="far fa-window-close" (click)="deleteImpresora(i)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.2. Tamaño de sustrato a imprimir / ejemplares por pliego:</td>
+                        <td *ngFor="let e of [].constructor(montajes); let n = index">
+                        <b>Montaje {{montaje(n)}}:</b><br>
+                        <span *ngIf="!Edicion">
+                            <ng-container *ngIf="n === 0">
+                                {{productos.producto.tamano_sustrato[0]}} x {{productos.producto.tamano_sustrato[1]}} cm <br>
+                            </ng-container>
+                            <ng-container *ngIf="n === 1">
+                                {{productos.producto.tamano_sustrato[2]}} x {{productos.producto.tamano_sustrato[3]}} cm <br>
+                            </ng-container>
+                        </span>
+                        {{productos.producto.ejemplares[n]}} Ejemplares
+                        <div class="columns" *ngIf="Edicion">
+                            <div class="column is-2">
+                                <label for="" class="label">Ancho:</label>
+                                <ng-container *ngIf="n === 0">
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_sustrato[0]" (change)="pull_toneladas(n)">
+                                </ng-container>
+                                <ng-container *ngIf="n === 1">
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_sustrato[2]" (change)="pull_toneladas(n)">
+                                </ng-container>
+                            </div>
+                            <div class="column is-2">
+                                <label for="" class="label">largo:</label>
+                                <ng-container *ngIf="n === 0">
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_sustrato[1]" (change)="pull_toneladas(n)">
+                                </ng-container>
+                                <ng-container *ngIf="n === 1">
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.tamano_sustrato[3]" (change)="pull_toneladas(n)">
+                                </ng-container>
+                            </div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.3. Rendimiento de unidades por cada tonelada de sustrato</td>
+                        
+                        <td *ngFor="let e of [].constructor(montajes); let n = index">
+                        <b>Montaje {{montaje(n)}}:</b><br>
+                        <ng-container *ngIf="n === 0">
+                            {{productos.producto.tamano_sustrato[0]}} x {{productos.producto.tamano_sustrato[1]}} cm <br>
+                            {{tonelada(productos.producto.tamano_sustrato[0], productos.producto.tamano_sustrato[1],productos.producto.ejemplares[n])}} unidades
+                        </ng-container>
+                        <ng-container *ngIf="n === 1">
+                            {{productos.producto.tamano_sustrato[2]}} x {{productos.producto.tamano_sustrato[3]}} cm <br>
+                            {{tonelada(productos.producto.tamano_sustrato[0], productos.producto.tamano_sustrato[1],productos.producto.ejemplares[n])}} unidades
+                        </ng-container>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.4. Área efectiva de impresión (cm²):</td>
+                        <td *ngFor="let e of [].constructor(montajes); let n = index">
+                            <b>Montaje {{montaje(n)}}:</b><br>
+                            <span *ngIf="!Edicion">
+                                <ng-container *ngIf="n === 0">
+                                    {{productos.producto.Area_impresion[0]}}
+                                </ng-container>
+                                <ng-container *ngIf="n === 1">
+                                    {{productos.producto.Area_impresion[1]}}
+                                </ng-container>
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <ng-container *ngIf="n === 0">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.Area_impresion[0]" (change)="calcular_Desperdicio()">
+                                    </ng-container>
+                                    <ng-container *ngIf="n === 1">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.Area_impresion[1]" (change)="calcular_Desperdicio()">
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.5. Porcentaje de desperdicio (%)</td>
+                        <td *ngFor="let e of [].constructor(montajes); let n = index">
+                            <b>Montaje {{montaje(n)}}:</b><br>
+                            <ng-container *ngIf="n === 0">
+                                {{calcular_desperdicio(productos.producto.tamano_sustrato[0],productos.producto.tamano_sustrato[1],productos.producto.Area_impresion[0])}}%
+                            </ng-container>
+                            <ng-container *ngIf="n === 1">
+                                {{calcular_desperdicio(productos.producto.tamano_sustrato[2],productos.producto.tamano_sustrato[3],productos.producto.Area_impresion[1])}}%
+                            </ng-container>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.6. Tamaño de la pinza de impresión (mm)</td>
+                        <td colspan="6">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let impresora of this.productos.producto.impresora_aprobada;index as i">
+                                    {{impresora}} ({{this.productos.producto.tamano_pinza[i]}}) <br>
+                                </ng-container>
+                            </ng-container>
+                            <table class="table" *ngIf="Edicion">
+                                <tr *ngFor="let impresora of this.productos.producto.impresora_aprobada;index as i">
+                                    <th>
+                                        {{impresora}}
+                                    </th>
+                                    <td>
+                                        <div class="columns">
+                                            <div class="column is-4">
+                                                <label for="" class="label">Tamaño:</label>
+                                                <input type="text" class="input" [(ngModel)]="productos.producto.tamano_pinza[i]">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.7. Secuencia de colores en máquina:</td>
+                        <td colspan="6">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let color of colores;index as i">
+                                    <ng-container *ngIf="productos.producto.orden_de_color[i]">
+                                        Cuerpo Nº {{i+1}}: {{colores[productos.producto.orden_de_color[i]].nombre}}<br>                                
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+
+                            <ng-container *ngIf="Edicion">
+                                <ng-container *ngFor="let color of colores;index as i">
+                                    <div class="columns">
+                                        <div class="column">
+                                            Cuerpo Nº {{i+1}}:
+                                        </div>
+                                        <div class="column">
+                                            <div class="select is-small">
+                                                <select name="" id="" [(ngModel)]="productos.producto.orden_de_color[i]">
+                                                    <option value="#">Seleccione color</option>
+                                                    <option value="{{n}}" *ngFor="let color of colores;index as n">{{color.nombre}} ({{color.marca}})</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <!-- Cuerpo N° 1: Blanco Opaco <br>
+                            Cuerpo N° 2: Negro <br>
+                            Cuerpo N° 3: Pantone 6435 <br>
+                            Cuerpo N° 4: Pantone 348 <br>
+                            Cuerpo N° 5: Laca IPA (ref.) Dorado -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">5.8. Solución de fuente:</td>
+                        <td colspan="6">
+                            <ng-container *ngFor="let fuente of Quimicos">
+                                <span *ngIf="fuente.nombre === 'Solución de Fuente'">
+                                    {{fuente.chemical}} <br>
+                                    ○ pH: {{fuente.ph}} <br>
+                                    ○ Conductividad: {{fuente.conductividad}}  μS/cm
+                                </span>
+                            </ng-container> <br>
+                            <span *ngIf="!Edicion">
+                                <ng-container *ngIf="productos.producto.Solucion_nota">
+                                    <b>Nota: </b>{{productos.producto.Solucion_nota}}
+                                </ng-container>
+                            </span>
+                            <span *ngIf="Edicion">
+                                <br>
+                                <label for="" class="label">Agregar nota:</label>
+                                <textarea class="textarea" placeholder="NOTA" rows="2" [(ngModel)]="productos.producto.Solucion_nota"></textarea>
+                            </span>
+                    </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="3">6. Post-impresión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">6.1. Máquina troqueladora aprobada:</td>
+                        <td colspan="2">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let troqueladora of this.productos.producto.troqueladora_aprobada">
+                                    <p>
+                                        {{troqueladora}}
+                                    </p>
+                                </ng-container>
+                            </ng-container>
+
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <div class="select">
+                                        <select name="" id="" (change)="Seleccionartroqueladora($event.target.value)">
+                                            <option value="#">Seleccionar troqueladora</option>
+                                            <ng-container *ngFor="let maquina of productos.maquinas">    
+                                                <option value="{{maquina.nombre}}" *ngIf="maquina.tipo === 'TROQUELAR'">
+                                                    {{maquina.nombre}}
+                                                </option>
+                                            </ng-container>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="column is-8">
+                                    <div class="columns" *ngFor="let troqueladora of this.productos.producto.troqueladora_aprobada;index as i">
+                                        <div class="column is-5">
+                                            {{troqueladora}}
+                                        </div>
+                                        <div class="column is-1 red__">
+                                            <i class="far fa-window-close" (click)="deleteTroqueladora(i)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.2. Tipo de troquel / cuchilla - ángulo:</td>
+                        <td colspan="2">
+                            <span *ngIf="!Edicion">
+                                {{productos.producto.tipo_troquel[0]}} <br>
+                                <b>Tipo de cuchilla:</b> {{productos.producto.tipo_troquel[1]}} <br>
+                                <b>Tamaño de madera:</b> {{productos.producto.tipo_troquel[2]}} <br>
+                                <b>Espesor de madera:</b> {{productos.producto.tipo_troquel[3]}} <br>
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <div class="field">
+                                        <label for="" class="label">Tipo de Troquel:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_troquel[0]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-3">
+                                    <div class="field">
+                                        <label for="" class="label">Tipo de cuchilla:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_troquel[1]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <div class="field">
+                                        <label for="" class="label">Tamaño de madera:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_troquel[2]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-3">
+                                    <div class="field">
+                                        <label for="" class="label">Espesor de madera:</label>
+                                        <div class="control">
+                                            <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_troquel[3]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.3. Tamaño de canal de hendidura a utilizar (mm):</td>
+                        <!-- <td>
+                            <span *ngIf="!Edicion">
+                                {{productos.producto.hendidura}}
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-5">
+                                    <label for="" class="label">Tamaño de hendidura:</label>
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.hendidura">
+                                </div>
+                            </div>
+                        </td> -->
+                        <td>
+                            <b>Fabricante / Marca</b> <br>
+                            <span *ngIf="!Edicion">
+                                {{productos.producto.hendidura_canal}}<br>
+                            </span>
+
+                            <div class="select is-small" *ngIf="Edicion">
+                                <select name="" id="" [(ngModel)]="productos.producto.hendidura_canal">
+                                    <option value="No aplica">No aplica</option>
+                                <ng-container *ngFor="let plancha of Planchas">
+                                    <option value="{{plancha.nombre}} / {{plancha.marca}}" *ngIf="plancha.marca === 'Cito'">
+                                        {{plancha.nombre}}
+                                    </option>
+                                </ng-container>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td class="indice">6.4. Presión de troquelado (MN):</td>
+                        <td colspan="2">
+                            <span *ngIf="!Edicion">
+                                {{productos.producto.presion_troquel}}
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <label for="" class="label">Presión:</label>
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.presion_troquel">
+                                </div>
+                            </div>
+                        </td>
+                    </tr> -->
+                    <tr>
+                        <td class="indice">6.4. Guillotina aprobada:</td>
+                        <td colspan="2">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let guillotina of this.productos.producto.guillotina_aprobada">
+                                    <p>
+                                        {{guillotina}}
+                                    </p>
+                                </ng-container>
+                            </ng-container>
+
+                            <div class="columns"  *ngIf="Edicion">
+                                
+                                <div class="column">
+                                        <div class="select">
+                                        
+                                        <select name="" id="" (change)="Guillotina_aprobada($event.target.value)">
+                                            <option value="#">Seleccione Guillotina</option>
+                                            <option value="#">No aplica</option>
+                                            <option value="Polar Morh 137 X">Polar Morh 137 X</option>
+                                            <option value="Polar Morh 115 EMC">Polar Morh 115 EMC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="column is-8">
+                                    <div class="columns" *ngFor="let guillotina of this.productos.producto.guillotina_aprobada;index as i">
+                                        <div class="column is-5">
+                                           {{guillotina}}
+                                        </div>
+                                    <div class="column is-1 red__" *ngIf="this.productos.producto.guillotina_aprobada != 'No aplica'">
+                                                <i class="far fa-window-close" (click)="deleteGuillotina(i)"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.5. Tipo de cuchilla - ángulo (etiqueta)</td>
+                        <td colspan="2">
+                            <span *ngIf="!Edicion">
+                                <ng-container *ngIf="this.productos.producto.guillotina_aprobada[0] != 'No aplica'">
+                                    {{productos.producto.tipo_cuchilla}}
+                                </ng-container>
+                                <ng-container *ngIf="this.productos.producto.guillotina_aprobada[0] === 'No aplica'">
+                                    No aplica
+                                </ng-container>
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <label for="" class="label">Tipo:</label>
+                                    <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_cuchilla">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.6. Máquina pegadora aprobada:</td>
+                        <td colspan="2">
+                            <ng-container *ngIf="!Edicion">
+                                <ng-container *ngFor="let pegadora of this.productos.producto.pegadora_aprobada">
+                                    <p>
+                                        {{pegadora}}
+                                    </p>
+                                </ng-container>
+                            </ng-container>
+
+                            <div class="columns"  *ngIf="Edicion">
+                                
+                                <div class="column">
+                                        <div class="select">
+                                        
+                                        <select name="" id="" (change)="Pegadora_aprobada($event.target.value)">
+                                            <option value="#">Seleccione pegadora</option>
+                                            <option value="#">No aplica</option>
+                                            <option value="Bobst Ambition">Bobst Ambition	</option>
+                                            <option value="Anter 520">Anter 520</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="column is-8">
+                                    <div class="columns" *ngFor="let pegadora of this.productos.producto.pegadora_aprobada;index as i">
+                                        <div class="column is-5">
+                                           {{pegadora}}
+                                        </div>
+                                    <div class="column is-1 red__" *ngIf="this.productos.producto.pegadora_aprobada != 'No aplica'">
+                                                <i class="far fa-window-close" (click)="deletePegadora(i)"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.7. Pegamento aprobado:</td>
+                        <td colspan="2">
+                            <ul>
+                                <li *ngFor="let pega of pega">{{pega}}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.8. Tipo de caja para embalaje:</td>
+                        <td colspan="2">
+                        {{caja.producto.descripcion}} <br>
+                        Tipo {{caja.producto.tipo}} <br>
+                        ECT Mínimo: {{caja.producto.ECT}} KN/m
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.9. Modelo de la caja:</td>
+                        <td colspan="2">
+                            {{caja.producto.nombre}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.10. Proveedores de corrugados aprobados:</td>
+                        <td colspan="2">
+                            Servicios de Corrugados Maracay, C.A <br> 
+                            Corrugados Industriales de Venezuela, C.A. (CIVCA)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.11. Cantidad de unidades por caja:</td>
+                        <td colspan="2">{{caja.cantidad}} unidades</td>
+                    </tr>
+                    <tr>
+                        <td class="indice">6.12. Cantidad por paquetes:</td>
+                        <td colspan="2">
+                            <span *ngIf="!Edicion">
+                                
+                                {{productos.producto.Cantidad_paquete}}
+                            </span>
+                            <div class="columns" *ngIf="Edicion">
+                                <div class="column is-3">
+                                    <label for="" class="label">Cantidad:</label>
+                                    <input type="text" class="input" [(ngModel)]="productos.producto.Cantidad_paquete">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" >
+                            <b>6.13. Distribución del producto en caja</b><br>
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="img_">
+                                        <img src="{{this.baseUrl}}/imagen/aereo/{{productos.producto.aereo}}" alt="Diseño del producto" width="300" height="300">
+                                    </div>
+                                    <div class="descripcionImg">
+                                        <b>Imagen 2:</b> Distribución del producto (vista aerea)
+                                    </div>
+                                    <span *ngIf="Edicion">
+                                        <div class="file is-small has-name is-primary">
+                                            <label class="file-label">
+                                              <input class="file-input" type="file" name="resume"
+                                              (change)="CambiarImagen__($event)">
+                                              <span class="file-cta">
+                                                <span class="file-icon">
+                                                  <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                  Seleccionar Imagen
+                                                </span>
+                                              </span>
+                                              <span class="file-name file-name___">
+                                                Sin archivo
+                                              </span>
+                                            </label>
+                                          </div>
+                                          <br>
+                                          <div class="field">
+                                            <div class="control">
+                                                <button class="button is-success is-small" (click)="subirImagen__()">
+                                                    <span class="icon">
+                                                        <i class="fas fa-image"></i>
+                                                    </span>
+                                                    <span>
+                                                        subir imagen
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="column">
+                                    <div class="img_">
+                                        <img src="{{this.baseUrl}}/imagen/distribucion/{{productos.producto.distribucion}}" alt="Diseño del producto" width="500" height="500">
+                                    </div>
+                                    <br>
+                                    <div class="descripcionImg">
+                                        <b>Imagen 3:</b> Distribución del producto (vista 3D)
+                                    </div>
+                                    <span *ngIf="Edicion">
+                                        <div class="file is-small has-name is-primary">
+                                            <label class="file-label">
+                                              <input class="file-input" type="file" name="resume"
+                                              (change)="CambiarImagen_($event)">
+                                              <span class="file-cta">
+                                                <span class="file-icon">
+                                                  <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                  Seleccionar Imagen
+                                                </span>
+                                              </span>
+                                              <span class="file-name file-name__">
+                                                Sin archivo
+                                              </span>
+                                            </label>
+                                          </div>
+                                          <br>
+                                          <div class="field">
+                                            <div class="control">
+                                                <button class="button is-success is-small" (click)="subirImagen_()">
+                                                    <span class="icon">
+                                                        <i class="fas fa-image"></i>
+                                                    </span>
+                                                    <span>
+                                                        subir imagen
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" >
+                            <span *ngIf="!Edicion">
+                                <b>6.14. Paletizado</b><br><br>
+                                <b>Tipo de paleta: </b>{{productos.producto.tipo_paleta[0]}} <br>
+                                <b>Tamaño de paleta (cm): </b>{{productos.producto.tipo_paleta[1]}} <br>
+                                <b>Cantidad de estibas:</b> {{productos.producto.tipo_paleta[2]}} <br>
+                                <b>Peso de caja (Kg):</b> {{productos.producto.tipo_paleta[3]}} <br>
+                                <br>
+                            </span>
+                            <span *ngIf="Edicion">
+                                <div class="field">
+                                    <label for="" class="label">Tipo de paleta:</label>
+                                    <div class="control short">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_paleta[0]">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="" class="label">Tamaño de paleta (cm):</label>
+                                    <div class="control short">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_paleta[1]">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="" class="label">Cantidad de estibas:</label>
+                                    <div class="control short">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_paleta[2]">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="" class="label">Peso de caja (kg):</label>
+                                    <div class="control short">
+                                        <input type="text" class="input is-small" [(ngModel)]="productos.producto.tipo_paleta[3]">
+                                    </div>
+                                </div>
+                                <br><br>
+                            </span>
+                            <div class="img">
+                                <img src='{{this.baseUrl}}/imagen/despacho/{{productos.producto.paletizado}}' alt="Diseño del producto" width="500" height="500">
+                            </div><br>
+                            <span class="descripcionImg">
+                                <b>Imagen 4:</b> Paletizado aprobado
+                            </span>
+                            <span *ngIf="Edicion">
+                                <div class="file is-small has-name is-primary">
+                                    <label class="file-label">
+                                      <input class="file-input" type="file" name="resume"
+                                      (change)="CambiarImagen($event)">
+                                      <span class="file-cta">
+                                        <span class="file-icon">
+                                          <i class="fas fa-upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                          Seleccionar Imagen
+                                        </span>
+                                      </span>
+                                      <span class="file-name file-name_">
+                                        Sin archivo
+                                      </span>
+                                    </label>
+                                  </div>
+                                  <br>
+                                  <div class="field">
+                                    <div class="control">
+                                        <button class="button is-success is-small" (click)="subirImagen()">
+                                            <span class="icon">
+                                                <i class="fas fa-image"></i>
+                                            </span>
+                                            <span>
+                                                subir imagen
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="2">7. Clasificación de defectos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="indice">7.1. Defectos críticos:</td>
+                        <td>
+                            <ng-container *ngIf="productos.producto.defectos[0]  && !Edicion">
+                                <pre>
+                                    {{Formatear(productos.producto.defectos[0])}}
+                                </pre>
+                            </ng-container>
+                            <ng-container *ngIf="Edicion">
+                                <textarea class="textarea" placeholder="Defectos críticos" rows="10" [(ngModel)]="productos.producto.defectos[0]"></textarea>
+                            </ng-container>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="indice">7.2. Defectos mayores:</td>
+                        <td>
+                        <ng-container *ngIf="productos.producto.defectos[1] && !Edicion">
+                            <pre>
+                                {{productos.producto.defectos[1]}}
+                            </pre>
+                        </ng-container>
+                        <ng-container *ngIf="Edicion">
+                            <textarea class="textarea" placeholder="Defectos críticos" rows="10" [(ngModel)]="productos.producto.defectos[1]"></textarea>  
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td class="indice">7.3. Defectos menores:</td>
+                        <td>
+                        <ng-container *ngIf="productos.producto.defectos[2] && !Edicion">
+                            <pre>
+                                {{Formatear(productos.producto.defectos[2])}}
+                            </pre>
+                        </ng-container>
+                        <ng-container *ngIf="Edicion">
+                            <textarea class="textarea" placeholder="Defectos críticos" rows="10" [(ngModel)]="productos.producto.defectos[2]"></textarea>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="columns">
+                <div class="column">
+                   <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">
+                                {{productos.producto.firmas[0]}} <br>
+                                <i>{{productos.producto.firmas[1]}}</i>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                                <ng-container *ngIf="productos.producto.firmas[2]">
+                                    <img src="../../assets/firmas/{{productos.producto.firmas[2]}}.png" width='100px' alt="firmas">
+                                </ng-container>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Fecha: {{productos.producto.firmas[12]}}
+                            </td>
+                        </tr>
+                    </thead>
+                   </table>
+                   <button class="button is-success" (click)="firmar(0)" *ngIf="Edicion">
+                    <span class="icon">
+                        <i class="fas fa-pen-nib"></i>
+                    </span>
+                    <span>
+                        Firmar
+                    </span>
+                   </button>
+                </div>
+
+                <div class="column">
+                    <table class="table is-fullwidth is-bordered">
+                     <thead>
+                         <tr>
+                             <th style="text-align: center;">
+                                 {{productos.producto.firmas[3]}} <br>
+                                 <i>{{productos.producto.firmas[4]}}</i>
+                             </th>
+                         </tr>
+                         <tr>
+                             <td style="text-align: center;">
+                                 <ng-container *ngIf="productos.producto.firmas[5]">
+                                     <img src="../../assets/firmas/{{productos.producto.firmas[2]}}.png" width='100px' alt="firmas">
+                                 </ng-container>
+                             </td>
+                         </tr>
+                         <tr>
+                            <td>
+                                Fecha: {{productos.producto.firmas[13]}}
+                            </td>
+                        </tr>
+                     </thead>
+                    </table>
+                    <button class="button is-success" (click)="firmar(1)" *ngIf="Edicion">
+                     <span class="icon">
+                         <i class="fas fa-pen-nib"></i>
+                     </span>
+                     <span>
+                         Firmar
+                     </span>
+                    </button>
+                 </div>
+
+                 <div class="column">
+                    <table class="table is-fullwidth is-bordered">
+                     <thead>
+                         <tr>
+                             <th style="text-align: center;">
+                                 {{productos.producto.firmas[6]}} <br>
+                                 <i>{{productos.producto.firmas[7]}}</i>
+                             </th>
+                         </tr>
+                         <tr>
+                             <td style="text-align: center;">
+                                 <ng-container *ngIf="productos.producto.firmas[8]">
+                                     <img src="../../assets/firmas/{{productos.producto.firmas[2]}}.png" width='100px' alt="firmas">
+                                 </ng-container>
+                             </td>
+                         </tr>
+                         <tr>
+                            <td>
+                                Fecha: {{productos.producto.firmas[14]}}
+                            </td>
+                        </tr>
+                     </thead>
+                    </table>
+                    <button class="button is-success" (click)="firmar(2)" *ngIf="Edicion">
+                     <span class="icon">
+                         <i class="fas fa-pen-nib"></i>
+                     </span>
+                     <span>
+                         Firmar
+                     </span>
+                    </button>
+                 </div>
+
+                 <div class="column">
+                    <table class="table is-fullwidth is-bordered">
+                     <thead>
+                         <tr>
+                             <th style="text-align: center;">
+                                 {{productos.producto.firmas[9]}} <br>
+                                 <i>{{productos.producto.firmas[10]}}</i>
+                             </th>
+                         </tr>
+                         <tr>
+                             <td style="text-align: center;">
+                                 <ng-container *ngIf="productos.producto.firmas[11]">
+                                     <img src="../../assets/firmas/{{productos.producto.firmas[2]}}.png" width='100px' alt="firmas">
+                                 </ng-container>
+                             </td>
+                         </tr>
+                         <tr>
+                            <td>
+                                Fecha: {{productos.producto.firmas[15]}}
+                            </td>
+                        </tr>
+                     </thead>
+                    </table>
+                    <button class="button is-success" (click)="firmar(3)" *ngIf="Edicion">
+                     <span class="icon">
+                         <i class="fas fa-pen-nib"></i>
+                     </span>
+                     <span>
+                         Firmar
+                     </span>
+                    </button>
+                 </div>
+
+            </div>
+
+            <div class="columns">
+                <div class="column">
+
+                </div>
+                <div class="column is-2">
+                    <button class="button is-small is-success" *ngIf="Edicion" (click)="Finalizar_edicion()">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>Finalizar Edición</span>
+                    </button>
+                </div>
+            </div>
+
+            <button class="button is-small is-success" (click)="DescargarPDF()">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>
+                    Descargar
+                </span>
+            </button>
+
+        </div>
+    </div>
+</div>

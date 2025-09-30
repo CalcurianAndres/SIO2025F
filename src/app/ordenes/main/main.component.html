@@ -1,0 +1,63 @@
+<app-detalles
+[detalle]="detalle"
+[orden_detalle]="orden_detalle"
+[orden_id]="orden_id"
+[cantidad_d]="cantidad_d"
+[cantidad_do]="cantidad_do"
+[ejemplares_montados]="ejemplares_montados"
+(onCloseModal)="detalle = false"
+(CargarOrdenes)="getOrdenes()"
+>
+</app-detalles>
+
+<app-despachos
+[despacho]="despacho"
+[ORDENES]="ORDENES"
+(onCloseModal)="despacho = false">
+</app-despachos>
+<div class="container mt-5">
+    <div class="card mt-5">
+        <div class="card-content">
+            <div class="titulo">
+                <i class="fas fa-list-ol"></i> Órdenes de Producción
+            </div>
+            <hr>
+            <button class="button is-primary" (click)="despacho_()"  *ngIf="usuario.Nueva_orden != 0">Planificación de Despachos</button>
+            <hr>
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Orden de Produccion</th>
+                        <th>Producto</th>
+                        <th>Cliente</th>
+                        <th>Fecha solicitada</th>
+                        <th>Estado</th>
+                        <th>Detalles</th>
+                        <!-- <th>Ver orden</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let orden of ORDENES'>
+                        <td>{{orden.sort}} {{orden.cantidad_d}} <i class="far fa-eye" (click)='alert(orden._id)'></i></td>
+                        <td>{{orden.producto.producto}}</td>
+                        <td>{{orden.cliente.nombre}}</td>
+                        <td>{{orden.fecha_s | date: 'dd/MM/yyyy': 'UTC'}} </td>
+                        <td *ngIf="loading"><i class="fas fa-circle-notch"></i></td>
+                        <td *ngIf="!loading">{{getEstados(orden._id)}}</td>
+                        <td>
+                                 
+                            <i class="fas fa-th-list" (click)='detallar(orden._id, orden.sort, orden.cantidad, orden.cantidad_o, orden.producto.ejemplares[orden.montaje])'></i>
+                            <!-- <button class="button is-primary" (click)='detallar(orden._id, orden.sort, orden.cantidad, orden.cantidad_o)'>Detalles</button> -->
+                        </td>
+                        <!-- <td><button class="button is-primary" (click)='alert(orden._id)'>Consultar</button></td> -->
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <button class="button is-primary" (click)="exportarResumenExcel()">
+                <span class="icon"></span>
+                <span>Estadistica anual</span>
+            </button>
+        </div>
+    </div>
+</div>

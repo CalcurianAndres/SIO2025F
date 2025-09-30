@@ -1,0 +1,72 @@
+<div class="modal" [ngClass]="{'is-active':Despachos}">
+    <div class="modal-background" (click)="onCloseModal.emit()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulos">Despachos</span>
+            <hr>
+            <div class="cintillo_">
+                <!-- Despachos: {{despacho}} - Restan: {{restan(cantidad_do,despacho)}} -->
+            </div>
+                <div class="white">
+                    <ng-container *ngFor="let despacho of despachos; let even = even;">
+                        <div class="cintillo_" *ngIf="even">
+                            <b>Despachado:</b> {{despacho.cantidad}}
+                        </div>
+                        <table class="table is-fullwidth" *ngIf="even">
+                            <tr>
+                                <th>Nº Documento</th>
+                                <th>Nº Certificado</th>
+                                <th>Destino</th>
+                            </tr>
+                            <tr>
+                                <td>{{despacho.documento}}</td>
+                                <td>{{despacho.certificado}}</td>
+                                <td>{{despacho.destino}}</td>
+                            </tr>
+                        </table>
+                            <div style="margin-top: -20px;" *ngIf="!even">
+                                Fecha: <b>{{despacho.fecha}}</b>
+                            </div>
+
+                        <hr>
+                    </ng-container>
+
+                    <!-- <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Cantidad</th>
+                                
+                                <th>Nº Documento</th>
+                                <th>Nº Certificado</th>
+                                <th>Destino</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let despacho of despachos; let even = even;">
+                                <ng-container *ngIf="even">
+                                    <tr>
+                                        <td>{{despacho.cantidad}}</td>
+                                        
+                                        <td>{{despacho.documento}}</td>
+                                        <td>{{despacho.certificado}}</td>
+                                        <td>{{despacho.destino}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">{{despacho.producto}}</td>
+                                    </tr>
+                                </ng-container>
+                                <ng-container  *ngIf="!even">
+                                        <td colspan="2">
+                                            <ng-container>
+                                                Fecha: <b>{{despacho.fecha}}</b>
+                                            </ng-container>
+                                        </td>
+                                </ng-container>
+                            </ng-container>
+                        </tbody>
+                    </table> -->
+                    <!-- <button class="button is-success" *ngIf="cantidad_do - despacho < 1 && usuario.Role === 'ADMIN'" (click)="cerrarOrden()">Cerrar Orden</button> -->
+                </div>
+        </div>
+    </div>
+</div>

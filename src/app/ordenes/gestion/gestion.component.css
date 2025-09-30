@@ -1,0 +1,25 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 18px;
+    font-family: Roboto;
+}
+.mt-5{
+    margin-top: 5px;
+}
+
+
+.edited{
+    text-align: left;
+}
+.down{
+    display: block;
+    margin-top: -7px;
+}

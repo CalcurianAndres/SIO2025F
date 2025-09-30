@@ -1,0 +1,29 @@
+<div class="modal" [ngClass]="{'is-active':modal_gestiones}">
+    <div class="modal-background" (click)="closemodal()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Gestiones
+            </span>
+            <div class="trabajos" *ngFor="let trabajo of g_trabajos">
+                <span class="trabajo">
+                    {{trabajo.maquina.tipo}} ({{trabajo.maquina.nombre}})
+                </span>
+                <table class="table is-fullwidth">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hojas gestionadas</th>
+                        <th>Productos gestionados</th>
+                    </tr>
+                    <ng-container  *ngFor="let gestion of g_gestiones">
+                        <tr *ngIf="gestion.orden === trabajo._id">
+                            <td>{{gestion.fecha}}</td>
+                            <td>{{gestion.hojas}}</td>
+                            <td>{{gestion.productos}}</td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

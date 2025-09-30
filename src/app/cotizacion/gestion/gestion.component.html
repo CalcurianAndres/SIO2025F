@@ -1,0 +1,541 @@
+<div class="containe mt-5">
+    <div class="titulo"><i class="fas fa-dollar-sign"></i> Precios</div>
+
+<div class="card mt-5">
+    <div class="card-content">
+        <span class="subtitulos">
+            Gestión de precios
+        </span><br>
+        <div class="carga" *ngIf='carga_clientes'>
+            <i class="fas fa-circle-notch fa-spin fa-xs"></i>
+        </div>
+        <div class="select is-small" *ngIf="!carga_clientes">
+            <select (change)="select_cliente($event.target.value)">
+              <option value='#'>Clientes</option>
+              <option value='{{cliente._id}}' *ngFor="let cliente of clientes">{{cliente.nombre}}</option>
+            </select>
+        </div>  
+        <div class="select is-small" *ngIf="!carga_ordenes">
+            <select (change)="select_producto($event.target.value)">
+                <option value="#">Productos</option>
+                <option value="all">TODOS</option>
+                <option value="{{producto._id}}" *ngFor="let producto of productos">{{producto.producto}}</option>
+            </select>
+        </div>  
+        <!-- <button class="button is-small is-info" (click)="consultar_precioss()" *ngIf="producto_seleccionado">
+            <span class="icon">
+                <i class="fas fa-coins"></i>
+            </span>
+            <span>Consulta de precios</span>
+        </button>   -->
+        <!-- <button class="button is-primary is-small">
+            <span class="icon">
+                <i class="fas fa-eye"></i>
+            </span>
+            <span>Consultar precios</span>
+        </button> -->
+        <br>
+        <hr>
+        <span class="subtitulos-p" *ngIf="producto_seleccionado">
+            <i class="fas fa-coins"></i> Precios
+        </span><br>
+        <button class="button is-info is-small" (click)="New_table()" *ngIf="producto_seleccionado">
+            <span class="icon">
+                <i class="fas fa-table"></i>
+            </span>
+            <span>Nueva Tabla</span>
+        </button><br><br>
+        <div class="columns" *ngIf="newTable">
+            <div class="column is-3">
+                <div class="field">
+                    <label class="label">Descripción:</label>
+                    <div class="control">
+                        {{desc}}
+                    </div>
+                </div>
+            </div>
+            <div class="column is-1">
+                <div class="field">
+                    <label class="label">Montaje:</label>
+                    <div class="control">
+                        <div class="select">
+                            <select id="" class="select" (change)="FindDescripcion($event.target.value)" #montaje>
+                                <option value="#">Montaje</option>
+                                <option value="{{montaje}}" *ngFor="let montaje of montajes">{{NumToLet(montaje)}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field">
+                    <label class="label"> </label>
+                    <button class="button is-success" (click)="next('f', montaje.value)">
+                        <span class="icon">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                        <span>Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="nueva_tabla" *ngIf="Descripcion">
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Cantidad:</label>
+                        <div class="control">
+                            <input type="number" id="count" class="input" (keydown)="cantidad($event.target.value)" (change)="cantidad($event.target.value)" #new_cantidad>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Precio $:</label>
+                        <div class="control">
+                            <input type="number" id="price" class="input" [disabled]="input_precio" (keydown)="precio($event.target.value)" (change)="precio($event.target.value)" #new_precio>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label"> </label>
+                        <div class="control">
+                            <button class="button is-success" [disabled]="agregar" (click)="nueva_escala(new_cantidad.value, new_precio.value)">
+                                <span class="icon">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="is-selected" colspan="{{escala.lenght}}">
+                            {{desc}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="is-selected">Escala</td>
+                        <td *ngFor="let escala of escala;index as i">
+                            {{i+1}}
+                            <a (click)="delete_escalas(i)"><i class="fas fa-trash-alt" style="color: #ff0000;"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="is-selected">Cantidad</td>
+                        <td *ngFor="let escala of escala;index as i">
+                            {{escala.cantidad}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="is-selected">Precio</td>
+                        <td *ngFor="let escala of escala;index as i">
+                            {{escala.precio}}
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <button class="button is-success is-outlined" (click)="new_escala_vesion()">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>Confirmar</span>
+            </button> 
+            <button class="button is-danger is-outlined" (click)="cancelarTabla()">
+                <span class="icon">
+                    <i class="fas fa-times"></i>
+                </span>
+                <span>Cancelar</span>
+            </button>
+        </div>
+
+        <ng-container *ngIf="consulta_precios">
+            <ng-container *ngFor="let intervalo of intervalos;index as n">
+                <div class="columns" id="nuevaColumna{{n}}" style='display:none'>
+                    <div class="column is-2">
+                        <div class="field">
+                            <label class="label">Cantidad:</label>
+                            <div class="control">
+                                <input type="number" id="count" class="input" (keydown)="cantidad($event.target.value)" (change)="cantidad($event.target.value)" #new_cantidad>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <div class="field">
+                            <label class="label">Precio $:</label>
+                            <div class="control">
+                                <input type="number" id="price" class="input" [disabled]="input_precio" (keydown)="precio($event.target.value)" (change)="precio($event.target.value)" #new_precio>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label"> </label>
+                            <div class="control">
+                                <button class="button is-success" [disabled]="agregar" (click)="nueva_columna(new_cantidad.value, new_precio.value,n)">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <span>Agregar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table is-fullwidth is-bordered is-striped">
+                    <thead>
+                        <td class="is-selected" colspan="10"><b>{{intervalo.producto.producto}}</b><br>{{intervalo.descripcion}} </td>
+                    </thead>
+                    <tr>
+                        <th class="is-selected xwidth">Escala <i class="fas fa-caret-right"></i><br>
+                        <a (click)="add_columna(n)"><i class="fas fa-plus-circle" style="color: #b6eba2;"></i></a></th>
+                        <td *ngFor="let escala of intervalo.escalas;index as i">
+                        <div class="columns">
+                            <div class="column number is-3">
+                                {{i +1}}
+                            </div>
+                            <div class="column is-1">
+                                <a id="Edit{{i}}_{{n}}" (click)="Edit(i, n)"><i class="fas fa-edit" style="color: #b6eba2;"></i></a> 
+                            </div>
+                            <div class="column is-1">
+                                <a id="Confirm{{i}}_{{n}}" (click)="Confirm(i, n)" style="display:none"><i class="fas fa-check" style="color: #b6eba2;"></i></a> 
+                            </div>
+                            <div class="column is-1">
+                                <a id="Delete{{i}}_{{n}}" (click)="Delete(i, n)"><i class="fas fa-trash-alt" style="color: #ff0000;"></i></a>
+                            </div>
+                        </div>
+                        </td>
+        
+                    </tr>
+                    <tr>
+                        <th class="is-selected">Cantidad (Und) <i class="fas fa-caret-right"></i></th>
+                        <td *ngFor="let escala of intervalo.escalas;index as i">
+                            <span id="cant_{{i}}_{{n}}">
+                                {{puntoYcoma(escala.cantidad)}} 
+                            </span>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <input type="text" class="input" [(ngModel)]="intervalos[n].escalas[i].cantidad" id="Cantidad{{i}}_{{n}}" style="display: none;" width="100px">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="intervalos[n].escalas[0].precio_old">
+                        <th class="is-selected">Precio antiguo</th>
+                        <td *ngFor="let escala of intervalo.escalas;index as i">
+                            {{puntoYcoma(escala.precio_old)}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected">Precio (USD) <i class="fas fa-caret-right"></i></th>
+                        <td *ngFor="let escala of intervalo.escalas;index as i">
+                            <span id="precio_{{i}}_{{n}}">
+                                {{puntoYcoma(escala.precio)}}
+                            </span>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <input type="text" class="input" [(ngModel)]="intervalos[n].escalas[i].precio" id="Precio{{i}}_{{n}}" style="display: none;" width="100px">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </ng-container>
+        </ng-container>
+
+    </div>
+</div>
+<hr>
+
+<!-- <div class="card">
+    <div class="card-content">
+        <div class="content">
+            <span class="subtitulos">
+                Datos cliente
+            </span>
+            <br>
+            <hr>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">Cliente</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Rif</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Persona contacto</label>
+                    <input type="text" class="input">
+                </div>
+            </div>
+            <br>
+            <span class="subtitulos">
+                Producto
+            </span><br>
+            <hr>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top: 50px;">
+                        Tamaño del producto (cm):
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top: 300px;">
+                        X
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top:300px">
+                        X
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="text" class="input">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top:300px">
+                        Ejemplares por hoja (und):
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="text" class="input" [(ngModel)]="ejemplares">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top: 300px;">
+                        Tipo de sustrato:
+                    </span>
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span class="select">
+                        <select [(ngModel)]="sustrato_selected" (change)="calcularPrecioSustrato()">
+                            <option value="">Seleccionar Sustrato</option>
+                            <option value="Otro">Otro</option>
+                            <option value="{{sustrato._id}}" *ngFor="let sustrato of sustrato;index as i">{{sustrato.nombre}} ({{sustrato.marca}}) {{sustrato.gramaje}}g/m² {{sustrato.calibre}}pt ({{sustrato.ancho}} x {{sustrato.largo}})</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="control" *ngIf="precios.sustrato > 0 || precios.sustrato === -1">
+                    <label for="" class="label">&nbsp;</label>
+                    ({{precios.sustrato}}$)
+                </div>
+            </div>
+
+            <div class="field is-grouped" *ngIf="sustrato_selected == 'Otro'">
+                <div class="control">
+                    <label for="" class="label">Nombre</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">Ancho (cm)</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">Largo (cm)</label>
+                    <input type="text" class="input">
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">Calibre (pt)</label>
+                    <input type="number" name="" id="" class="input">
+                </div>
+                <div class="control" style="width: 120px;">
+                    <label for="" class="label">Gramaje (g/m²)</label>
+                    <input type="number" name="" id="" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Precio (USD)</label>
+                    <input type="number" name="" id="" class="input">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top:300px">
+                       Cantidad de colores:
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="number" name="" id="" class="input">
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <span style="margin-top: 300px;">
+                        Consumo / (1.000 hojas):
+                    </span>
+                </div>
+                <div class="control" style="width: 100px;">
+                    <label for="" class="label">&nbsp;</label>
+                    <input type="number" name="" id="" class="input" [(ngModel)]="kilos_tintas">
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    {{precios.tinta |number:'2.2-2'}}$
+                </div>
+            </div>
+
+        </div>
+
+        <span class="subtitulos">
+            Cotización de productos
+        </span><br>
+        <hr>
+
+        <div class="columns">
+            <div class="column" style="border-right: solid black 1px;">
+                <div class="field is-grouped">
+                    <div class="control">
+                        <label for="" class="label">Grupo de producto</label>
+                        <div class="select">
+                            <select [(ngModel)]="grupo_selected">
+                                <option value="">Selecciona un grupo</option>
+                                <option value="{{i}}" *ngFor="let grupo of grupos; index as i">{{grupo.nombre}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="field" *ngIf="grupo_selected">
+                    <div class="control" *ngFor="let maquina of grupos[grupo_selected].tipos; index as i">
+                        <label for="" class="label">{{maquina}}</label>
+                        <div class="select">
+                            <select name="" id="" [(ngModel)]="maquinas_selected[i]">
+                                <option value="">Seleccionar maquina</option>
+                                <option [ngValue]="maquina" *ngFor="let maquina of filtrarMaquinaPorGrupo(maquina)">{{maquina.nombre}}</option>
+                            </select>
+                        </div>
+                        <br> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="column" style="border-right: black 1px solid;">
+                <div class="field is-grouped">
+                    <div class="control">
+                        <label for="" class="label">Cant. Hojas desperdicio</label>
+                        <input type="number" name="" id="" class="input" style="width: 100px;" [(ngModel)]="cantidad_desperdicio">
+                    </div>
+                </div>
+                <hr>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <label for="" class="label">Otro material</label>
+                        <div class="select">
+                            <select [(ngModel)]="grupo_selected2">
+                                <option value="{{grupo.nombre}}" *ngFor="let grupo of gruposMP">{{grupo.nombre}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="field is-grouped has-addons" *ngIf="grupo_selected2">
+                    <div class="control">
+                        <label for="" class="label">Material</label>
+                        <div class="select">
+                            <select [(ngModel)]="material_selected">
+                                <option value="">Selecciona un material</option>
+                                <option value="{{i}}" *ngFor="let Material of filtrarMateiralPorGrupo(); index as i">{{Material.nombre}} ({{Material.marca}})</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control" style="width: 100px;">
+
+                        <label for="" class="label">Cantidad</label>
+                        <input type="number" class="input" [(ngModel)]="cantidad_added">
+                    </div>
+                    <p class="control" style="margin-left: -13px;">
+                        <label for="" class="label">&nbsp;</label>
+                      </p>
+                      <div class="control" *ngIf="material_selected && (cantidad_added > 0)">
+                        <label for="" class="label">&nbsp;</label>
+                        <button class="button" style="background-color: transparent; border: none;" (click)="add_material()">
+                            <span class="icon">
+                                <i class="fa-solid fa-circle-plus" style="color: rgb(108, 108, 253);"></i>
+                            </span>
+                        </button>
+                      </div>
+                      <hr>
+                      
+                </div>
+                <hr>
+                <table class="table is-striped is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                Material
+                            </th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let materiales of Materiales_Agregados; index as i">
+                            <td>{{materiales.material.nombre}} ({{materiales.material.marca}})</td>
+                            <td>{{materiales.cantidad}}</td>
+                            <td>{{materiales.material.ultimoPrecio}}</td>
+                            <td><i class="fa-solid fa-trash-can" style="color: rgb(251, 101, 101);" (click)="Materiales_Agregados.splice(i, 1)"></i></td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="column">
+                <div class="field is-grouped">
+                    <div class="control">
+                        <label for="" class="label">Cant. escalas</label>
+                        <input type='number' name="" id="" class="input" style="width: 100px;" [(ngModel)]="cantidad_escalas" (change)="cantidad_por_escala[cantidad_por_escala.length - 1] = 0">
+                    </div>
+                </div>
+                <hr>
+
+                 <div class="field" *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                    <div class="control">
+                        <label for="" class="label">Escala {{i+1}}</label>
+                        <input type="text" name="" id="" class="input" style="width: 150px;"
+                        (ngModelChange)="cantidad_por_escala[i] = $event" 
+                        (input)="onInputChange($event, i)"
+                        placeholder="0,0"> 
+                        <ng-container *ngIf="cantidad_desperdicio > 0 && cantidad_por_escala[i] > 0">
+                            ({{(cantidad_desperdicio / cantidad_por_escala[i]) * 100 | number:'1.2-2'}}% desperdicio) ({{calculoPrecioSustrato(cantidad_por_escala[i]) | number:'1.2-2'}} gasto en papel) ({{calcularPrecioTinta(cantidad_por_escala[i]) | number:'1.2-2'}} gasto tinta) ({{precios.maquinas[i] | number:'1.2-2'}} gasto maquinas)
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="button is-success">
+            <span>Crear</span>
+        </button>
+    </div>
+</div> -->
+</div>

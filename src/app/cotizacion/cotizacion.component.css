@@ -1,0 +1,22 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../assets/Roboto/Roboto-Black.ttf);
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+
+.containe{
+    margin-left: 1%;
+    width: 98%;
+}
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}

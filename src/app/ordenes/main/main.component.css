@@ -1,0 +1,38 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+.fa-circle-notch{
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
+
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 18px;
+    font-family: Roboto;
+}
+.mt-5{
+    margin-top: 5px;
+}
+.fa-eye{
+    cursor:pointer;
+}
+.fa-th-list{
+    cursor: pointer;
+}

@@ -1,0 +1,46 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.mt-5{
+    margin-top: 5px;
+}
+
+.tabla{
+    align-content: center;
+    align-items: center;
+}
+
+.separador{
+    display: block;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* .icon{
+    color: rgb(196, 194, 194);
+    display: block;
+    float: right;
+}
+.icon:hover{
+    cursor: pointer;
+    color: gray;
+} */
+
+img{
+    width: 500px;
+    height: 200px;
+}

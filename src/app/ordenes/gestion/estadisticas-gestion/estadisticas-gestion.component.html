@@ -1,0 +1,102 @@
+<div class="container mt-5">
+
+    <br>
+    <table class="table is-fullwidth is-stripped">
+        <thead>
+            <tr>
+                <th class="is-selected" colspan="5">Roland 700</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>Nº</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+                <th>Orden</th>
+                <th>Producto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let maquina of stats[0].Roland_700;index as i">
+                <td>{{i+1}}</td>
+                <td>{{maquina.fecha}}</td>
+                <td>{{maquina.hojas | number}}</td>
+                <td>{{maquina.op.sort}}</td>
+                <td>{{maquina.op.producto.producto}}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Promedio</strong></td>
+                <td><strong>{{ getAverage(stats[0].Roland_700) | number}}</strong></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <table class="table is-fullwidth is-stripped">
+        <thead>
+            <tr>
+                <th class="is-selected" colspan="5">Roland 4C</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>Nº</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+                <th>Orden</th>
+                <th>Producto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let maquina of stats[1].Roland_4c;index as i">
+                <td>{{i+1}}</td>
+                <td>{{maquina.fecha}}</td>
+                <td>{{maquina.hojas | number}}</td>
+                <td>{{maquina.op.sort}}</td>
+                <td>{{maquina.op.producto.producto}}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Promedio</strong></td>
+                <td><strong>{{ getAverage(stats[1].Roland_4c) | number}}</strong></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <table class="table is-fullwidth is-stripped">
+        <thead>
+            <tr>
+                <th class="is-selected" colspan="5">Roland 2C</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>Nº</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+                <th>Orden</th>
+                <th>Producto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let maquina of stats[2].Roland_2c;index as i">
+                <td>{{i+1}}</td>
+                <td>{{maquina.fecha}}</td>
+                <td>{{maquina.hojas | number}}</td>
+                <td>{{maquina.op.sort}}</td>
+                <td>{{maquina.op.producto.producto}}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Promedio</strong></td>
+                <td><strong>{{ getAverage(stats[2].Roland_2c) | number}}</strong></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,39 @@
+<div class="modal" [ngClass]="{'is-active':modal_consumos}">
+    <div class="modal-background" (click)="closemodal()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">
+                Consumo
+            </div>
+            <table class="table is-fullwidth">
+                <tr>
+                    <th>Material</th>
+                    <th>Cantidad</th>
+                    <th>Devolución</th>
+                    <th>Total</th>
+                </tr>
+                <tr *ngFor="let material of lote_mayor">
+                    <ng-container *ngIf="material.ancho">
+                        <td>{{material.nombre}} {{material.ancho}} x {{material.largo}} ({{material.marca}}) -
+                            cal:{{material.calibre}}</td>
+                    </ng-container>
+                    <ng-container *ngIf="!material.ancho">
+                        <td>{{material.nombre}} ({{material.marca}})</td>
+                    </ng-container>
+                    <td>
+                        {{dec(material.cantidad)}}
+                        <!-- <ng-container *ngIf="material.cantidad == 0">
+                            {{material.cantidad}} m
+                        </ng-container>
+                        <ng-container *ngIf="material.cantidad != 0">
+                        </ng-container> -->
+                    </td>
+                    <td>{{devoluciones_(material.nombre,material.id,material.op)}}</td>
+                    <td>
+                        {{Formatear(material.cantidad,(devoluciones_(material.nombre,material.id,material.op)))}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

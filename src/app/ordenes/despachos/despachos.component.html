@@ -1,0 +1,92 @@
+<div class="modal" [ngClass]="{'is-active':despacho}">
+    <div class="modal-background" (click)='onClose()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">
+                Planificar despachos
+            </div>
+            <hr>
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="control">
+                        <label class="label">Fecha del despacho</label>
+                        <input type="date" class="input" (change)="fecha($event.target.value)" [min]="hoy">
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="control">
+                        <label class="label">Seleccionar Orden</label>
+                        <div class="select">
+                            <select name="" id="" (change)="Orden_Selected($event.target.value)">
+                                <option value="0" >Seleccionar Orden</option>
+                                <option value="{{orden.sort}}" *ngFor="let orden of ORDENES.reverse()">{{orden.sort}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" *ngIf="Ordenes_seleccionadas.length > 0 && dated">
+                    <div class="control">
+                        <label for="" class="label"> </label>
+                        <button class="button is-success" (click)="despachar()">Notificar despacho</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Orden producción</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Orden de compra</th>
+                        <th>Destino</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let despachos of Ordenes_seleccionadas;index as i">
+                        <td>
+                            <ng-container *ngIf="!despachos.parcial_">
+                                <i 
+                                  class="fas fa-star blink" 
+                                  (click)="despachos.parcial_ = !despachos.parcial_" 
+                                  title="La estrella completa representa la totalidad de la orden">
+                                </i>
+                              </ng-container>
+                              <ng-container *ngIf="despachos.parcial_">
+                                <i 
+                                  class="fas fa-star-half-alt blink_" 
+                                  (click)="despachos.parcial_ = !despachos.parcial_" 
+                                  title="Media estrella representa una entrega parcial">
+                                </i>
+                              </ng-container>
+                            {{despachos.op}}
+                        </td>
+                        <td>{{despachos.producto}}</td>
+                        <td>
+                            <input type="number" class="input" (change)="change_value($event.target.value, i)" value="{{despachos.cantidad}}" max="{{despachos.cantidad}}" >
+                        </td>
+                        <td>{{despachos.oc}}</td>
+                        <td>
+                            <ng-container *ngIf="!Almacen__ || Selected != i">
+                                {{despachos.destino}}
+                                <i class="fas fa-map-marker-alt" (click)="BuscarAlmacen(despachos.producto, i)"></i>
+                            </ng-container>
+                            <ng-container *ngIf="Almacen__ && Selected === i">
+                                <div class="select">
+                                    <select name="" id="" (change)="SeleccionarAlmacen($event.target.value, i)">
+                                        <option value="#">Seleccionar Almacen</option>
+                                        <option value="{{almacen}}" *ngFor="let almacen of Almacenes_edicion[0]">{{almacen}}</option>
+                                    </select>
+                                </div>
+                            </ng-container>
+                        </td>
+                        <td>   <i class="fas fa-trash-alt" (click)="eliminar_Selected(despachos.op)"></i> 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <textarea class="textarea is-info" placeholder="Observación" rows="2" (change)="Observar($event.target.value)"></textarea>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,256 @@
+<div class="container">
+    <div class="titulo">
+        Etiquetas
+    </div> <br>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <!-- <div class="select">
+                        <select name="" id="" (change)="seleccionar_orden($event.target.value)">
+                            <option value="#">Selecciona una orden</option>
+                            <ng-container *ngFor="let orden of ordenes">
+                                <ng-container *ngIf="Despachado(orden.sort) < 0">
+                                    <option value="{{orden._id}}" >{{orden.sort}}</option>
+                                </ng-container>
+                            </ng-container>
+                        </select>
+                    </div> -->
+                    <label class="label">Ingrese Orden de producción:</label>
+                    <div class="columns">
+                        <div class="column width__">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" class="input width__" placeholder="Orden de producción N°" (change)="seleccionar_orden($event.target.value)" >
+                                     <button class="button is-success">
+                                        <span class="icon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br> <br>
+                    <div *ngIf="valido">
+                        <b>Producto:</b> {{__orden.producto.producto}} <br>
+                        <b>Cliente:</b> {{__orden.cliente.nombre}} <br>
+                        <b>Cantidad estimada de cajas:</b> {{__Cajas}} <br>
+                        <b>Cantidad de etiquetas a imprimir:</b> {{__Cajas}}
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- **************************
+                THIS
+            ************************** -->
+            <div class="card" *ngIf="visto"> 
+                <div class="card-content">
+                    <div class="container_" id="componentID" *ngIf="visto">
+                        <div class="header">
+                            <table class="datos">
+                                <tr>
+                                    <td class="dato__ Logo-etiquetas" >
+                                        <img src="../../assets/Logo-etiquetas.png" alt="" class="dato__">
+                                    </td>
+                                    <td class="dato__ qrcode">
+                                        <!-- <ngx-qrcode 
+                                          [elementType]="elementType" 
+                                          [value]="value"
+                                          [scale]="scale"
+                                          [margin]="margin"
+                                          cssClass="qrcode"
+                                          errorCorrectionLevel="L">
+                                        </ngx-qrcode> -->
+                                    </td>
+                                    <td class="dato__ Orden__">
+                                        <span class="orden_pro">
+                                            ORDEN DE PRODUCCIÓN <br>
+                                        </span>
+                                        <span class="op">
+                                            {{__orden.sort}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td class="item__">
+                                        <span class="subtitulo__">  PRODUCTO:</span><br>
+                                        <span class="titulo__">  {{__orden.producto.producto}}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td class="item__ short">
+                                        <span class="subtitulo__">  CLIENTE:</span><br>
+                                        <span class="titulo__">  {{__orden.cliente.nombre}}</span>
+                                    </td>
+                                    <td class="shorter">
+                                        <span class="subtitulo__">  ORDEN DE COMPRA:</span><br>
+                                        <span class="titulo__">  {{__orden.orden}}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td class="item__ short">
+                                        <span class="subtitulo__">  SUSTRATO:</span><br>
+                                        <span class="titulo__">  {{sustrato}}</span>
+                                    </td>
+                                    <td class="shorter">
+                                        <span class="subtitulo__">  CÓD. DEL PRODUCTO:</span><br>
+                                        <span class="titulo__">  {{__orden.producto.cod_cliente}}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td class="shortest">
+                                        <span class="subtitulo__">CÓD. ESPECIFICACIÓN:</span><br>
+                                        <span class="titulo__ _ml">E-{{__orden.cliente.codigo}}-{{__orden.producto.codigo}}-{{__orden.producto.version}}-{{__orden.producto.edicion}}</span>
+                                    </td>
+                                    <td class="shortest ml ml__">
+                                        <span class="subtitulo__">  FECHA DE FAB:</span><br>
+                                        <span class="titulo__ _ml">  {{fecha}}</span>
+                                    </td>
+                                    <td class="shortest ml">
+                                        <span class="subtitulo__">  FECHA DE ETIQ.:</span><br>
+                                        <span class="titulo__ _ml">  {{hoy}}</span>
+                                    </td>
+                                    <td class="unidades__">
+                                        <span class="unidades">  {{unidades__}}</span><br>
+                                        <span class="letter">  unidades</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                </tr>
+                            </table>
+                            <span class="FPR">
+                                FPR-018
+                            </span>
+                            <table>
+                                <tr>
+                                    <td class="mensaje">
+                                        <span class="linea1">
+                                            Se recomienda el uso de este producto dentro de un lapso no mayor<br>
+                                        </span>
+                                        <span class="linea2">
+                                            a 6 meses. Para más información lea detenidamente nuestra<br>
+                                        </span>
+                                        <span class="linea2">
+                                            “Politica de devoluciones o Reclamos (DDE-005)”
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br><br>
+                    <button class="button is-success" id='imprimir__' (click)="generarpdf()" *ngIf="visto"
+                    [ngClass]="{'is-loading':cargando}">
+                        <span class="icon">
+                            <i class="fas fa-print"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- <button class="button is-success" id='imprimir__' (click)="onPrint()">
+                <span class="icon">
+                    <i class="fas fa-print"></i>
+                </span>
+                <span>Imprimir</span>
+              </button> -->
+            
+            
+            
+            <!-- **************************
+            END
+            ************************* -->
+
+
+            <!-- <button class="button is-info" *ngIf="valido" (click)="verEtiqueta()">Pre visualizar</button> -->
+        </div>
+        <div class="column" *ngIf="loaded">
+            <div class="card" *ngFor="let gestion of __gestiones">
+                <div class="card-content">
+                    <table class="table is-fullwidth">
+                        <tr>
+                            <th class="is-selected">
+                                {{gestion.fecha}}
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table is-fullwidth">
+                                    <tr>
+                                        <th>Cantidad gestionada</th>
+                                        <th>Total Etiquetas a imprimir</th>
+                                        <th>Previsualizar</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{{gestion.productos}}</td>
+                                        <td>{{formatear(gestion.productos,__producto_por_caja)}} Etiquetas de {{__producto_por_caja}} Unidades
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="!gestion.Impreso">
+                                                <button class="button is-success" (click)="verEtiqueta(gestion.productos,__producto_por_caja,__producto_por_caja,gestion._id,false)">
+                                                    <span class="icon is-small">
+                                                      <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span>Ver</span>
+                                                  </button>
+                                            </ng-container>
+                                            <ng-container *ngIf="gestion.Impreso">
+                                                Impreso: {{gestion.Impreso | date:'dd/MM/yyyy'}}
+                                            </ng-container>
+                                    </td>
+                                    </tr>
+                                    <tr *ngIf="gestion.productos % __producto_por_caja > 0">
+                                        <td></td>
+                                        <td>1 por {{gestion.productos % __producto_por_caja}} Unidades</td>
+                                        <td>
+                                            <ng-container *ngIf="!gestion.Resto">
+                                                <button class="button is-success" (click)="verEtiqueta(10,10,(gestion.productos % __producto_por_caja),gestion._id,true)">
+                                                    <span class="icon is-small">
+                                                      <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span>Ver</span>
+                                                  </button>
+                                            </ng-container>
+        
+                                              <ng-container *ngIf="gestion.Resto">
+                                                Impreso: {{gestion.Resto  | date:'dd/MM/yyyy'}}
+                                            </ng-container>
+        
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column is-3">
+            <div class="card">
+                <div class="card-content">
+                    <label for="" class="label">Imprimir etiqueta de prueba</label>
+                    <button class="button is-small is-info" (click)="test_print()">
+                        <span class="icon">
+                            <i class="fas fa-print"></i>
+                        </span>
+                        <span>
+                            Imprimir prueba
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../assets/Roboto/Roboto-Black.ttf);
+}
+
+  .titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.n_lote{
+    width: 150px;
+}
+.n_lote_{
+    width: 100px;
+}
+.datos{
+    margin-top: -24px;
+}
+.gramaje{
+    width: 70px;
+    height: 23px;
+}
+.gramaje_{
+    height: 20px;
+}
+.size{
+    width: 100px;
+}
+.red{
+    color: red;
+}
+.red:hover{
+    cursor: pointer;
+    color: rgb(224, 0, 0);
+}
+.green{
+    color: #48c78e;
+}
+.color{
+    color: #bdbdbd;
+}
+
+.cart{
+    display: block;
+    width: 100px;
+    height: 100px;
+    float: left;
+}
+
+.ver{
+    cursor: pointer;
+}
+
+.see{
+    text-align: center;
+    align-self: center;
+    align-content: center;
+    display: block;
+    margin-top: 50%;
+}
+
+.buttons_{
+    position: absolute;
+    right: 15px;
+    bottom: 35px;
+}
+.small_{
+   width: 100px; 
+}
+
+.ampliar{
+    width: 90%;
+}
+.ampliar_unpoco{
+    width: 55%;
+}
+
+.menor{
+    font-size: small;
+}
+.menor_{
+    font-size: 10px;
+}
+.color{
+    color: #d6d6d6;
+}
+
+.etiqueta{
+    position: relative;
+    float: left;
+}

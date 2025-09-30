@@ -1,0 +1,677 @@
+<app-gestiones
+[modal_gestiones]='modal_gestiones'
+[g_trabajos]="g_trabajos"
+[g_gestiones]="g_gestiones"
+(onCloseModal) = "modal_gestiones = false"></app-gestiones>
+<app-consumo
+[modal_consumos]="modal_consumos"
+[c_lotes]="c_lotes"
+[lote_mayor] = "lote_mayor"
+[c_devoluciones] = "c_devoluciones"
+(onCloseModal)="modal_consumos = false">
+</app-consumo>
+
+<app-despachos
+[modal_despacho]="modal_despacho"
+[despachos_filtrado]="despachos_filtrado"
+[despachos_orden]="despachos_orden"
+[c_devoluciones] = "c_devoluciones"
+[lote_mayor] = "lote_mayor"
+[Ej_montados]="Ej_montados"
+[hojas]="hojasTrabajadas"
+(onCloseModal)="modal_despacho = false">
+</app-despachos>
+
+<button class="ordenes_button" *ngIf="!vacio && !cargando && !sinBusqueda">
+    <button class="is-primary button" (click)="rolltoorders()">
+        Órdenes
+    </button>
+</button>
+
+<div class="containe mt-5">
+    <div class="titulo">
+        <i class="fas fa-chart-bar"></i> Estadísticas
+    </div>
+    <div class="card">
+        <div class="card-content is-primary">
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="control">
+                        <span class="select is-small">
+                            <select id="" (change)="busquedaInteligente($event.target.value)">
+                                <option value="fecha">Por fecha</option>
+                                <option value="cliente">Por cliente</option>
+                                <option value="orden">Por orden de producción</option>
+                                <option value="maquina">Por Maquina</option>
+                                <!-- <option value="oCompra">Por orden de compra</option> -->
+                            </select>
+                        </span>
+                    </div>
+                </div>
+                <div class="column is-2" *ngIf="clientes_form">
+                    <div class="control">
+                        <span class="select is-small">
+                            <select value="#" id="cliente_select" (change)="Cliente_Selected($event.target.value)">
+                                <option value="#">Seleccionar cliente</option>
+                                <option value="{{cliente._id}}" *ngFor="let cliente of busqueda_clientes.clientes">{{cliente.nombre}}</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+                <div class="column is-2" *ngIf="producto_form">
+                    <div class="control">
+                        <span class="select is-small">
+                            <select id="producto_select" (change)="Producto_Selected($event.target.value)">
+                                <option value="#">Todos los productos</option>
+                                <option value="{{producto._id}}" *ngFor="let producto of Productos_by_client.productos">{{producto.producto}}</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+                <div class="column is-2" *ngIf="busqueda_orden">
+                    <div class="control">
+                        <input type="text" class="input is-small" placeholder="Orden de Producción" id="OP">
+                    </div>
+                </div>
+
+                    <!-- <label for="" class="label"> </label> -->
+                    <button class="button is-success" routerLink="/almacen/movimiento-material" style="position: absolute; margin-left: 87%;">
+                        <span>Consumo / Factura</span>
+                    </button>
+                <!-- <div class="column is-2">
+                    <div class="control">
+                        <input type="text" class="input is-small" placeholder="Orden de compra">
+                    </div>
+                </div> -->
+            </div>
+            <div class="column is-2" *ngIf="busqueda_orden">
+                <div class="control">
+                    <label class="label"> </label>
+                    <button class="button is-primary is-small" (click)="Buscar_estadisticas('orden','orden')">Buscar</button>
+                </div>
+            </div>
+            <div class="columns" *ngIf="!busqueda_orden">
+                <div class="column is-2">
+                    <div class="control">
+                        <label class="label">Desde:</label>
+                        <input type="date" class="input is-small" #desde>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="control">
+                        <label class="label">Hasta:</label>
+                        <input type="date" class="input is-small" #hasta>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="control">
+                        <label class="label"> </label>
+                        <button class="button is-primary is-small" (click)="Buscar_estadisticas(desde.value, hasta.value)">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+    <br>
+    <!-- *******************************************************************************
+    ORDENES ENCONTRADAS EN LA FECHA ESTIMADA
+    ******************************************************************** -->
+    <div class="card">
+        <div class="card-content">
+            <div class="carga" *ngIf="sinBusqueda">
+                No se ha realizado ninguna consulta aun
+                <i class="far fa-clock"></i>
+            </div>
+            <div class="carga_" *ngIf="cargando">
+                <div class="loader">
+                    <span style="--i:2"></span>
+                    <span style="--i:3"></span>
+                    <span style="--i:1"></span>
+                    <span style="--i:4"></span>
+                    <span style="--i:5"></span>
+                    <span style="--i:6"></span>
+                    <span style="--i:7"></span>
+                    <span style="--i:8"></span>
+                    <span style="--i:9"></span>
+                    <span style="--i:10"></span>
+                </div>
+                <span class="text">Cargando, esto puede tomar un tiempo.</span>
+            </div>
+            <div class="empty" *ngIf="vacio">
+                No hay órdenes en la fecha indicada 
+                <i class="fas fa-folder-open"></i>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <div class="xlarge" *ngIf="!Sustrato_load">
+                                <i class="fas fa-sticky-note"></i> Sustrato
+                            </div>
+                            <table class="table is-fullwidth" *ngIf="!Sustrato_load && detalles_sustratos">
+                                <thead>
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th>Cant.</th>
+                                        <th>Peso</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let sustrato of data.asignados.Sustratos;let i as index">
+                                        <ng-container>
+                                            <td>
+                                                {{sustrato.Nombre}} {{sustrato.Ancho}}x{{sustrato.Largo}} ({{sustrato.Marca}})
+                                                <br>
+                                                <strong>Calibre:</strong>
+                                                {{sustrato.Calibre}},
+                                                <strong>Gramaje:</strong>
+                                                {{sustrato.Gramaje}}
+                                            </td>
+                                            <td>
+                                                {{puntoYcoma(sustrato.Cantidad)}}Und
+                                            </td>
+                                            <td>
+                                                {{puntoYcoma(sustrato.Peso)}}
+                                                <!-- {{MostrarPeso(sustrato.Cantidad,sustrato.Gramaje,sustrato.Ancho,sustrato.Largo)}}t -->
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class=" table is-fullwidth" *ngIf="!Sustrato_load">
+                                <tr  class="is-selected">
+                                    <th colspan="2">
+                                        <span class="titulo_sustrato">
+                                            Peso de sustrato consumido
+                                        </span>
+                                        <span class="icono" (click)="detalles_sustrato()">
+                                            <ng-container *ngIf="!detalles_sustratos">
+                                                <i class="fas fa-plus"></i>
+                                            </ng-container>
+                                            <ng-container *ngIf="detalles_sustratos">
+                                                <i class="fas fa-minus"></i>
+                                            </ng-container>
+                                        </span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <span class="titulo_sustrato">
+                                            Papel
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span class="titulo_sustrato">
+                                            Cartón
+                                        </span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <span class="titulo_sustrato xlarge">
+                                            <ng-container *ngIf="data.asignados.Papel">
+                                                {{puntoYcoma(data.asignados.Papel)}}t
+                                            </ng-container>
+                                            <ng-container *ngIf="!data.asignados.Papel">
+                                                {{puntoYcoma(data.asignados.Papel)}}t
+                                            </ng-container>
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span class="titulo_sustrato xlarge">
+                                            {{puntoYcoma(data.asignados.Carton)}}t
+                                        </span>
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="column"></div>
+
+                        <div class="column is-one-third">
+                            <div class="chart-container">
+                                <canvas  id="Sustrato_chart" width="100" height="100">{{ sustrato_char }}</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="xlarge" *ngIf="!Tinta_load">
+                                <i class="fas fa-palette"></i>    Tinta
+                            </div>
+                            <table class="table is-fullwidth" *ngIf="detalles_tintas">
+                                <thead>
+                                    <tr>
+                                        <th>Color</th>
+                                        <th>Asignado</th>
+                                        <th>Devuelto</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Amarillo</td>
+                                        <td>{{puntoYcoma(aMASa(data.asignados.detalle_tintas.Amarillo,data.adicionales.detalle_tintas.Amarillo))}}Kg</td>
+                                        <td>{{puntoYcoma(data.Colores_devueltos.Amarillo)}}</td>
+                                        <td>{{puntoYcoma(aMENOSa(aMASa(data.asignados.detalle_tintas.Amarillo,data.adicionales.detalle_tintas.Amarillo),data.Colores_devueltos.Amarillo))}}</td>
+                                        <!-- <td>{{D_Amarillo.toFixed(2)}}Kg</td>
+                                        <td class="is-selected">{{((Amarillo).toFixed(2) - D_Amarillo.toFixed(2)).toFixed(2)}}Kg</td> -->
+                                    </tr>
+                                    <tr>
+                                        <td>Cyan</td>
+                                        <td>{{puntoYcoma(aMASa(data.asignados.detalle_tintas.Cyan,data.adicionales.detalle_tintas.Cyan))}}Kg</td>
+                                        <td>{{puntoYcoma(data.Colores_devueltos.Cyan)}}</td>
+                                        <td>{{puntoYcoma(aMENOSa(aMASa(data.asignados.detalle_tintas.Cyan,data.adicionales.detalle_tintas.Cyan),data.Colores_devueltos.Cyan))}}</td>
+                                        <!-- <td>{{D_Cyan.toFixed(2)}}Kg</td>
+                                        <td class="is-selected">{{((Cyan).toFixed(2) - D_Cyan.toFixed(2)).toFixed(2)}}Kg</td> -->
+                                    </tr>
+                                    <tr>
+                                        <td>Magenta</td>
+                                        <td>{{puntoYcoma(aMASa(data.asignados.detalle_tintas.Magenta,data.adicionales.detalle_tintas.Magenta))}}Kg</td>
+                                        <td>{{puntoYcoma(data.Colores_devueltos.Magenta)}}</td>
+                                        <td>{{puntoYcoma(aMENOSa(aMASa(data.asignados.detalle_tintas.Magenta,data.adicionales.detalle_tintas.Magenta),data.Colores_devueltos.Magenta))}}</td>
+                                        <!-- <td>{{D_Magenta.toFixed(2)}}Kg</td>
+                                        <td class="is-selected">{{((Magenta).toFixed(2) - D_Magenta.toFixed(2)).toFixed(2)}}Kg</td> -->
+                                    </tr>
+                                    <tr>
+                                        <td>Negro</td>
+                                        <td>{{puntoYcoma(aMASa(data.asignados.detalle_tintas.Negro,data.adicionales.detalle_tintas.Negro))}}Kg</td>
+                                        <td>{{puntoYcoma(data.Colores_devueltos.Negro)}}</td>
+                                        <td>{{puntoYcoma(aMENOSa(aMASa(data.asignados.detalle_tintas.Negro,data.adicionales.detalle_tintas.Negro),data.Colores_devueltos.Negro))}}</td>
+                                        <!-- <td>{{D_Negro.toFixed(2)}}Kg</td>
+                                        <td class="is-selected">{{((Negro).toFixed(2) - D_Negro.toFixed(2)).toFixed(2)}}Kg</td> -->
+                                    </tr>
+                                    <tr>
+                                        <td>Pantone</td>
+                                        <td>{{puntoYcoma(aMASa(data.asignados.detalle_tintas.Pantone,data.adicionales.detalle_tintas.Pantone))}}Kg</td>
+                                        <td>{{puntoYcoma(data.Colores_devueltos.Pantone)}}</td>
+                                        <td>{{puntoYcoma(aMENOSa(aMASa(data.asignados.detalle_tintas.Pantone,data.adicionales.detalle_tintas.Pantone),data.Colores_devueltos.Pantone))}}</td>
+                                        <!-- <td>{{D_Pantone.toFixed(2)}}</td>
+                                        <td class="is-selected">{{((Otros_c).toFixed(2) - D_Pantone.toFixed(2)).toFixed(2)}}Kg</td> -->
+                                    </tr>
+                                    <tr class="is-selected">
+                                        <th>Total</th>
+                                        <th>{{puntoYcoma(data.Suma_de_tintas)}}Kg</th>
+                                        <th>{{puntoYcoma(data.total_tintas_devueltas)}}Kg</th>
+                                        <th>{{puntoYcoma(aMENOSa(data.Suma_de_tintas,data.total_tintas_devueltas))}}Kg</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table is-fullwidth" *ngIf="!Tinta_load">
+                                <thead>
+                                    <tr class="is-selected">
+                                        <th class="titulo_sustrato">Tinta consumida
+                                            <span class="icono" (click)="detalles_tinta()">
+                                                <ng-container *ngIf="!detalles_tintas">
+                                                    <i class="fas fa-plus"></i>
+                                                </ng-container>
+                                                <ng-container *ngIf="detalles_tintas">
+                                                    <i class="fas fa-minus"></i>
+                                                </ng-container>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th class="xlarge">
+                                            {{puntoYcoma(aMENOSa(data.Suma_de_tintas,data.total_tintas_devueltas))}}Kg</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <a (click)="modalTintas()" *ngIf="!Tinta_load">Ver detalles</a>
+                            <!-- test ********************************************** -->
+                            <div class="modal is-active" [ngClass]="{'is-active':DetallesTinta}" *ngIf="!Tinta_load">
+                                <div class="modal-background" (click)="modalTintas()"></div>
+                                <div class="modal-card detalles">
+                                    <div class="modal-card-body">
+                                        <div class="columns">
+                                            <div class="column columna_izquierda">
+                                                <div class="subtitulo">Asignado a ordenes</div>
+                                                <table class="table is-fullwidth">
+                                                    <thead>
+                                                        <th>
+                                                            Material
+                                                        </th>
+                                                        <th>Cant.</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let tinta of data.asignados.Tintas;let i as index">
+                                                                    <td>
+                                                                        {{tinta.Nombre}} ({{tinta.Marca}})
+                                                                    </td>
+                                                                    <td>
+                                                                        {{tinta.Cantidad}}Kg
+                                                                    </td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                                <div class="subtitulo">Asignado por solicitud adicional</div>
+                                                <table class="table is-fullwidth">
+                                                    <thead>
+                                                        <th>
+                                                            Material
+                                                        </th>
+                                                        <th>Cant.</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let tinta of data.adicionales.Tintas;let i as index">
+                                                                    <td>
+                                                                        {{tinta.Nombre}} ({{tinta.Marca}})
+                                                                    </td>
+                                                                    <td>
+                                                                        {{tinta.Cantidad}}Kg
+                                                                    </td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- test ********************************************** -->
+                        </div>
+                        <div class="column">
+                            <div class="chart-container">
+                                <canvas  id="MyChart" >{{ chart }}</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <div class="xlarge" *ngIf="!Barniz_load">
+                                <i class="fas fa-air-freshener"></i> Barniz
+                            </div>
+                            <table class="table is-fullwidth" *ngIf="detalles_barniz">
+                                <tr>
+                                    <th>Barniz S/Impresión</th>
+                                    <th>Asignado</th>
+                                    <th>Devuelto</th>
+                                    <th>Total</th>
+                                </tr>
+                                <tr *ngFor="let Barniz of data.Barniz.Barniz">
+                                    <td>
+                                        {{Barniz.Nombre}}({{Barniz.Marca}})
+                                    </td>
+                                    <td>
+                                        {{puntoYcoma(Barniz.Cantidad)}}kg.
+                                    </td>
+                                    <td>
+                                        {{puntoYcoma(descuento('Barniz',Barniz.Nombre,Barniz.Marca))}}
+                                    </td>
+                                    <td>
+                                        {{(Barniz.Cantidad - descuento('Barniz',Barniz.Nombre,Barniz.Marca)).toFixed(2)}}
+                                        <!-- {{restar__(Barniz.Nombre,Barniz.Marca,Barniz.Cantidad)}}kg. -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Barniz Acuoso</th>
+                                    <th>Asignado</th>
+                                    <th>Devuelto</th>
+                                    <th>Total</th>
+                                </tr>
+                                <tr *ngFor="let Barniz of data.Barniz.Barniz_acuoso">
+                                    <td>
+                                        {{Barniz.Nombre}}({{Barniz.Marca}})
+                                    </td>
+                                    <td>
+                                        {{puntoYcoma(Barniz.Cantidad)}}L.
+                                    </td>
+                                    <td>
+                                        0,00L
+                                    </td>
+                                    <td>
+                                        {{puntoYcoma(Barniz.Cantidad)}}L.
+                                        <!-- {{restar__(Barniz.Nombre,Barniz.Marca,Barniz.Cantidad)}}L. -->
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="table is-fullwidth" *ngIf="!Barniz_load">
+                                <tr class="is-selected">
+                                    <th class="titulo_sustrato" colspan="2">
+                                        Barniz consumido
+                                        <span class="icono" (click)="detalle_barniz()">
+                                            <ng-container *ngIf="!detalles_barniz">
+                                                <i class="fas fa-plus"></i>
+                                            </ng-container>
+                                            <ng-container *ngIf="detalles_barniz">
+                                                <i class="fas fa-minus"></i>
+                                            </ng-container>
+                                        </span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Barniz S/Impresión</th>
+                                    <th>Barniz Acuoso</th>   
+                                </tr>
+                                <tr>
+                                    <th class="xlarge">{{puntoYcoma(data.Barniz.Total_Barniz-data.Barniz.Devolucion_Total_barniz)}}kg.</th>
+                                    <th class="xlarge">{{puntoYcoma(data.Barniz.Total_barniz_acuoso)}}L. / {{puntoYcoma(data.Barniz.Total_barniz_acuoso * 0.868)}}kg</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="column"></div>
+
+                        <div class="column is-one-third">
+                            <div class="chart-container">
+                                <canvas  id="Barniz_chart" width="100" height="100">{{ barniz_char }}</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <div class="xlarge" *ngIf="!Cajas_loading">
+                                <i class="fas fa-boxes"></i> Cajas Corrugadas
+                            </div>
+                            <table class="table is-fullwidth" *ngIf="!Cajas_loading">
+                                <tr>
+                                    <th colspan="11" class="is-selected titulo_sustrato">Cajas</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <ng-container *ngFor="let cajas of data.Caja.Caja">
+                                        <td class="titulo_sustrato">{{cajas.Nombre}}</td>
+                                    </ng-container>
+                                </tr>
+                                <tr>
+                                    <th>Asignado</th>
+                                    <ng-container *ngFor="let cajas of data.Caja.Caja">
+                                        <th class="titulo_sustrato">{{puntoYcoma(cajas.Cantidad)}}</th>
+                                    </ng-container>
+                                </tr>
+                                <tr>
+                                    <th>Devuelto</th>
+                                    <ng-container *ngFor="let cajas of data.Caja.Caja">
+                                        <th class="titulo_sustrato">{{puntoYcoma(descuento('Caja',cajas.Nombre,0))}}</th>
+                                    </ng-container>
+                                </tr>
+                                <tr>   
+                                    <th>Total</th>
+                                    <ng-container *ngFor="let cajas of data.Caja.Caja">
+                                        <th class="titulo_sustrato">{{puntoYcoma(cajas.Cantidad-descuento('Caja',cajas.Nombre,0))}}</th>
+                                    </ng-container>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="column"></div>
+                        <div class="column">
+                            <div class="chart-container_cajas">
+                                <canvas  id="Caja_chart" width="100" height="100">{{Caja_chart}}</canvas>
+                            </div>
+                            <div class="space"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <div class="xlarge" *ngIf="!Pega_loading">
+                                <i class="fas fa-tint"></i> Pega
+                            </div>
+                            <table class="table is-fullwidth" *ngIf="detalles_pega">
+                                <tr>
+                                    <th>Pega</th>
+                                    <th>Asignado</th>
+                                    <th>Devuelto</th>
+                                    <th>Total</th>
+                                </tr>
+                                <tr *ngFor="let Pega of data.Pega.Pega">
+                                    <td>
+                                        {{Pega.Nombre}}({{Pega.Marca}})
+                                    </td>
+                                    <th>
+                                        {{puntoYcoma(Pega.Cantidad)}}L.
+                                    </th>
+                                    <th>
+                                        {{descuento('Pega',Pega.Nombre,Pega.Marca)}}
+                                    </th>
+                                    <th>
+                                        {{puntoYcoma(Pega.Cantidad - descuento('Pega',Pega.Nombre,Pega.Marca))}}
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="table is-fullwidth" *ngIf="!Pega_loading">
+                                <thead>
+                                    <tr class="is-selected">
+                                        <th class="titulo_sustrato" colspan="2">
+                                            Pega Consumida
+                                            <span class="icono" (click)="detalle_pega()">
+                                                <ng-container *ngIf="!detalles_pega">
+                                                    <i class="fas fa-plus"></i>
+                                                </ng-container>
+                                                <ng-container *ngIf="detalles_pega">
+                                                    <i class="fas fa-minus"></i>
+                                                </ng-container>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th class="xlarge">
+                                            {{puntoYcoma(data.Pega.Total_Pega-data.Pega.Devolucion_Total_pega)}}L.
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="column"></div>
+                        <div class="column is-one-third">
+                            <div class="chart-container">
+                                <canvas  id="Pega_chart" width="100" height="100">{{Pega_chart}}</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            
+            <div class="columns" id="orders">
+                <div class="column">
+                    <div class="info" *ngIf="!vacio && !cargando && !sinBusqueda">
+                        <div class="subtitulos xlarge">
+                            <b>Cantidad de Órdenes:</b> 
+                            {{data.Ordenes.length}}
+                        </div>
+                        <div class="orden">
+                            <table class="table is-fullwidth" *ngFor="let orden of data.Ordenes;let impar = odd;let par = even;" [ngClass]="{impar:impar}">
+                                <tr>
+                                    <th colspan="3">
+                                        {{orden.sort}} - {{orden.producto.producto}} <a class="link" href="/orden-produccion/{{orden._id}}" target="_blank"><i class="fas fa-eye link"></i></a> / <i class="fas fa-question-circle link" (click)="gestiones_(orden._id, orden.sort)"></i> / <i class="fas fa-chart-bar link" (click)="consumos(orden._id, orden.sort)"></i> / <i class="fas fa-chart-line link" (click)="despachos_porcentaje(orden.sort,orden.producto.ejemplares[orden.montaje],orden)"></i><br>
+                                    </th>
+                                </tr>
+                                <!-- <tr> -->
+                                    <!-- <td>{{orden.sort}} <i class="far fa-eye" (click)='alert(orden._id)'></i></td> -->
+                                    <!-- <td class="link" (click)="gestiones_(orden._id, orden.sort)">Gestiones <i class="fas fa-question-circle"></i></td>
+                                    <td class="link" (click)="consumos(orden._id, orden.sort)">Consumo <i class="fas fa-chart-bar"></i></td> -->
+                                    <!-- <td><b>Inicio: </b>{{orden.fecha | date: 'dd/MM/yyyy': 'UTC'}}</td>
+                                    <td><b>Despachado:</b> {{GetDespacho(orden.sort)}}</td> -->
+                                <!-- </tr> -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <br>
+        </div>
+    </div>
+<br>
+
+<div class="columns" *ngIf="!vacio && !cargando && !sinBusqueda">
+    <div class="column">
+        <div class="card">
+            <div class="card-content adicionales">
+                <p class="subtitulos">
+                    <i class="fas fa-comments-dollar"></i> Solicitudes Realizadas
+                </p>
+                <table class="table is-fullwidth">
+                    <tr>
+                        <th>Material</th>
+                        <th>Cant.</th>
+                        <th>Fecha</th>
+                    </tr>
+                    <!-- <div class="adicionales"> -->
+                        <!-- <ng-container *ngFor="let adicional of adicionales">
+                            <ng-container *ngFor="let material of adicional.material">
+                                <tr>
+                                    <td>{{material.material.nombre}} ({{material.material.marca}})</td>
+                                    <ng-container *ngIf="material.material.grupo != '61fd54e2d9115415a4416f17'">
+                                        <td>{{material.cantidad}} {{material.material.unidad}}</td>
+                                    </ng-container>
+                                    <ng-containe *ngIf="material.material.grupo == '61fd54e2d9115415a4416f17'">
+                                        <td>{{material.EA_Cantidad}} {{material.material.unidad}}</td> 
+                                    </ng-containe>
+                                    <td>{{adicional.fecha | date: 'dd/MM/yyyy': 'UTC'}}</td>
+                                </tr>
+                            </ng-container>
+                        </ng-container> -->
+                    <!-- </div> -->
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- **************************************************************
+    ORDENES ENCONTRADAS EN LA FECHA ESTIMADA
+    ******************************************************************** -->
+</div>

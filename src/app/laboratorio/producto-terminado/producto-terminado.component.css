@@ -1,0 +1,13 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}

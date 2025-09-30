@@ -1,0 +1,149 @@
+<div class="container" style="margin-top: 20px;">
+    <span class="title">
+        Movimiento de material
+    </span>
+    <hr>
+    <div class="buscador">
+        <div class="field is-grouped">
+            <div class="control">
+                <label for="" class="label">Desde</label>
+                <input type="date" name="" id="" class="input" [(ngModel)]="fechas.desde">
+            </div>
+            <div class="control">
+                <label for="" class="label">Hasta:</label>
+                <input type="date" name="" id="" class="input" [(ngModel)]="fechas.hasta">
+            </div>
+            <div class="control">
+                <label for="" class="label"> </label>
+                <button class="button is-success" (click)="mostrarFechas()">
+                    <span class="icon"><i class="fas fa-search"></i></span>
+                    <span>Buscar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br> <br>
+    <ng-container *ngIf="!buscar">
+        <div class="message-box"> 
+            <h1>Aún no has solicitado un reporte</h1> 
+        </div>
+    </ng-container>
+    <ng-container *ngIf="buscar">
+        <button class="button is-primary" (click)="exportToExcel()">Descargar a Excel</button>
+        <br> <br>
+        <ng-container *ngFor="let despachos of Resultado.despachos;index as x">
+            <ng-container *ngFor="let factura of despachos.despacho;index as y">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-header-title">
+                            <span class="tag is-success is-large">
+                                {{factura.documento}}
+                            </span>
+                             (
+                            <ng-container *ngIf="factura.parcial">
+                                {{factura.parcial}}
+                            </ng-container>
+                            <ng-container *ngIf="!factura.parcial">
+                                {{despachos.fecha}}
+                            </ng-container>
+                            )
+                             {{factura.producto}} OP:{{factura.op}} 
+                            <ng-container *ngIf="factura.parcial_ === true">
+                                <span class="tag is-info">Parcial</span> 
+                            </ng-container> 
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Grupo</th>
+                                    <th>Asignado</th>
+                                    <th>Devoluciones</th>
+                                    <th>Despachado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let materiales of sumarMaterialesPorGrupo(factura.op)">
+                                  <tr (click)="toggleDetalles(materiales.grupo)" style="cursor: pointer;">
+                                    <td>
+                                      <strong>{{materiales.grupo}}</strong>
+                                      <span style="margin-left: 8px;">
+                                        <i *ngIf="!mostrarDetalles[materiales.grupo]">[+]</i>
+                                        <i *ngIf="mostrarDetalles[materiales.grupo]">[-]</i>
+                                      </span>
+                                    </td>
+                                    <td>
+                                      {{materiales.cantidad | number: '1.2-2'}} {{UnidadesMedicion(materiales.grupo)}}
+                                    </td>
+                                    <td>
+                                      <ng-container *ngIf="factura.parcial_ === false">
+                                        {{BuscarDevolucionDeOrdenPorGrupo(materiales.grupo, factura.op).cantidad | number: '1.2-2'}}
+                                        <ng-container *ngIf="BuscarDevolucionDeOrdenPorGrupo(materiales.grupo, factura.op).cantidad">
+                                          {{UnidadesMedicion(materiales.grupo)}}
+                                        </ng-container>
+                                      </ng-container>
+                                    </td>
+                                    <td>
+                                      <ng-container *ngIf="factura.parcial_ === true">
+                                        {{despachoParcial(materiales.cantidad, factura.cantidad, factura.op) | number: '1.2-2'}} {{UnidadesMedicion(materiales.grupo)}}
+                                      </ng-container>
+                                      <ng-container *ngIf="factura.parcial_ === false">
+                                        {{
+                                          restaDeDevoluciones(materiales.cantidad, BuscarDevolucionDeOrdenPorGrupo(materiales.grupo, factura.op).cantidad)
+                                          - despachoCompleto(materiales.cantidad, factura.op)
+                                          | number: '1.2-2'
+                                        }} {{UnidadesMedicion(materiales.grupo)}}
+                                      </ng-container>
+                                    </td>
+                                  </tr>
+                              
+                                  <tr *ngIf="mostrarDetalles[materiales.grupo]">
+                                    <td colspan="4">
+                                      <table class="table is-fullwidth is-bordered is-striped">
+                                        <thead>
+                                          <tr>
+                                            <th style="text-align: left; width: 450px; background-color: #c3c3c3;">Material</th>
+                                            <th style="text-align: right; background-color: #c3c3c3;">Asignado</th>
+                                            <th style="text-align: right; background-color: #c3c3c3;">Devolución</th>
+                                            <th style="text-align: right; background-color: #c3c3c3;">Despachado</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let detalle of materiales.detalles">
+                                            <td>{{detalle.nombre}}</td>
+                                            <td style="text-align: right;">{{detalle.cantidad | number: '1.2-2'}} {{detalle.unidad}}</td>
+                                            <td style="text-align: right;">
+                                                <ng-container *ngIf="factura.parcial_ === false">
+                                                    {{devolucionPorMaterialEspecifico(factura.op, detalle) | number: '1.2-2'}} {{UnidadesMedicion(materiales.grupo)}}
+                                                </ng-container>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <ng-container *ngIf="factura.parcial_ === true">
+                                                    {{despachoParcial(detalle.cantidad, factura.cantidad, factura.op) | number: '1.2-2'}} {{UnidadesMedicion(materiales.grupo)}}
+                                                  </ng-container>
+                                                  <ng-container *ngIf="factura.parcial_ === false">
+                                                    {{
+                                                      restaDeDevoluciones(detalle.cantidad, devolucionPorMaterialEspecifico(factura.op, detalle))
+                                                      - despachoCompleto(detalle.cantidad, factura.op)
+                                                      | number: '1.2-2'
+                                                    }} {{UnidadesMedicion(materiales.grupo)}}
+                                                  </ng-container>
+                                            </td>
+                                            <!-- <td style="text-align: right;">{{detalle.despacho | number: '1.2-2'}} {{detalle.unidad}}</td> -->
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                  
+                                </ng-container>
+                              </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>

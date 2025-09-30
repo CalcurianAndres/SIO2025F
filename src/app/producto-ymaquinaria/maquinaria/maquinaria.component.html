@@ -1,0 +1,264 @@
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-content">
+            <div class="titulo"> <i class="fas fa-cogs"></i> Maquinaria</div>
+            <button class="button is-primary" (click)='Modal_Maquina()' *ngIf='usuario.Maquinaria == 2'>Nueva
+                Máquina</button>
+            <hr>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Nombre Máquina</th>
+                        <th>Función de Máquina</th>
+                        <th>Cantidad de Colores</th>
+                        <th>Trabajos por Hora</th>
+                        <th>Precio por hora (USD)</th>
+                        <th>Horas de preparación</th>
+                        <th *ngIf='usuario.Maquinaria == 2'>Modificar Máquina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let maquina of MAQUINAS'>
+                        <td>{{maquina.nombre}}</td>
+                        <td>{{maquina.tipo}}</td>
+                        <td>{{maquina.colores}}</td>
+                        <td>{{maquina.cph | number:'1.0-0'}}</td>
+                        <td>{{maquina.precio || '0.00' | number:'2.2-2'}}</td>
+                        <td>{{maquina.reparacion || '0.00' | number:'1.0-0'}}</td>
+                        <td *ngIf='usuario.Maquinaria == 2'>
+                            <button class="button is-danger is-outlined" (click)='BorrarMaquina_(maquina._id)'>
+                                <span>Borrar</span>
+                                <span class="icon is-small">
+                                    <i class="fas fa-trash-alt"></i>
+                                </span>
+                            </button>  
+                            <button class="button is-success is-outlined" (click)='EditarMaquina(maquina._id)'>
+                                <span>Editar</span>
+                                <span class="icon is-small">
+                                    <i class="far fa-edit"></i>
+                                </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-content">
+            <div class="titulo">Grupo de Productos
+            </div>
+            <button class="button is-primary" (click)='Modal_Grupo()' *ngIf='usuario.Maquinaria == 2'>Nuevo
+                Grupo</button>
+            <hr>
+            <table class="table tables__" *ngFor="let grupo of GRUPOS">
+                <tr>
+                    <th>
+                        {{grupo.nombre}}
+                        <span class="borrar">
+                            <i class="fas fa-trash-alt" (click)='EliminarGrupo_(grupo._id)'
+                                *ngIf='usuario.Maquinaria == 2'></i>
+                        </span>
+                        <!-- <button class="button is-danger is-small is-outlined" (click)='EliminarGrupo_(grupo._id)' *ngIf='usuario.Maquinaria == 2'>
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </button> -->
+                    </th>
+                </tr>
+                <tr>
+                    <ul>
+                        <li *ngFor='let tipo of grupo.tipos;index as i'>
+                            <p>
+                                {{tipo}}
+                            </p>
+                        </li>
+                    </ul>
+                </tr>
+            </table>
+            <hr>
+            <!-- <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th *ngFor="let grupo of GRUPOS">{{grupo.nombre}}
+                            <button class="button is-danger is-small is-outlined" (click)='EliminarGrupo_(grupo._id)' *ngIf='usuario.Maquinaria == 2'>
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <td *ngFor="let grupo of GRUPOS;">
+                        <ul>
+                            <li *ngFor='let tipo of grupo.tipos;index as i'>
+                                <p>
+                                    {{tipo}}
+                                </p>
+                            </li>
+                        </ul>
+                    </td>
+                </tbody>
+            </table> -->
+        </div>
+    </div>
+</div>
+
+<!-- Editar Maquina -->
+<div *ngIf='MaquinaID'>
+    <div class="modal" [ngClass]="{'is-active':EDITAR_MAQUINA}">
+        <div class="modal-background" (click)='Edicion_Modal_Maquina()'></div>
+        <div class="modal-card">
+            <div class="modal-card-body">
+                <div class="subtitulo">Registrar Máquina</div>
+                <hr>
+                <div class="field">
+                    <label class="label">Nombre</label>
+                    <div class="control">
+                        <input type="text" class="input" [(ngModel)]='MaquinaID.nombre' name='nombre'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Función</label>
+                    <div class="control">
+                        <input type="text" class="input" [(ngModel)]='MaquinaID.tipo' name='tipo'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Colores (Opcional)</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" [(ngModel)]='MaquinaID.colores' name='colores'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Trabajo por Hora</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" [(ngModel)]='MaquinaID.cph' name='cph'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Precio (USD)</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" [(ngModel)]='MaquinaID.precio' name='precio'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Horas de preparación</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" [(ngModel)]='MaquinaID.reparacion' name='reparacion'>
+                    </div>
+                </div>
+
+                <button class="button is-primary" (click)='Finalizar_Edicion_M()'>Editar Máquina</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Editar Maquina -->
+
+
+<div class="modal" [ngClass]="{'is-active':NUEVA_MAQUINA}">
+    <div class="modal-background" (click)='Modal_Maquina()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+
+            <form autocomplete="off" [formGroup]="maquinaForm" (ngSubmit)="nuevaMaquina()">
+                <div class="subtitulo">Registrar Máquina</div>
+                <hr>
+                <div class="field">
+                    <label class="label">Nombre</label>
+                    <div class="control">
+                        <input type="text" class="input" formControlName='nombre'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Funcion</label>
+                    <div class="control">
+                        <input type="text" class="input" formControlName='tipo'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Colores (Opcional)</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" formControlName='colores'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Trabajo por Hora</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" formControlName='cph'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Precio</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" formControlName='precio'>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Horas de preparación</label>
+                    <div class="control">
+                        <input type="number" min='0' class="input" formControlName='reparacion'>
+                    </div>
+                </div>
+
+                <button class="button is-primary">Registrar Nueva Máquina</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':NUEVO_GRUPO}">
+    <div class="modal-background" (click)='Modal_Grupo()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">Nuevo Grupo de Productos</div>
+            <hr>
+            <div class="field">
+                <label class="label">Nombre del Grupo</label>
+                <div class="control">
+                    <input type="text" class="input" id='name'>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Fases:</label>
+                <div class="control">
+                    <div class="select">
+                        <select (click)='agregarTipo()' id='tipos' value='IMPRESION'>
+                            <option *ngFor='let tipo of FUNCIONES' value='{{tipo}}'>{{tipo}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>proceso</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let fase of FASES'>
+                        <td>{{fase}}</td>
+                        <td><button class="button is-primary">Eliminar</button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <button class="button is-primary" (click)='nuevoTipo()'>Registrar Nueva Grupo de Productos</button>
+        </div>
+    </div>
+</div>

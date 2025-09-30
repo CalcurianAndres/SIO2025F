@@ -1,0 +1,34 @@
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.cintillo{
+    background-color: rgb(253, 253, 253);
+}
+
+.cintillo_{
+    padding: 5px;
+    background-color: rgb(28, 40, 49);
+    color: white;
+}
+.white{
+    color: black;
+    background-color: white;
+}
+.modal-card{
+    width: 65%;
+}
+
+.fechas{
+    position: relative;
+    width: 100px;
+}
+
+.icono{
+    color: #48c78e;
+}
+.icono:hover{
+    color: #49a079;
+    cursor: pointer;
+}

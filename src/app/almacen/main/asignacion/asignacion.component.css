@@ -1,0 +1,53 @@
+.empty{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:5px;
+    color: white;
+    text-align: center;
+    font-size: large;
+    background-color: rgb(247, 147, 147);
+}
+
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.informacion{
+    margin-top:-69px;
+    box-sizing: border-box;
+    visibility: hidden;
+    width: 230px;
+    height: 60px;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+    z-index: 100;
+}
+
+.Inf_lotes:hover{
+    cursor: pointer;
+}
+
+.Inf_lotes:hover .informacion{
+    visibility: visible
+}
+
+.fijar_lote{
+    display:none;
+}
+
+#boton_add{
+    color:black
+}
+
+#boton_add:hover{
+    color:rgb(79, 196, 64);
+    cursor: pointer;
+}
+
+.modal-card{
+    width: 70%;
+}

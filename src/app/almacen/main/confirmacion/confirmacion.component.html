@@ -1,0 +1,63 @@
+
+<div class="modal" [ngClass]="{'is-active':confirmacion}">
+    <div class="modal-background" (click)="onClose()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">
+                Solicitud de Material
+            </div>
+            <hr>
+            <ng-container *ngFor="let pendiente of Pendiente">
+
+                <ng-container *ngIf="pendiente.sort === '#'">
+                    <p class="orden">Solicitud de Material por: ( {{pendiente.usuario}})</p>
+                </ng-container>
+                <ng-container *ngIf="pendiente.sort != '#'">
+                    <p class="orden">Orden: {{pendiente.sort}} ( {{pendiente.usuario}})</p>
+                </ng-container>
+                <b>Motivo: </b>{{pendiente.motivo}} <br>
+                <b>Fecha: </b> {{pendiente.fecha | date:'dd/MM/yyyy - hh:mm a'}}
+                <table class="table is-fullwidth" >
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="necesario of pendiente.producto.materiales[0];index as i">
+                            <td>{{pendiente.producto.materiales[0][i].producto.nombre}}<ng-container *ngIf="pendiente.producto.materiales[0][i].producto.gramaje"> {{pendiente.producto.materiales[0][i].producto.gramaje}}g</ng-container> <ng-container *ngIf="pendiente.producto.materiales[0][i].producto.gramaje"> (<ng-container *ngIf="pendiente.producto.materiales[0][i].producto.gramaje"> {{pendiente.producto.materiales[0][i].producto.ancho}}x{{pendiente.producto.materiales[0][i].producto.largo}}</ng-container> )</ng-container> {{pendiente.producto.materiales[0][i].producto.marca}} <ng-container *ngIf="pendiente.producto.materiales[0][i].producto.gramaje">Cal: {{pendiente.producto.materiales[0][i].producto.calibre}}</ng-container></td>
+                            <td>{{pendiente.producto.materiales[0][i].cantidad}}{{pendiente.producto.materiales[0][i].producto.unidad}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            <button class="button is-success" (click)="aprobar(pendiente._id)">Aprobar Solicitud</button> <button class="button is-danger" (click)="rechazar(pendiente._id)">Rechazar Solicitud</button>
+            <hr>
+            </ng-container>
+            <ng-container *ngFor="let pendiente of Repuestos">
+                <p class="orden">Solicitud de repuesto por: ( {{pendiente.usuario}} )</p>
+                <b>Motivo: </b>{{pendiente.motivo}}
+                <table class="table is-fullwidth" >
+                    <thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let necesario of pendiente.repuestos;index as i">
+                            <td><b>Pieza Nº:</b> {{necesario.repuesto.parte}} - {{necesario.repuesto.nombre}} <br>
+                                <b>Maquina:</b> {{necesario.repuesto.maquina.nombre}} ({{necesario.repuesto.categoria.nombre}})</td>
+                            <td>
+                                {{necesario.cantidad}}Und
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="button is-success" (click)="AprobarRepuesto(pendiente._id)">Aprobar Solicitud</button> <button class="button is-danger" (click)="RechazarRepuesto(pendiente._id)">Rechazar Solicitud</button>
+                <hr>
+            </ng-container>
+        </div>
+    </div>
+</div>

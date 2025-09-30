@@ -1,0 +1,38 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.subtitulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.sized{
+    width: 150px;
+    text-align: center;
+    padding-top: 25px;
+}
+.down{
+    display: block;
+    margin-top: -7px;
+}
+.edited{
+    text-align: left;
+}
+.sized_{
+    width: 200px;
+    text-align: center;
+    padding-top: 25px; 
+}
+.sized__{
+    width: 150px;
+}
+
+.subtitulo__{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.fa-eye{
+    cursor: pointer;
+}

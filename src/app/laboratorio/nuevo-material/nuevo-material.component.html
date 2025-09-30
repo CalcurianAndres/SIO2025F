@@ -1,0 +1,97 @@
+<div class="modal" [ngClass]="{'is-active':Asignacion}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="bar">
+                <span class="logo">
+                    <i class="fas fa-plus-circle"></i>
+                </span>
+                <span class="grupos">
+                       Nuevo material
+                </span>
+            </div>
+            <hr>
+            <div class="field">
+                <label for="" class="label">Grupo</label>
+                <div class="control">
+                    <div class="select is-small">
+                        <select name="" id="" (change)="seleccionarGrupo($event.target.value)">
+                            <option value="">Selecciona grupo</option>
+                            <option value="{{grupo.nombre}}" *ngFor="let grupo of grupos">{{grupo.nombre}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column" [ngClass]="{'is-4':Tinta}">
+                    <label for="" class="label">Fabricante</label>
+                    <div class="select is-small">
+                        <select name="" id="" (change)="seleccionarFabricante($event.target.value)">
+                            <option value="-1">Seleccionar Fabricante</option>
+                            <option value="{{fabricante._id}}" *ngFor="let fabricante of Fabricantes_filtrados;index as i">{{fabricante.nombre}}</option>
+                        </select>
+                    </div>
+                </div>
+                <ng-container *ngIf="Fabricante.origenes">
+                    <div class="column is-3" *ngIf="Fabricante.origenes.length > 0">
+                        <label for="" class="label">Origen</label>
+                        <div class="select is-small">
+                            <select name="" id="" (change)="origen($event.target.value)">
+                                <option value="">Origen</option>
+                                <option value="{{origen}}" *ngFor="let origen of Fabricante.origenes">{{origen}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Sustrato || Tinta">
+                    <div class="column" *ngIf="Sustrato">
+                        <label for="" class="label">Serie</label>
+                        <input type="text" class="input is-small">
+                    </div>
+                    <div class="column is-2" *ngIf="Tinta">
+                        <label for="" class="label">Color</label>
+                        <div class="select is-small">
+                            <select name="" id="" (change)="color_($event.target.value)">
+                                <option value="color">Color</option>
+                                <option value="Negro">Negro</option>
+                                <option value="Amarillo">Amarillo</option>
+                                <option value="Cyan">Cyan</option>
+                                <option value="Magenta">Magenta</option>
+                                <option value="Pantone">Pantone</option>
+                            </select>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="color">
+                    <div class="column is-3" *ngIf="color != 'color' && color != 'Negro' && color != 'Amarillo' && color != 'Cyan' && color != 'Magenta' && color != '_'">
+                        <label for="" class="label">Código / Color</label>
+                        <input type="text" class="input is-small" [(ngModel)]="color">
+                    </div>
+                </ng-container>
+            </div>
+            <div class="columns">
+                <div class="column" [ngClass]="{'is-5':!Sustrato}">
+                    <label for="" class="label">Material</label>
+                    <input type="text" class="input is-small" [(ngModel)]="material">
+                </div>
+                <div class="column is-3" *ngIf="Sustrato">
+                    <label for="" class="label">Gramaje</label>
+                    <input type="text" class="input is-small" [(ngModel)]="gramaje">
+                </div>
+                <div class="column is-3" *ngIf="Sustrato">
+                    <label for="" class="label">Calibre</label>
+                    <input type="text" class="input is-small" [(ngModel)]="calibre">
+                </div>
+            </div>
+            <hr>
+            <button class="button is-success" (click)="Finalizar()">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>
+                    Registrar
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

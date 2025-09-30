@@ -1,0 +1,21 @@
+.fondo{
+    width: 100%;
+    height: 50em;
+    /* background: radial-gradient(circle, rgba(142,17,29,0.40379901960784315) 0%, rgba(28,40,49,0.8379726890756303) 100%),
+    url(../../assets/button.jpg) no-repeat center; */
+    background: url(../../assets/FONDO-SIO.jpg) no-repeat center;
+    background-size: cover;
+    align-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.login{
+    position: relative;
+    display: block;
+    width: 500px;
+    background-color: white;
+    left: 35%;
+    top: 30%;
+    border-radius: 50px;
+    padding: 50px;
+}

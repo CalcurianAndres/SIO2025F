@@ -1,0 +1,235 @@
+<div>
+    <div class="titulo ml-5 ">
+        <i class="fas fa-search-dollar"></i> Consulta de facturación
+    </div>
+    <div class="card ml-5">
+        <div class="card-content">
+            <div class="field">
+                <label for="" class="label">Buscar por:</label>
+                <div class="control">
+                    <div class="select is-small">
+                        <select name="" id="" (change)="Select_opcion($event.target.value)">
+                            <option value="#">Seleccione una opción</option>
+                            <option value="fecha">Fecha</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="orden">Orden de producción</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fecha" *ngIf="m_fecha">
+            <br>
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="field">
+                        <label for="" class="label">Desde:</label>
+                        <div class="control">
+                            <input type="date" class="input is-small" #desde>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label for="" class="label">Hasta:</label>
+                        <div class="control">
+                            <input type="date" class="input is-small" #hasta>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label for="" class="label"> </label>
+                        <div class="control">
+                            <button class="button is-small is-success" (click)="buscar_fecha(desde,hasta)">
+                                <span class="icon"><i class="fas fa-search"></i></span>
+                                <span>Buscar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="cliente" *ngIf="m_cliente">
+                <br>
+                <div class="columns">
+                    <div class="column is-2">
+                        <div class="field">
+                            <label for="" class="label"> </label>
+                            <div class="control">
+                                <div name="" id="" class="select is-small">
+                                    <select name="" id="" #cliente_>
+                                        <option value="#">Seleccione cliente</option>
+                                        <option value="{{cliente._id}}" *ngFor="let cliente of Clientes">{{cliente.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <div class="field">
+                            <label for="" class="label">Desde:</label>
+                            <div class="control">
+                                <input type="date" class="input is-small" #desde_>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <div class="field">
+                            <label for="" class="label">Hasta:</label>
+                            <div class="control">
+                                <input type="date" class="input is-small" #hasta_>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <div class="field">
+                            <label for="" class="label"> </label>
+                            <div class="control">
+                                <button class="button is-small is-success" (click)="BuscarCliente(cliente_.value,desde_.value,hasta_.value)">
+                                    <span class="icon"><i class="fas fa-search"></i></span>
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="op" *ngIf="m_orden">
+                <br>
+                <div class="field">
+                    <label for="" class="label">Ingrese Orden de producción:</label>
+                    <div class="control">
+                        <div class="columns">
+                            <div class="column is-2">
+                                <input type="text" class="input is-small" #op>
+                            </div>
+                            <div class="column is-2">
+                                <button class="button is-small is-success" (click)="Buscar_op(op.value)">
+                                    <span class="icon">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <span>
+                                        Buscar
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="card ml-5">
+        <div class="card-content">
+            <div class="columns">
+                <div class="column is-4">
+                    <div class="tabs" *ngIf="ORDENES.length > 0 || NOTAS.length > 0">
+                        <ul>
+                          <li class="is-active" id="FA_" (click)="FA()"><a>Facturas</a></li>
+                          <li (click)="NE()" id="NE_"><a>Notas de entrega</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="column">
+
+                </div>
+            </div>
+            <ng-container *ngIf="Facturas">
+                <table class="table is-fullwidth tablas" *ngIf="ORDENES.length > 0 || NOTAS.length > 0">
+                    <thead>
+                        <!-- <tr>
+                            <th colspan="4" class="is-selected">Est. Display Konga Sabores (Máquina) / 30-05-2023</th>
+                        </tr> -->
+                        <tr>
+                            <th class="_data__">Producto</th>
+                            <th style="text-align: center;" class="_data__" >OP</th>
+                            <th style="text-align: center;" class="_data__">Fecha</th>
+                            <th style="text-align: center;" class="_data__">Tasa BCV<br>(Bs/USD)</th>
+                            <th style="text-align: center;" class="_data__">Cantidad <br>
+                            (Und)</th>
+                            <th style="text-align: center;" class="_data__">Precio <br>
+                                /millar (USD)</th>
+                            <th style="text-align: center;" class="_data__">N° de <br> Factura</th>
+                            <th style="text-align: center;" class="_data__">Subtotal <br> (USD)</th>
+                            <th style="text-align: center;" class="_data__">Subtotal <br> (Bs)</th>
+                        </tr>
+                        <tr *ngFor="let despacho of ORDENES">
+                            <td class="data__">{{despacho.producto}}</td>
+                            <td style="text-align: center;" class="data__">{{despacho.op}}</td>
+                            <td style="text-align: center;" class="data__">
+                                <ng-container *ngIf="!despacho.parcial">
+                                    {{despacho.fecha}}
+                                </ng-container>
+                                <ng-container *ngIf="despacho.parcial">
+                                    {{despacho.parcial}}
+                                </ng-container>
+                            </td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.tasa)}}</td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.cantidad)}}</td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.precio)}}</td>
+                            <td style="text-align: center;" class="data__">{{despacho.documento}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma((despacho.cantidad / 1000)*despacho.precio)}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma(((despacho.cantidad / 1000)*despacho.precio)*despacho.tasa)}}</td>
+    
+                        </tr>
+                        <tr>
+                            <th colspan="7" style="text-align: right;" class="_data__">Totales:</th>
+                            <th style="text-align: right;" class="_data__">{{puntoYcoma(Total_USD)}}</th>
+                            <th style="text-align: right;" class="_data__">{{puntoYcoma(Total_Bs)}}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </ng-container>
+            <ng-container *ngIf="Notas">
+                <table class="table is-fullwidth tablas" *ngIf="ORDENES.length > 0  || NOTAS.length > 0">
+                    <thead>
+                        <!-- <tr>
+                            <th colspan="4" class="is-selected">Est. Display Konga Sabores (Máquina) / 30-05-2023</th>
+                        </tr> -->
+                        <tr>
+                            <th class="_data__">Producto</th>
+                            <th style="text-align: center;" class="_data__" >OP</th>
+                            <th style="text-align: center;" class="_data__">Fecha</th>
+                            <th style="text-align: center;" class="_data__">Tasa BCV<br>(Bs/USD)</th>
+                            <th style="text-align: center;" class="_data__">Cantidad <br>
+                            (Und)</th>
+                            <th style="text-align: center;" class="_data__">Precio <br>
+                                /millar (USD)</th>
+                            <th style="text-align: center;" class="_data__">N° de <br> nota de entrega</th>
+                            <th style="text-align: center;" class="_data__">Subtotal <br> (USD)</th>
+                            <th style="text-align: center;" class="_data__">Subtotal <br> (Bs)</th>
+                        </tr>
+                        <tr *ngFor="let despacho of NOTAS">
+                            <td class="data__">{{despacho.producto}}</td>
+                            <td style="text-align: center;" class="data__">{{despacho.op}}</td>
+                            <td style="text-align: center;" class="data__">
+                                {{despacho.fecha}}
+                                <ng-container *ngIf="!despacho.fecha">
+                                    <ng-container *ngIf="!despacho.parcial">
+                                        {{despacho.status}}
+                                    </ng-container>
+                                    <ng-container *ngIf="despacho.parcial">
+                                        {{despacho.parcial}}
+                                    </ng-container>
+                                </ng-container>
+                            </td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.tasa)}}</td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.cantidad)}}</td>
+                            <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.precio)}}</td>
+                            <td style="text-align: center;" class="data__">{{despacho.documento}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma((despacho.cantidad / 1000)*despacho.precio)}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma(((despacho.cantidad / 1000)*despacho.precio)*despacho.tasa)}}</td>
+    
+                        </tr>
+                        <tr>
+                            <th colspan="7" style="text-align: right;" class="_data__">Totales:</th>
+                            <th style="text-align: right;" class="_data__">{{puntoYcoma(Total_USD_N)}}</th>
+                            <th style="text-align: right;" class="_data__">{{puntoYcoma(Total_Bs_N)}}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </ng-container>
+        </div>
+    </div>
+</div>

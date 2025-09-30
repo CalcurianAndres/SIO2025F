@@ -1,0 +1,64 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../assets/Roboto/Roboto-Black.ttf);
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+
+.containe{
+    margin-left: 1%;
+    width: 98%;
+}
+.titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    display: block;
+    font-size: 25px;
+    font-family: Roboto;
+    text-align: center;
+}
+.modal-card{
+    width: 250px;
+}
+
+.volver{
+    display: block;
+    /* border: solid 2px black; */
+    width: 20px;
+    height: 20px;
+    border-radius: 500px;
+    padding: 15px;
+    font-size: x-large;
+}
+.volver a{
+    display: block;
+    margin-top: -18px;
+    margin-left: -11px;
+}
+
+.logo{
+    display: block;
+    text-align: center;
+    align-content: center;
+    font-size: 100px;
+    padding: 0px;
+}
+
+.confirmacion{
+    display: block;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+
+/* //pin verificacion */

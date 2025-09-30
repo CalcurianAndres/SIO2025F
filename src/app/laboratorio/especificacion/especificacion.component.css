@@ -1,0 +1,65 @@
+  @font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+  .titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.indice{
+    width: 250px;
+    font-weight: bold;
+}
+
+.img{
+    display: block;
+    width: 100%;
+    border: solid 1px black;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+}
+.descripcionImg {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.img_{
+    display: block;
+    border:solid 1px black;
+    width: 100%;
+    float: left;
+    margin:5px;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+    height: 400px;
+}
+.DescripcionImg_{
+    display: block;
+    width: 48.8%;
+    float: left;
+    margin:5px;
+    text-align: center;
+}
+.red__{
+    color: red;
+}
+
+.short{
+    width: 150px;
+}
+
+pre{
+    background-color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}

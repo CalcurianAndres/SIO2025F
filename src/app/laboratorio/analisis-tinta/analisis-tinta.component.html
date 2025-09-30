@@ -1,0 +1,928 @@
+<div class="container">
+    <div class="titulo">
+        Análisis de tinta
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="field">
+                        <label for="" class="label">Lotes por analizar</label>
+                        <div class="control">
+                            <div class="select">
+                                <select (change)="_BuscarLote($event.target.value)">
+                                    <option value="#">Lotes por analizar</option>
+                                    <option value="{{lote.grupo}}*{{lote.lote}}" *ngFor="let lote of Lotes_por_analizar">{{lote.lote}} - {{lote.nombre}} ({{lote.marca}})</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="field">
+                        <label for="" class="label">Buscar lote:</label>
+                        <input type="text" class="input short___" (change)="getLote($event.target.value)">
+                        <button class="button is-success">
+                            <span class="icon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </button>
+                    </div> -->
+                </div>
+            </div>
+            <table class="table is-fullwidth">
+                <tr>
+                    <th class="is-selected standar">Producto:</th>
+                    <td>{{muestra__.material.nombre}}</td>
+                    <th class="is-selected standar">Proveedor:</th>
+                    <td>{{FacturaSelected.proveedor.nombre}}</td>
+                    <th class="is-selected standar">N° Lote:</th>
+                    <td>{{muestra__.lote}}</td>
+                </tr>
+                <tr>
+                    <th class="is-selected standar">Presentación:</th>
+                    <td>
+                        <input type="text" class="input is-small wd100" [(ngModel)]="presentacion_">
+                        <!-- <ng-container *ngFor="let cantidad of cantidad;index as i">
+                           <ng-containr *ngIf="i > 0">,</ng-containr>{{cantidad.unidades}} {{cantidad.presentacion}} {{cantidad.neto}}Kg
+                        </ng-container> -->
+                    </td>
+                    <th class="is-selected standar">Fecha fabricación:</th>
+                    <td><input type="date" class="input is-small wd100" [(ngModel)]="f_fabricacion"></td>
+                    <th class="is-selected standar">Fecha vencimiento:</th>
+                    <td><input type="date" class="input is-small wd100" [(ngModel)]="f_vencimiento"></td>
+                </tr>
+                <tr>
+                    <th class="is-selected standar">Cantidad (Kg):</th>
+                    <td><input type="text" class="input is-small wd100" [(ngModel)]="cantidad__"></td>
+                    <th class="is-selected standar">Estándar utilizado:</th>
+                    <td><input type="text" class="input is-small wd100" [(ngModel)]="estandar_utilizado"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-content">
+            <hr>
+            <!-- <table class="table is-fullwidth" *ngIf="cualitativo">
+                    <tr>
+                        <th class="is-selected wid">Tono</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected wid">Transparencia / Opacidad</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected wid">Viscocidad</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected wid">Secado capa fina (1-3 horas)</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected wid">Secado capa gruesa (24 horas)</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected wid">Brillo</th>
+                        <td class="wid">
+                            <div class="field has-addons">
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-up green"></i>
+                                    </span>
+                                    <span>Cumple</span>
+                                  </button>
+                                </p>
+                                <p class="control">
+                                  <button class="button">
+                                    <span class="icon is-small">
+                                        <i class="far fa-thumbs-down red"></i>
+                                    </span>
+                                    <span>No cumple</span>
+                                  </button>
+                                </p>
+                              </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-check green"></i>
+                            <i class="fas fa-times red"></i>
+                        </td>
+                    </tr>
+            </table> -->
+            <table class="table is-fullwidth is-bordered">
+                <tr>
+                    <th class="is-selected" colspan="6">Análisis cualitativo (Draw down)</th>
+                </tr>
+                <tr>
+                    <th style="text-align: center;">
+                        <span class="__th">
+                            Tono
+                        </span>
+                    </th>
+                    <th style="text-align: center;">
+                        <span class="__th">
+                            Transparencia / Opacidad
+                        </span>
+                    </th>
+                    <th style="text-align: center;">
+                        <span class="__th">
+                            Viscosidad
+                        </span>
+                    </th>
+                    <th style="text-align: center;">Secado capa fina
+                        <br>(1-3 horas)</th>
+                    <th style="text-align: center;">Secado capa gruesa
+                        <br>(24 horas)</th>
+                    <th style="text-align: center;">
+                        <span class="__th">
+                            Brillo
+                        </span>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="select">
+                            <select name="" id="1" (change)="cualitativo('0',$event.target.value)" [(ngModel)]="DrawDown_[0]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="select">
+                            <select name="" id="2" (change)="cualitativo('1',$event.target.value)" [(ngModel)]="DrawDown_[1]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="select">
+                            <select name="" id="3" (change)="cualitativo('2',$event.target.value)" [(ngModel)]="DrawDown_[2]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="select">
+                            <select name="" id="4" (change)="cualitativo('3',$event.target.value)" [(ngModel)]="DrawDown_[3]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="select">
+                            <select name="" id="5" (change)="cualitativo('4',$event.target.value)" [(ngModel)]="DrawDown_[4]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="select">
+                            <select name="" id="6" (change)="cualitativo('5',$event.target.value)" [(ngModel)]="DrawDown_[5]">
+                                <option value="Cumple">Cumple</option>
+                            <option value="No cumple">No cumple</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="file is-small has-name is-success">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="resume" (change)="CambiarImagen($event)">
+                  <span class="file-cta">
+                    <span class="file-icon">
+                      <i class="fas fa-upload"></i>
+                    </span>
+                    <span class="file-label">
+                      Draw down…
+                    </span>
+                  </span>
+                  <span class="file-name">
+                    Sin archivo...
+                  </span>
+                </label>
+                <span class="ver" (click)="verImagen()" *ngIf="img != 'no-file'">
+                    <i class="fas fa-eye"></i>
+                </span>
+              </div>
+            <hr>
+            <table class="table is-fullwidth">
+                <tr>
+                    <th class="is-selected">Análisis cuantitativo (Roll down)</th>
+                </tr>
+            </table>
+
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column is-3">
+                            <div class="field">
+                                <label for="" class="label">Realizar Roll down sobre:</label>
+                                <div class="control">
+                                    <div class="select">
+                                        <Select name="fieldName" ngDefaultControl (change)="cantidad_($event.target.value)" [(ngModel)]="sobre">
+                                            <option value="#">Tipo de sustrato</option>
+                                            <option value="Carton">Cartón</option>
+                                            <option value="Papel">Papel</option>
+                                            <option value="Ambos">Cartón y papel</option>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <table class="table">
+                                <tr>
+                                    <th class="is-selected" colspan="2">
+                                        Tipo de sustrato
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Cartón:
+                                    
+                                        <input type="text" class="input is-small short" placeholder="Calibre (pt)" [(ngModel)]="_tipo_[0]">
+                                    </th>
+                                    <th *ngIf="_papel_">
+                                        Papel:
+                                        <input type="text" class="input is-small short" placeholder="Gramaje (g/m²)" [(ngModel)]="_tipo_[1]">
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="column">
+                            <table class="table">
+                                <tr>
+                                    <th class="is-selected" colspan="2">
+                                        Tipo de sustrato en muestra
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="select">
+                                            <select name="" id="" (change)="papel_muestra($event.target.value)" [(ngModel)]="prueba">
+                                                <option value="Cartón">Cartón</option>
+                                                <option value="Papel">Papel</option>
+                                                <option value="Metalizado">Metalizado</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-content">
+                    <div class="tabs">
+                        <ul>
+                            <li [ngClass]="{'is-active':carton}" (click)="carton_()"><a>Cartón</a></li>
+                            <li [ngClass]="{'is-active':sustrato}" (click)="sustrato_()"><a>Papel</a></li>
+                            <li [ngClass]="{'is-active':muestra}" (click)="muestra_()"><a>Muestra</a></li>
+                        </ul>
+                    </div>
+                    <table class="table is-fullwidth">
+                        <tr>
+                            <th class="is-selected" colspan="9">1° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[0]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[0]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[0]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[6]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[6]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[6]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[0]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_1" [style]="papel_e1">
+                                    <i class="fas fa-eye ojos" (click)="big('p1')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[3]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[3]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[3]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[6]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[6]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[6]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[0]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_1" [style]="papel_m1"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="9">2° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[1]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[1]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[1]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[2]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_2" [style]="papel_e2">
+                                    <i class="fas fa-eye ojos" (click)="big('p2')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[4]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[4]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[4]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[7]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[7]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[7]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[1]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_2" [style]="papel_m2"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="9">3° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[2]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[2]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[2]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[4]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_3" [style]="papel_e3">
+                                    <i class="fas fa-eye ojos" (click)="big('p3')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="l1[5]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="a1[5]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move()" [(ngModel)]="b1[5]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l1[8]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a1[8]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b1[8]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[2]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_3" [style]="papel_m3"></div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table is-fullwidth" *ngIf="sustrato">
+                        <tr>
+                            <th class="is-selected" colspan="9">1° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[0]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[0]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[0]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[6]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[6]" ></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[6]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[6]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_1" [style]="carton_e1">
+                                    <i class="fas fa-eye ojos" (click)="big('c1')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[3]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[3]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[3]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[6]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[6]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[6]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[3]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_1" [style]="carton_m1"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="9">2° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[1]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[1]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[1]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[8]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[8]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_2" [style]="carton_e2">
+                                    <i class="fas fa-eye ojos" (click)="big('c2')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[4]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[4]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[4]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[7]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[7]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[7]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[4]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_2" [style]="carton_m2"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="9">3° Descarga</th>
+                        </tr>
+                        <tr>
+                            <th>Estándar</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[2]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[2]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[2]"></td>
+                            <td>
+                                <!-- <label for="" class="label">∆L</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆a</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆b</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[10]"></td> -->
+                            <td>
+                                <!-- <label for="" class="label">∆E</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[10]"></td> -->
+                            <td>
+                                <label for="" class="label"> </label>
+                                <div class="colores mt" id="estándar_3" [style]="carton_e3">
+                                    <i class="fas fa-eye ojos" (click)="big('c3')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Muestra</th>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="l2[5]"></td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="a2[5]"></td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" class="input is-small" (change)="move2()" [(ngModel)]="b2[5]"></td>
+                            <td>
+                                <label for="" class="label">∆L*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="l2[8]"></td>
+                            <td>
+                                <label for="" class="label">∆a*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="a2[8]"></td>
+                            <td>
+                                <label for="" class="label">∆b*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="b2[8]"></td>
+                            <td>
+                                <label for="" class="label">∆E*</label>
+                                <input type="number" class="input is-small" [(ngModel)]="d1[5]"></td>
+                            <td>
+                                <div class="colores mb" id="muestra_3" [style]="carton_m3"></div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table" *ngIf="muestra">
+                        <tr>
+                            <th class="is-selected" colspan="4">
+                                1° Descarga
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="l3[0]">
+                            </td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="a3[0]">
+                            </td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="b3[0]">
+                            </td>
+                            <td>
+                                <div class="colores" [style]="muestra1"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="4">
+                                2° Descarga
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="l3[1]">
+                            </td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="a3[1]">
+                            </td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="b3[1]">
+                            </td>
+                            <td>
+                                <div class="colores" [style]="muestra2"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="is-selected" colspan="4">
+                                3° Descarga
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="" class="label">L*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="l3[2]">
+                            </td>
+                            <td>
+                                <label for="" class="label">a*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()"  [(ngModel)]="a3[2]">
+                            </td>
+                            <td>
+                                <label for="" class="label">b*</label>
+                                <input type="number" name="" id="" class="input is-small" (change)="move3()" [(ngModel)]="b3[2]">
+                            </td>
+                            <td>
+                                <div class="colores" [style]="muestra3"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <div class="card">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <table class="table is-fullwidth">
+                                <tr>
+                                    <th class="is-selected">Observaciones</th>
+                                </tr>
+                            </table>
+                            <textarea class="textarea" placeholder="Observaciones" [(ngModel)]="Observacion_"></textarea>
+                        </div>
+                        <div class="column">
+                            <table class="table is-fullwidth">
+                                <tr>
+                                    <th class="is-selected">Resultados de análisis</th>
+                                </tr>
+                            </table>
+                            <table class="table is-fullwidth">
+                                <tr>
+                                    <th>Validar</th>
+                                    <th>Resultados</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox">
+                                            <input type="checkbox" (click)="validar()">
+                                            Análisis realizado adecuadamente.
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <div class="select">
+                                            <select [(ngModel)]="Resultado">
+                                                <option value="APROBADO">APROBADO</option>
+                                                <option value="RECHAZADO">RECHAZADO</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <button class="button is-info" (click)="Guardar_()">
+                        <span class="icon"><i class="fas fa-save"></i></span>
+                        <span>Guardar progreso</span>
+                    </button> 
+                    <span *ngIf="validado">
+                        <button class="button is-success" (click)="PreFinalizacion()">
+                            <span class="icon"><i class="fas fa-download"></i></span>
+                            <span>Descargar análisis</span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':_BIG_}">
+    <div class="modal-background" (click)="close_modal()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <table class="table is-fullwidth">
+                <tr>
+                    <th class="is-selected">
+                        Comparación de colores
+                    </th>
+                </tr>
+            </table>
+            <div class="muestra rolls_" [style]="Big_e">
+                <p class="text">
+                    Estandar
+                </p>
+            </div>
+            <div class="entandar rolls_ estandar" [style]="Big_m">
+                <p class="text">
+                    Muestra
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

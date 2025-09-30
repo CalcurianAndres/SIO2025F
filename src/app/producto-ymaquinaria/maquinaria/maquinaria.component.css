@@ -1,0 +1,43 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 25px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.mt-5{
+    margin-top: 5px;
+}
+
+.tables__{
+    display: block;
+    float: left;
+    width: 23%;
+    height: 220px;
+    margin: 1%;
+    padding: 5px;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.09);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.09);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.09);
+    border: solid 0.5px rgb(247, 247, 247);
+    border-radius: 5px;
+}
+
+.borrar{
+    color: red;
+}
+.borrar:hover{
+    cursor: pointer;
+    color: rgb(207, 0, 0);
+}

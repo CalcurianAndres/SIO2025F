@@ -1,0 +1,42 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+  .titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.n_lote{
+    width: 150px;
+}
+.n_lote_{
+    width: 100px;
+}
+.datos{
+    margin-top: -24px;
+}
+.gramaje{
+    width: 70px;
+    height: 23px;
+}
+.gramaje_{
+    height: 20px;
+}
+.size{
+    width: 100px;
+}
+.red{
+    color: red;
+}
+.green{
+    color: #48c78e;
+}
+.color{
+    color: #bdbdbd;
+}

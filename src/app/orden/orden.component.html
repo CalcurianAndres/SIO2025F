@@ -1,0 +1,889 @@
+<app-navbar></app-navbar>
+<div class="container mt-5">
+
+    <div class="card" *ngIf='loading'>
+        <div class="card-content">
+            <div class="loading">
+                <div class="icon">
+                    cargando...<i class="fa-solid fa-loader"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" *ngIf='!loading'>
+        <div class="card-content">
+            <ng-container *ngIf="usuario.Role === 'ADMIN'">
+                <button class="button is-small is-danger" (click)="cancelarOrden()" *ngIf="usuario.Role === 'ADMIN'">Cancelar Orden</button> 
+                <button class="button is-small is-success" (click)="EditarOrden()" *ngIf="!edicion && usuario.Role === 'ADMIN'">Editar Orden</button>
+                <button class="button is-small is-success" (click)="FinalizarEdicion()" *ngIf="edicion">Finalizar</button>  <br><br>
+            </ng-container>
+
+            <div class="columns">
+                <div class="column is-3">
+                    <table class="table is-bordered is-fullwidth">
+                        <thead>
+                            <th colspan="2">
+                                ORDEN DE COMPRA
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nº</td>
+                                <td *ngIf="!edicion">
+                                    {{PRODUCTO.orden}}
+                                </td>
+                                <td *ngIf="edicion">
+                                    <input type="text" class="input" [(ngModel)]="PRODUCTO.orden">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Fecha de OC:.</td>
+                                <td *ngIf="!edicion">{{PRODUCTO.fecha_o | date: 'dd/MM/yyyy': 'UTC'}}
+                                </td>
+                                <td *ngIf="edicion">
+                                    <input type="date" class="input" [(ngModel)]="PRODUCTO.fecha_o">
+                                </td>
+                                <!-- <td>{{PRODUCTO.fecha_o | date: 'dd/MM/yyyy'}}</td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column">
+                    <table class="table is-bordered is-fullwidth">
+                        <thead>
+                            <th colspan="2">
+                                PRODUCTO
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>NOMBRE:</td>
+                                <td>{{PRODUCTO.producto.producto}}</td>
+                            </tr>
+                            <tr>
+                                <td>CÓDIGO:</td>
+                                <td>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column is-4">
+                    <table class="table is-bordered is-fullwidth">
+                        <thead>
+                            <th colspan="2">
+                                ORDEN DE PRODUCCIÓN
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nº:</td>
+                                <td><b id='n_orden'>{{PRODUCTO.sort}}</b></td>
+                            </tr>
+                            <tr>
+                                <td>FECHA DE EMISIÓN:</td>
+                                <!-- <td>{{PRODUCTO.fecha}}</td> -->
+                                <td>{{PRODUCTO.fecha | date:'dd/MM/yyyy'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <table class="table is-bordered is-fullwidth">
+                    <thead>
+                        <th colspan="2">
+                            INFORMACIÓN DEL PRODUCTO
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th width="30%">CLIENTE:</th>
+                            <td>{{PRODUCTO.cliente.nombre}}</td>
+                        </tr>
+                        <tr>
+                            <th>CÓDIGO DE PRODUCTO DEL CLIENTE:</th>
+                            <td>{{PRODUCTO.producto.cod_cliente}}</td>
+                        </tr>
+                        <tr>
+                            <th>CÓDIGO ESPECIFICACIÓN</th>
+                            <td>E-{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{PRODUCTO.producto.edicion}}</td>
+                        </tr>
+                    </tbody>
+            </table>
+
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <th colspan="5">
+                        PLANIFICACIÓN DE ENTREGAS
+                    </th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Nº</th>
+                        <th>CANTIDAD</th>
+                        <th>FECHA SOLICITADA</th>
+                        <th>LUGAR DE ENTREGA</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>{{cantidad}}</td>
+                        <!-- <td>{{PRODUCTO.fecha_s}}</td> -->
+                        <td *ngIf="!edicion">
+                            {{PRODUCTO.fecha_s | date:'dd/MM/yyyy': 'UTC'}}
+                        </td>
+                        <td *ngIf="edicion">
+                            <div class="columns">
+                                <div class="column is-7">
+                                    <input type="date" class="input" [(ngModel)]="PRODUCTO.fecha_s" width="150px">
+                                </div>
+                            </div>
+                        </td> 
+                        <td *ngIf="!edicion">
+                            {{PRODUCTO.almacen}}
+                        </td>
+                        <td *ngIf="edicion">
+                            <select class="select" [(ngModel)]="PRODUCTO.almacen">
+                                <option value="{{almacen}}" *ngFor="let almacen of PRODUCTO.cliente.almacenes">{{almacen}}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>TOTAL</th>
+                        <td>{{cantidad}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <th>
+                        CARACTERÍSTICAS Y MATERIALES
+                    </th>
+                </thead>
+                <tr>
+                    <td>
+
+                        <!-- HORIZONTAL -->
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <th>PRE-IMPRESION</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="columns">
+                                            <div class="column">
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                CÓDIGO DEL MONTAJE
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                M-{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>
+                                                                CANTIDAD DE EJEMPLARES
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                {{PRODUCTO.producto.ejemplares[PRODUCTO.montaje]}}
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                            <div class="column">
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                CÓDIGO DE PELICULA
+                                                            </th>
+                                                        </tr>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Tinta'">
+                                                            <tr>
+                                                                <td>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Negro'"><b>Negro:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-1 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Cyan'"><b>Cyan:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-2 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Magenta'"><b>Magenta:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-3 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Amarillo'"><b>Amarillo:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-4 </p>
+                                                                    <div *ngIf="TintaProducto.producto.color != 'Amarillo' && TintaProducto.producto.color != 'Magenta' && TintaProducto.producto.color != 'Cyan' && TintaProducto.producto.color != 'Negro' ">
+                                                                        <b>{{TintaProducto.producto.color}}:</b>
+                                                                        <ng-container>
+                                                                            {{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-
+                                                                            <ng-container *ngIf="PRODUCTO.montaje == 0">
+                                                                                {{sumaTintas(i)}}
+                                                                            </ng-container>
+                                                                            <ng-container *ngIf="PRODUCTO.montaje != 0">
+                                                                                {{sumaTintas(i)-2}}
+                                                                            </ng-container>
+                                                                        </ng-container>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <th>IMPRESIÓN</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="columns">
+                                            <div class="column">
+                                                <table class="table is-bordered-is-fullwidth">
+                                                    <tr>
+                                                        <th width="50%">SUSTRATO</th>
+                                                        <th>TAMAÑO ORIGINAL (cm)</th>
+                                                    </tr>
+                                                    <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                        <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                                                    <tr>
+                                                        <td>
+                                                            {{TintaProducto.producto.nombre}} {{TintaProducto.producto.marca}}  (Calibre:{{TintaProducto.producto.calibre}}, Gramaje:{{TintaProducto.producto.gramaje}})
+                                                        </td>
+                                                        <td>
+                                                            ({{TintaProducto.producto.ancho}} x {{TintaProducto.producto.largo}})
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                            <th>DIRECCIÓN DE FIBRA</th>
+                                                            <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                                <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                                                            <td>{{TintaProducto.producto.largo}}</td>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                    </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <tr>
+                                                        <th>TAMAÑO DE SUSTRATO A IMPRIMIR (cm)</th>
+                                                        <td *ngIf="!edicion">
+                                                            {{PRODUCTO.i_ancho}} x {{PRODUCTO.i_largo}}
+                                                        </td>
+                                                        <td *ngIf="edicion">
+                                                            <div class="columns">
+                                                                <div class="column is-6">
+                                                                    <input type="Number" class="input" [(ngModel)]="PRODUCTO.i_ancho">
+                                                                </div>
+                                                                <div class="column is-6">
+                                                                    <input type="Number" class="input" [(ngModel)]="PRODUCTO.i_largo">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="column">
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <tr>
+                                                        <th>% DEMASÍA</th>
+                                                        <td>{{PRODUCTO.demasia}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>HOJAS DE DEMASÍA</th>
+                                                        <td>{{hojas_demasia}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>HOJAS A IMPRIMIR</th>
+                                                        <td>{{hojas_imprimir}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>TOTAL DE HOJAS POR ASIGNAR</th>
+
+                                                        <ng-container *ngIf="PRODUCTO.montaje == 0">
+                                                            <td>{{PRODUCTO.paginas}}</td>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="PRODUCTO.montaje == 1">
+                                                            <td>{{hojas_demasia + hojas_imprimir}}</td>
+                                                        </ng-container>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="column">
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <tr>
+                                                        <th>COLOR</th>
+                                                        <th>TINTA</th>
+                                                    </tr>
+                                                    <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                        <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Tinta'">
+                                                        <tr>
+                                                            <td>{{TintaProducto.producto.color}}</td>
+                                                            <td>{{TintaProducto.producto.nombre}}
+                                                                ({{TintaProducto.producto.marca}})
+                                                            </td>
+                                                        </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <table class="table is-fullwidth is-bordered">
+                                            <tr>
+                                                <th>BARNIZ</th>
+                                                <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                    <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Barniz' || TintaProducto.producto.grupo.nombre === 'Barniz Acuoso'">
+                                                <td colspan="2">{{TintaProducto.producto.nombre}}
+                                                    ({{TintaProducto.producto.marca}})
+                                                </td>
+                                                     </ng-container>
+                                                </ng-container>
+                                            </tr>
+                                            <tr>
+                                                <th>ESTÁNDAR DE COLORES:</th>
+                                                <td *ngIf="PRODUCTO.e_c === true && !edicion">Si</td>
+                                                <td *ngIf="PRODUCTO.e_c != true && !edicion">No</td>
+                                                <td *ngIf="edicion"><select class="select" [(ngModel)]="PRODUCTO.e_c">
+                                                    <option value="true">Si</option>
+                                                    <option value="false">No</option>
+                                                </select></td>
+                                            <tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <th>POST-IMPRESIÓN</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="columns">
+                                            <div class="column">
+                                                <p *ngFor="let post of PRODUCTO.producto.post" class="post">
+                                                ○    {{post}}
+                                                </p>
+                                                <br>
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <thead>
+                                                        <th>TIPO DE PEGA</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Pega'">
+                                                                <td>{{TintaProducto.producto.nombre}}</td>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="column">
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <thead>
+                                                        <th>CÓDIGO DE CAJA</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
+                                                                <td>{{TintaProducto.producto.nombre}}</td>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <tr>
+                                                        <th>CINTA DE EMBALAJE</th>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
+                                                        <td>
+                                                            <!-- {{PRODUCTO.cantidad}} - {{TintaProducto.cantidad}} * - {{TintaProducto.producto.cinta}} -->
+                                                            {{(Aprox(PRODUCTO.cantidad,TintaProducto.cantidad) * TintaProducto.producto.cinta).toFixed(2)}}m
+                                                        <br>
+                                                        </td>
+                                                             </ng-container>
+                                                        </ng-container>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- FIN HORIZONTAL -->
+
+                        <!-- <div class="columns">
+                            <div class="column">
+                                <table class="table is-fullwidth">
+                                    <thead>
+                                        <th>PRE-IMPRESIÓN</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                CÓDIGO DEL MONTAJE
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                M-{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>
+                                                                CANTIDAD DE EJEMPLARES
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                {{PRODUCTO.producto.ejemplares[PRODUCTO.montaje]}}
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                CÓDIGO DE PELICULA
+                                                            </th>
+                                                        </tr>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Tinta'">
+                                                            <tr>
+                                                                <td>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Negro'"><b>Negro:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-1 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Cyan'"><b>Cyan:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-2 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Magenta'"><b>Magenta:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-3 </p>
+                                                                    <p *ngIf="TintaProducto.producto.color === 'Amarillo'"><b>Amarillo:</b>{{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{NumToLet(PRODUCTO.montaje)}}-4 </p>
+                                                                    <div *ngIf="TintaProducto.producto.color != 'Amarillo' && TintaProducto.producto.color != 'Magenta' && TintaProducto.producto.color != 'Cyan' && TintaProducto.producto.color != 'Negro' ">
+                                                                        <b>{{TintaProducto.producto.color}}:</b>
+                                                                        <ng-container>
+                                                                            {{PRODUCTO.cliente.codigo}}-{{PRODUCTO.producto.codigo}}-{{PRODUCTO.producto.version}}-{{sumaTintas(i)}}
+                                                                        </ng-container>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </thead>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="column">
+                                <table class="table is-fullwidth is-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>IMPRESIÓN</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table class="table is-bordered-is-fullwidth">
+                                                    <tr>
+                                                        <th width="50%">SUSTRATO</th>
+                                                        <th>TAMAÑO ORIGINAL (cm)</th>
+                                                    </tr>
+                                                    <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                        <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                                                    <tr>
+                                                        <td>
+                                                            {{TintaProducto.producto.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            ({{TintaProducto.producto.ancho}} x {{TintaProducto.producto.largo}})
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                            <th>DIRECCIÓN DE FIBRA</th>
+                                                            <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                                <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                                                            <td>{{TintaProducto.producto.largo}}</td>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                    </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </table>
+
+                                                <table class="table is-bordered is-fullwidth">
+                                                    <tr>
+                                                        <th>% DEMASIA</th>
+                                                        <td>{{demasia}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>TOTAL DE HOJAS</th>
+                                                        <td>{{PRODUCTO.demasia}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>TOTAL DE HOJAS POR ASIGNAR</th>
+                                                        <td>{{PRODUCTO.paginas}}</td>
+                                                    </tr>
+                                                </table>
+
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <tr>
+                                                        <th>COLOR</th>
+                                                        <th>TINTA</th>
+                                                    </tr>
+                                                    <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                        <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Tinta'">
+                                                        <tr>
+                                                            <td>{{TintaProducto.producto.color}}</td>
+                                                            <td>{{TintaProducto.producto.nombre}}
+                                                                ({{TintaProducto.producto.marca}})
+                                                            </td>
+                                                        </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </table>
+
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <tr>
+                                                        <th>BARNIZ</th>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Barniz'">
+                                                        <td>{{TintaProducto.producto.nombre}}
+                                                            ({{TintaProducto.producto.marca}})
+                                                        </td>
+                                                             </ng-container>
+                                                        </ng-container>
+                                                    </tr>
+                                                </table>
+
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="column">
+                                <table class="table is-fullwidth is-bordered">
+                                    <thead>
+                                        <th>POST-IMPRESIÓN</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <p *ngFor="let post of PRODUCTO.producto.post">
+                                                    {{post}}
+                                                </p>
+                                                <br>
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <thead>
+                                                        <th>TIPO DE PEGA</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Pega'">
+                                                                <td>{{TintaProducto.producto.nombre}}</td>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <thead>
+                                                        <th>CÓDIGO DE CAJA</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
+                                                                <td>{{TintaProducto.producto.nombre}}</td>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table is-fullwidth is-bordered">
+                                                    <tr>
+                                                        <th>CINTA DE EMBALAJE</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <ng-container tr *ngFor="let TintaProducto of PRODUCTO.producto.materiales[PRODUCTO.montaje];let i = index">
+                                                            <ng-container *ngIf="TintaProducto.producto.grupo.nombre === 'Cinta de embalaje'">
+                                                        <td>{{TintaProducto.producto.nombre}}
+                                                            ({{TintaProducto.producto.marca}})
+                                                        </td>
+                                                             </ng-container>
+                                                        </ng-container>
+                                                    </tr>
+                                                </table>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </td>
+                </tr>
+            </table>
+
+            <table class="table is-fullwidth is-bordered">
+                <tr>
+                    <th>
+                        PROCESOS
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+
+                        <table class="table is-fullwidth is-bordered">
+                            <tr>
+                                <th colspan="2">EQUIPOS</th>
+                            </tr>
+                            <tr *ngFor="let maquina of Maquinas.maquinasDB">
+                                <td>
+                                    {{maquina.maquina.nombre}}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="table is-fullwidth isbordered">
+                            <tr>
+                                <th colspan="6">OBSERVACIONES</th>
+                                <th colspan="2">ELABORADO POR</th>
+                            </tr>
+                            <tr>
+                                <td colspan="6" *ngIf="!edicion">
+                                {{this.PRODUCTO.observacion}}
+                                    <br>
+                                    <br>
+                                    <br>
+                                </td> 
+                                <td colspan="6" *ngIf="edicion">
+                                    <textarea cols="30" rows="3" class="textarea" [(ngModel)]="this.PRODUCTO.observacion"></textarea>
+                                </td>
+                                <td colspan="2">
+                                    Firma:
+                                    <br>
+                                    <br>
+                                    Fecha:
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            <button class="button is-success" (click)='descargarPDF()' *ngIf="old_new(this.PRODUCTO.sort)">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>Descargar</span>
+              </button>
+              <button class="button is-success" (click)='DescargarOrden(this.PRODUCTO)'  *ngIf="!old_new(this.PRODUCTO.sort)">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>Descargar</span>
+              </button>
+            <!-- <button class="button is-primary" (click)='descargarPDF()'>Descargar</button> -->
+        </div>
+    </div>
+</div>
+<!-- <div class="container mt-5">
+    <div class="card">
+        <div class="card-content">
+                <table width='100%'>
+                    <tr>
+                        <td>
+                            <img src="../../assets/Poligrafica_black.png">
+                        </td>
+                        <td class="orden">
+                            ORDEN DE PRODUCCIÓN <br>
+                            <b id='n_orden'>{{PRODUCTO.sort}}</b> <br>
+                            FECHA DE EMISION: {{PRODUCTO.fecha | date:'dd-MM-yyyy'}}
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table border="solid 1px black" width='100%'>
+                    <tr>
+                        <td><b> CLIENTE: </b>{{PRODUCTO.cliente.nombre}}</td>
+                        <td><b> O.C.: </b>{{PRODUCTO.orden}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b> PRODUCTO: </b> {{PRODUCTO.cliente.codigo}} - {{PRODUCTO.producto.codigo}} - {{PRODUCTO.producto.version}} {{PRODUCTO.producto.producto}}
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>ENTREGAS</th>
+                    </tr>
+                </table>
+                <table border="solid 1px black" width='100%'>
+                    <tr>
+                        <th> N° ENTREGA</th>
+                        <th> CANTIDAD</th>
+                        <th> FECHA</th>
+                        <th> OBSERVACIÓN</th>
+                    </tr>
+                    <tr>
+                        <td> 1</td>
+                        <td> {{PRODUCTO.cantidad}}</td>
+                        <td>{{PRODUCTO.fecha_s}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td> TOTAL</td>
+                        <td> {{PRODUCTO.cantidad}}</td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='3'>MONTAJE Y DESARROLLO</th>
+                    </tr>
+                </table>
+                <table border='solid 1px black' width='100%'>
+                    <tr>
+                        <th> ESPECIFICACIÓN</th>
+                        <th> IMPRESIÓN</th>
+                        <th> POST-IMPRESION</th>
+                    </tr>
+                    <tr>
+                        <td>E {{PRODUCTO.cliente.codigo}} - {{PRODUCTO.producto.codigo}} - {{PRODUCTO.producto.version}} - {{PRODUCTO.producto.edicion}}</td>
+                        <td class="has-text-centered">
+                        <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                            <p *ngIf='material.producto.grupo.nombre != "Sustrato"'>
+                                {{material.producto.nombre}} ({{material.producto.marca}})<br>
+                            </p>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor='let post of PRODUCTO.producto.post'>
+                                 {{post}} <br>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='3'>SUSTRATO</th>
+                    </tr>
+                </table>
+                <table border='solid 1px black' width='100%'>
+                    <tr>
+                        <td colspan='2'>
+                             <b> TIPO DE SUSTRATO:
+                                <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                                    <ng-container *ngIf='material.producto.grupo.nombre === "Sustrato"'>
+                                        {{material.producto.nombre}} ({{material.producto.marca}})<br>
+                                    </ng-container>
+                                </ng-container>
+                            </b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b> TAMAÑO ORIGINAL: {{PRODUCTO.producto.dimensiones}}</b></td>
+                        <td> <b>DIRECCIÓN DE FIBRA: </b> {{PRODUCTO.producto.fibra}}</td>
+                    </tr>
+                    <tr>
+                        <td><b> DEMASIA:</b> {{PRODUCTO.demasia}}</td>
+                        <td><b> TAMAÑOS A IMPRIMIR: </b> {{PRODUCTO.paginas}}</td>
+                    </tr>
+                </table>
+                <hr>-->
+        <!--</div>
+        <!-- <div class="card-content">
+
+            <div class="orden">Orden de Producción</div>
+            <div class="op">
+                <b>
+                    {{PRODUCTO.sort}}
+                </b>
+            </div>
+            <table class="table is-fullwidth">
+                <tr>
+                    <td>
+                        <b>CLIENTE:</b> {{PRODUCTO.cliente.nombre}}
+                    </td>
+                    <td>
+                        <b>Orden De Compra:</b> {{PRODUCTO.orden}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b>PRODUCTO:</b> {{PRODUCTO.producto.producto}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>ENTREGAS</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Cantidad:</b> {{PRODUCTO.cantidad}} <br>
+                        </td>
+                        <td>
+                            <b>Fecha de Creacion: </b> {{PRODUCTO.fecha | date:'dd-MM-yyyy'}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>MONTAJE Y DESARROLLO</th>
+                    </tr>
+                    <tr class="has-text-centered">
+                        <th class="has-text-centered is-selected">MATERIALES</th>
+                        <th class="has-text-centered is-selected">HOJAS</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                                {{material.material}} <br>
+                            </ng-container>
+                        </td>
+                        <td>
+                            <b>Ejemplares Montados:</b>
+                            {{PRODUCTO.producto.ejemplares}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Hojas:</b>
+                            {{PRODUCTO.paginas}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered">
+                        <th class="is-selected" colspan='2'>POST - IMPRESION</th>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b>Corte:</b>
+                            {{PRODUCTO.producto.post}}
+                        </td>
+                    </tr>
+                </table>
+                <div class="column">
+                </div>
+            <hr>
+        </div>
+    </div>
+</div> -->

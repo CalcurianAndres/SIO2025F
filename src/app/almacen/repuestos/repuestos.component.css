@@ -1,0 +1,170 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+@keyframes spin {
+    from{
+        transform:rotate(0deg)
+    }
+    to{
+        transform:rotate(360deg)
+    }
+}
+
+.contador{
+    font-size: large;
+}
+
+.button{
+    margin-right: 5px;
+}
+
+.mensaje{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:5px;
+    color: rgb(240, 132, 132);
+    text-align: center;
+    font-size: large;
+    background-color: rgb(248, 220, 220);
+}
+
+.loading{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:30px;
+    background-color: rgb(169, 238, 186);
+    text-align: center;
+    font-size: large;
+    color: white;
+}
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.mt-5{
+    margin-top: 5px;
+}
+
+.separador{
+    display: block;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.down{
+    display: block;
+    margin-top: -7px;
+}
+.edited{
+    text-align: left;
+}
+
+.categoria_style{
+    display: block;
+    background-color: rgb(211, 211, 211);
+    border: solid 1px white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.toggle{
+    color: green;
+    font-size: xx-large;
+    cursor: pointer;
+}
+
+.categoria{
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 20px;
+
+}
+
+.categoria:hover{
+    background-color: rgb(189, 189, 189);
+
+}
+
+.modal .modal-card .modal-card-body .note {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .blink {
+    animation: blink 1s;
+    animation-iteration-count: 5;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+      background-color: #9affdd;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+      background-color: #ffffff;
+    }
+  }
+
+  .imagenBusqueda{
+    width: 128px;
+    height: 128px;
+    cursor:zoom-in
+  }
+
+  .parte{
+    font-weight: bolder;
+    font-size: 35px;
+  }
+
+  .image-zoom {
+    /* the coordinate of the zoom */
+    --x: 30%;
+    --y: 30%;
+    /**/
+    transform: scale(var(--zoom));
+    transform-origin: var(--x) var(--y);
+    clip-path: inset(
+      calc((1 - 1/var(--zoom)) * (var(--y)))
+      calc((1 - 1/var(--zoom)) * (100% - var(--x)))
+      calc((1 - 1/var(--zoom)) * (100% - var(--y)))
+      calc((1 - 1/var(--zoom)) * (var(--x)))
+    );
+    width: 200px;
+    cursor: crosshair;
+  }
+  
+  .image-zoom:hover {
+    --zoom:2; /* control the zoom level */
+  }
+
+  .modal .modal-content .gridd{
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap:20px;
+    place-content: center;
+    overflow: hidden;
+  }
+
+  .zIndex{
+    z-index: 10;
+  }

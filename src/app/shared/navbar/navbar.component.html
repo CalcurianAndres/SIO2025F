@@ -1,0 +1,50 @@
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" routerLink="">
+            <img src="../../../assets/logo_nav.png" width="112" height="28">
+        </a>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <i class="fas fa-user"></i>  {{usuario.Nombre}} {{usuario.Apellido}}
+            </a>
+    
+            <div class="navbar-dropdown">
+              <a class="navbar-item" (click)="cambiar()">
+                <i class="fas fa-key"></i> Cambiar Contraseña
+              </a>
+              <a class="navbar-item" (click)='logout()'>
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesion
+              </a>
+            </div>
+          </div>
+        </div>
+  </nav>
+
+<div class="modal" [ngClass]="{'is-active':cambio_cont}">
+  <div class="modal-background" (click)="cambiar()"></div>
+  <div class="modal-card">
+    <div class="modal-card-head">
+      <div class="modal-card-title">Cambio de Contraseña</div>
+    </div>
+      <div class="modal-card-body">
+          <div class="field">
+            <label class="label">Nueva Contraseña</label>
+            <div class="control">
+              <input type="password" class="input" [(ngModel)]="pass1">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Repetir Contraseña</label>
+            <div class="control">
+              <input type="password" class="input" [(ngModel)]="pass2">
+            </div>
+            <p class="alerta" *ngIf="pass2 != '' && pass2 != pass1">Contraseñas no coinciden</p>
+          </div>
+
+          <div class="button is-primary" *ngIf="pass2 != '' && pass2 == pass1" (click)="cambiarPass()">Cambiar Contraseña</div>
+      </div>
+  </div>
+</div>

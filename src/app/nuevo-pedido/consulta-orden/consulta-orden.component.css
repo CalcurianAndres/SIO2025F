@@ -1,0 +1,71 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+.mt-5{
+    margin-top: 15px;
+}
+.mt-3{
+    margin-top: 3px;
+}
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.cargando{
+    display: block;
+    padding: 5px;
+    background-color: rgb(78, 243, 78);
+    color: white;
+}
+.modal-card{
+    width: 70%;
+}
+
+.nueva_escala{
+    display: none;
+}
+
+.close{
+    color: red;
+    cursor: pointer;
+}
+.subtitulos{
+    font-size: 40px;
+    font-family: Roboto;
+}
+.subtitulos-p{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.ml-5{
+    margin-left: 30px;
+}
+
+.cantidad{
+    width: 200px;
+}
+.producto____{
+    width: 150px;
+}
+.edicion_{
+    width: 150px;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .loader i {
+    font-size: 50px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

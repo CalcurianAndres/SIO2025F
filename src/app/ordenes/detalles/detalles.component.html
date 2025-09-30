@@ -1,0 +1,153 @@
+<div class="modal" [ngClass]="{'is-active':detalle}">
+    <div class="modal-background" (click)='onClose()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <p class="subtitulo">
+                Orden: {{orden_detalle}}
+            </p>
+            <hr>
+            <div class="columns cintillo">
+                <div class="column">
+                    Cantidad solicitada: <b>{{cantidad_d}}</b>
+                </div>
+                <div class="column">
+                    Cantidad a entregar: <b>{{cantidad_do}} ({{((cantidad_do * 100) /cantidad_d).toFixed(2)}}%)</b>
+                </div>
+                <!-- <div class="column is-2">
+                    <button class="button is-primary" (click)="gestiones()" >
+                        <span class="icon">
+                            <i class="fas fa-wrench"></i>
+                        </span>
+                        <span>
+                            Gestiones
+                        </span>
+                    </button>
+                </div> -->
+            </div>
+
+            <div *ngIf="detallado">
+                <hr>
+                <div class="cintillo_" *ngFor="let trabajo of trabajos">
+                    {{trabajo.maquina.tipo}} ( <ng-container *ngIf="usuario.Role === 'ADMIN' && trabajo.status">
+                        <!-- <div class="select"> -->
+                            <select name="maquina" id="maquina" (change)="cambiarFecha($event.target.value, trabajo._id, 'maquina')">
+                                <ng-container *ngFor="let maquina of Maquinas">
+                                    <ng-container *ngIf="maquina.tipo == trabajo.maquina.tipo">
+                                        <ng-container *ngIf="maquina._id === trabajo.maquina._id">
+                                            <option value="{{maquina._id}}" selected *ngIf="maquina.tipo == trabajo.maquina.tipo">{{maquina.nombre}}</option>
+                                        </ng-container>
+                                        <ng-container *ngIf="maquina._id != trabajo.maquina._id">
+                                            <option value="{{maquina._id}}" *ngIf="maquina.tipo == trabajo.maquina.tipo">{{maquina.nombre}}</option>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </select>
+                        <!-- </div> -->
+                    </ng-container>
+                    <ng-container *ngIf="usuario.Role != 'ADMIN' || !trabajo.status">{{trabajo.maquina.nombre}}</ng-container>) <ng-container *ngIf="usuario.Role === 'ADMIN' && trabajo.status">   <input type="date" class="fechas" value="{{trabajo.fechaI}}" (change)="cambiarFecha($event.target.value, trabajo._id, 'fechaI')">   <input type="date" class="fechas" value="{{trabajo.fecha}}" (change)="cambiarFecha($event.target.value, trabajo._id, 'fecha')"></ng-container>  <br>
+                        <div class="white">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th *ngIf="usuario.Role === 'ADMIN'">Edición</th>
+                                        <th>Fecha</th>
+                                        <th>Hojas gestionadas</th>
+                                        <th>Productos gestionados</th>
+                                        <th>Restante</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let gestion of gestiones_;index as i">
+                                    <tr *ngIf="gestion.maquina.tipo === trabajo.maquina.tipo && gestion.op === orden_id">
+                                        <td *ngIf="usuario.Role === 'ADMIN'">
+                                            <span class="icono" id="edicion_{{i}}" (click)="editar_gestion(i)">
+                                                <i class="fas fa-edit"></i>
+                                            </span>
+                                            <span class="icono" id="finalizar_{{i}}" (click)="Finalizar(i)" style="display: none;">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span id="dato_fecha_{{i}}">
+                                                {{gestion.fecha | date:'dd/MM/yyyy':'UTC'}}
+                                            </span>
+                                            <input type="date" name="" id="fecha_{{i}}" class="input is-small" [value]="gestiones_[i].fecha"  style="display: none;" (change)="chage_date($event.target.value, i)">
+                                        </td>
+                                        <td>
+                                            <span id="dato_hoja_{{i}}">
+                                                {{format(gestion.hojas)}} <br>
+                                            </span>
+                                            <input type="number" class="input is-small" id="hojas_{{i}}" [value]="gestiones_[i].hojas" (change)="change_hojas($event.target.value, i)" style="display: none;">
+                                        </td>
+                                        <td>
+                                            <span id="dato_producto_{{i}}">
+                                                {{format(gestion.productos)}}
+                                            </span>
+                                            <input type="number" class="input is-small" id="productos_{{i}}" [value]="gestiones_[i].productos" (change)="change_productos($event.target.value,i)" style="display: none;">
+                                        </td>
+                                        <td>{{gestion.Rhojas}}(Hojas) /
+                                            <ng-container *ngIf="gestion.Rproductos > 0">
+                                                {{gestion.Rproductos}}(Productos)
+                                            </ng-container>
+                                            <ng-container *ngIf="gestion.Rproductos < 1">
+                                                0(Productos)
+                                            </ng-container>
+                                        </td>
+                                    </tr>
+                                    </ng-container>
+                                    <tr class="has-background-light">
+                                        <td *ngIf="usuario.Role === 'ADMIN'"><strong>Total</strong></td>
+                                        <td></td>
+                                        <td><strong>{{ format(getTotalesPorTipo(trabajo.maquina.tipo).hojas) }}</strong></td>
+                                        <td><strong>{{ format(getTotalesPorTipo(trabajo.maquina.tipo).productos) }}</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+                <div class="cintillo_">
+                    Despachos: {{despacho}} - Restan: {{restan(cantidad_do,despacho)}}
+                    <div class="white">
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Cantidad</th>
+                                    <th>OC</th>
+                                    <th>Nº Documento</th>
+                                    <th>Nº Certificado</th>
+                                    <th>Destino</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let despacho of despachos; let even = even;">
+                                    <ng-container *ngIf="even">
+                                        <tr>
+                                            <td>{{despacho.cantidad}}</td>
+                                            <td>{{despacho.oc}}</td>
+                                            <td>{{despacho.documento}}</td>
+                                            <td>{{despacho.certificado}}</td>
+                                            <td>{{despacho.destino}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">{{despacho.producto}}</td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-container  *ngIf="!even">
+                                            <td colspan="2">
+                                                <ng-container>
+                                                    Fecha: <b>{{despacho.fecha}}</b>
+                                                </ng-container>
+                                            </td>
+                                    </ng-container>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+                <button class="button is-success" *ngIf="despacho > 0 && usuario.Role === 'ADMIN'" (click)="cerrarOrden()">Cerrar Orden </button>
+            </div>
+        </div>
+    </div>
+</div>

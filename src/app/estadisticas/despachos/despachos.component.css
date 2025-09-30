@@ -1,0 +1,20 @@
+.modal-card{
+    width: 70%;
+}
+
+.xlarge{
+    font-size: x-large;
+}
+
+.espacio{
+    display: block;
+    width: 100%;
+    height: 15%;
+}
+.titulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.bold{
+    font-weight: bold;
+}

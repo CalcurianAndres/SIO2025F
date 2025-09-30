@@ -1,0 +1,108 @@
+<div class="modal" [ngClass]="{'is-active':Piezas}">
+    <div class="modal-background" (click)="cerrar()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">Ingresar al almacén</div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Maquina:</label>
+                        <div class="control">
+                            <div class="select">
+                                <select [(ngModel)]="Almacen.maquina">
+                                    <ng-container *ngFor="let maquina of Maquinas">
+                                        <option value="{{maquina._id}}" *ngIf="maquina.nombre != 'Proceso de Revisión'">{{maquina.nombre}}</option>
+                                        <option value="{{maquina._id}}" *ngIf="maquina.nombre == 'Proceso de Revisión'">Genericos</option>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Categoria:</label>
+                        <div class="control">
+                            <div class="select">
+                                <select [(ngModel)]="Almacen.categoria">
+                                    <option value="{{categoria._id}}" *ngFor="let categoria of Categorias">{{categoria.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Repuesto:</label>
+                        <div class="select">
+                            <select [(ngModel)]="Almacen.repuesto">
+                               <option value="{{repuesto._id}}" *ngFor="let repuesto of cargarRepuestos()">{{repuesto.parte}} - {{repuesto.nombre}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Fecha Compra:</label>
+                        <div class="control">
+                            <input type="date" class="input" [(ngModel)]="Almacen.fecha">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Proveedor</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="Almacen.proveedor">
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="columns">
+                <!-- <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Nº Factura</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="Almacen.factura">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Precio</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="Almacen.precio">
+                        </div>
+                    </div>
+                </div> -->
+                <div class="column is-3">
+                    <div class="field">
+                        <label for="" class="label">Ubicación</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="Almacen.ubicacion">
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Cantidad</label>
+                        <div class="control">
+                            <input type="number" name="" id="" class="input" [(ngModel)]="Almacen.cantidad">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <button class="button is-success" (click)="guardar()" *ngIf="!Edicion">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Nuevo</span>
+            </button>
+            <button class="button is-success" (click)="editarPieza()" *ngIf="Edicion">
+                <span class="icon"><i class="fas fa-edit"></i></span>
+                <span>Editar</span>
+            </button>
+        </div>
+    </div>
+</div>

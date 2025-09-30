@@ -1,0 +1,98 @@
+<div class="modal" [ngClass]="{'is-active':Repuesto}">
+    <div class="modal-background" (click)="cerrar()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">Nuevo Repuesto</span>
+            <hr>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Maquina:</label>
+                        <div class="control">
+                            <div class="select">
+                                <select [(ngModel)]="nuevoMaterial.maquina">
+                                    <ng-container *ngFor="let maquina of Maquinas">
+                                        <option value="{{maquina._id}}" *ngIf="maquina.nombre != 'Proceso de Revisión'">{{maquina.nombre}}</option>
+                                        <option value="{{maquina._id}}" *ngIf="maquina.nombre == 'Proceso de Revisión'">Genericos</option>
+                                    </ng-container>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Categoria:</label>
+                        <div class="control">
+                            <div class="select">
+                                <select [(ngModel)]="nuevoMaterial.categoria">
+                                    <option value="{{categoria._id}}" *ngFor="let categoria of Categorias">{{categoria.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column"></div>
+                <div class="column"></div>
+            </div>
+            <div class="columns">
+                <div class="column is-5">
+                    <div class="field">
+                        <label for="" class="label">Nombre:</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="nuevoMaterial.nombre">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Nº parte:</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="nuevoMaterial.parte" id="n_parte">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">S/N de parte</label>
+                        <div class="control">
+                            <input type="checkbox" name="" id="" (change)="SNParte($event)">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label"> </label>
+                        <div class="control">
+                            <div class="file is-success">
+                                <label class="file-label">
+                                  <input class="file-input" type="file" name="resume" (change)="SubirFoto($event)">
+                                  <span class="file-cta">
+                                    <span class="file-icon">
+                                      <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                      Foto
+                                    </span>
+                                  </span>
+                                </label>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
+            <hr>
+            <button class="button is-success" (click)="guardar()" *ngIf="!Edicion">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Agregar</span>
+            </button>
+            <button class="button is-success" (click)="editar()" *ngIf="Edicion">
+                <span class="icon"><i class="fas fa-edit"></i></span>
+                <span>Editar</span>
+            </button>
+        </div>
+    </div>
+</div>

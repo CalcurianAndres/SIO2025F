@@ -1,0 +1,59 @@
+<div class="modal is-active" *ngIf="!nuevo_pin">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="volver">
+                <a href="/"><i class="fas fa-angle-double-left"></i></a>
+            </span>
+            <!-- <span class="logo">
+                <i class="fas fa-user-secret"></i>
+            </span>  -->
+            <span class="logo">
+                <img src="../../assets/blindaje.png" width="150">
+            </span>
+            <span class="subtitulo">
+               Ingrese su PIN
+            </span>
+            <br>
+            <!-- <hr> -->
+            <input type="password" class="input" #pin (change)="Verificar(pin.value)"><br><br>
+            <span class="confirmacion">
+                <button class="button is-success" (click)="Verificar(pin.value)">
+                    Continuar
+                </button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div>
+
+</div>
+
+<div class="modal is-active" *ngIf="nuevo_pin">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Crear PIN de seguridad
+            </span><br>
+            Crear nuevo PIN de seguridad para acceder al módulo.
+            <hr>
+            <div class="field">
+                <label for="" class="label">Ingrese PIN</label>
+                <input type="text" class="input" [(ngModel)]="pin1">
+            </div>
+            <div class="field">
+                <label for="" class="label">Repetir PIN</label>
+                <input type="text" class="input" [(ngModel)]="pin2">
+            </div>
+            <br>
+            <button class="button is-success" *ngIf="pin1 != '' && pin1 === pin2" (click)="Crear_pin()">
+                <span class="icon">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <span>Crear PIN</span>
+            </button>
+        </div>
+    </div>
+</div>

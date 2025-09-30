@@ -1,0 +1,128 @@
+<div class="card mt-5">
+    <div class="card-content">
+
+        <div class="select">
+            <select>
+                <option value="">Materiales Registrados</option>
+                <option value="">Almacén</option>
+            </select>
+        </div>
+
+        <hr>
+        <span *ngFor="let grupo of SECCIONES">
+            <span class="grupos" (click)="MostrarInfo(grupo.nombre)">
+                <div class="columns"></div>
+                <ng-container *ngIf="grupo.nombre === 'Tinta'">
+                    <i class="fas fa-palette"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Sustrato'">
+                    <i class="fas fa-sticky-note"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Barniz' || grupo.nombre === 'Barniz Acuoso'">
+                    <i class="fas fa-air-freshener"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Cinta de Embalaje'">
+                    <i class="fas fa-tape"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Pega'">
+                    <i class="fas fa-tint"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Cajas Corrugadas'">
+                    <i class="fas fa-box-open"></i> 
+                </ng-container>
+                <ng-container *ngIf="grupo.nombre === 'Quimicos'">
+                    <i class="fas fa-flask"></i> 
+                </ng-container>
+                {{grupo.nombre}} 
+                     <i class="fas fa-chevron-circle-down flechas" id="{{grupo.nombre}}_down"></i>
+                     <i class="fas fa-chevron-circle-up flechas" id="{{grupo.nombre}}_up" style="display: none;"></i>
+            </span>
+            <span style="display: none;" id="{{grupo.nombre}}">
+                <table class="table is-fullwidth">
+                    <tr>
+                        <th>Material</th>
+                        <ng-container *ngIf="grupo.nombre === 'Sustrato'">
+                            <th>Medidas</th>
+                        </ng-container>
+                        <th>Marca</th>
+                        <ng-container *ngIf="grupo.nombre === 'Sustrato'">
+                            <th>Gramaje</th>
+                            <th>Calibre</th>
+                        </ng-container>
+                        <th>Presentación</th>
+                        <th>Editar</th>
+                    </tr>
+                    <ng-container *ngFor="let materia of Materia_Prima;index as i">
+                        <tr *ngIf="materia.grupo.nombre === grupo.nombre">
+                            <td>
+                                        <span id="1_{{i}}">
+                                            {{materia.nombre}}
+                                        </span>
+                                <div class="columns">
+                                    <div class="column">
+                                        <input type="text" class="input is-small small {{i}}" id="{{i}}_1" style="display: none;" [(ngModel)]="Materia_Prima[i].nombre">
+                                    </div>
+                                    <ng-container *ngIf="materia.grupo.nombre === 'Sustrato'">
+
+                                    </ng-container>
+                                </div>
+                            </td>
+                            <td *ngIf="materia.grupo.nombre === 'Sustrato'">
+                                <ng-container>
+                                    <span id="2_{{i}}">
+                                        ({{materia.ancho}}x{{materia.largo}})
+                                    </span>
+                                    <div class="columns">
+                                        <div class="column">
+                                            <input type="text" class="input is-small xsmall {{i}}" id="{{i}}_2" style="display: none;" [(ngModel)]="Materia_Prima[i].ancho">
+                                        </div>
+                                        <div class="column">
+                                            <input type="text" class="input is-small xsmall {{i}}" id="{{i}}_3" style="display: none;" [(ngModel)]="Materia_Prima[i].largo">
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </td>
+                            <td>
+                                {{materia.marca}}
+                            </td>
+                            <ng-container *ngIf="materia.grupo.nombre === 'Sustrato'">
+                                <td>
+                                    <span id="3_{{i}}">
+                                        {{materia.gramaje}}
+                                    </span>
+                                    <input type="text" class="input is-small xsmall {{i}}" id="{{i}}_4" style="display: none;" [(ngModel)]="Materia_Prima[i].gramaje">
+                                </td>
+                                <td>
+                                    <span id="4_{{i}}">
+                                        {{materia.calibre}}
+                                    </span>
+                                    <input type="text" class="input is-small xsmall {{i}}" id="{{i}}_5" style="display: none;" [(ngModel)]="Materia_Prima[i].calibre">
+                                </td>
+                            </ng-container>
+                            <td>
+                                <span id="5_{{i}}">
+                                    {{materia.presentacion}} {{materia.neto}}{{materia.unidad}}
+                                </span>
+                                <div class="columns">
+                                    <div class="column">
+                                        <input type="text" class="input is-small ssmall {{i}}" id="{{i}}_6" style="display: none;" [(ngModel)]="Materia_Prima[i].presentacion"> 
+                                    </div>
+                                    <div class="column">
+                                        <input type="text" class="input is-small ssmall {{i}}" id="{{i}}_7" style="display: none;" [(ngModel)]="Materia_Prima[i].neto">
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <i class="fas fa-edit edicion" (click)="editar(i)" id="6_{{i}}" ></i>
+
+                                <i class="fas fa-check edicion" (click)="Finalizar(materia._id,i)" id="{{i}}_8" style="display: none;"></i>
+
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </span>
+            <hr>
+        </span>
+    </div>
+</div>

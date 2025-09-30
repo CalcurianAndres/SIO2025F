@@ -1,0 +1,11 @@
+.trabajo{
+    display: block;
+    padding: 4px;
+    background-color: #1c2831;
+    color: white;
+}
+
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}

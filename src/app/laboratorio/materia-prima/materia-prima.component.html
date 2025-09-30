@@ -1,0 +1,1096 @@
+<div class="container">
+    <span class="subtitulo">
+        <i class="fas fa-swatchbook"></i> Materia Prima
+    </span>
+<br>
+<br>
+    <div class="columns">
+        <div class="column is-7">
+            <nav class="breadcrumb" aria-label="breadcrumbs">
+                <ul>
+                  <li><a href="#">Inicio</a></li>
+                  <li><a href="/laboratorio">Laboratorio</a></li>
+                  <li><a href="/laboratorio/especificaciones">Especificaciones</a></li>
+                  <li class="is-active"><a href="#" aria-current="page">Materia Prima</a></li>
+                </ul>
+              </nav>
+        </div>
+    </div>
+
+<br>
+<button class="button is-primary edited" (click)='Modal_Almacen()'>
+    <span class="icon">
+        <i class="fas fa-swatchbook"></i>
+    </span>
+    <span>
+        Nuevo <br>
+        <span class="down">
+        material
+        </span>
+    </span>
+</button>
+<br>
+<br>
+</div>
+<div class="tabs">
+    <ul>
+      <li [ngClass]="{'is-active':_Sustrato}"><a (click)="Sustrato__()">Sustrato</a></li>
+      <li [ngClass]="{'is-active':_Tintas}"><a (click)="Tintas__()">Tintas</a></li>
+      <li [ngClass]="{'is-active':_Cajas}"><a (click)="Cajas__()">Cajas corrugadas</a></li>
+      <li [ngClass]="{'is-active':_Solucion}"><a (click)="Solucion__()">Solución de fuentes</a></li>
+      <li [ngClass]="{'is-active':_Plancha}"><a (click)="Plancha__()">Planchas Litográficas</a></li>
+    </ul>
+</div>
+
+
+<div class="modal" [ngClass]="{'is-active':NUEVO_PRODUCTO}">
+    <div class="modal-background" (click)='Modal_Almacen()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">Nuevo Material</div>
+            <form
+            autocomplete="on"
+            [formGroup]="InventarioForm"
+            (ngSubmit)="Almacenar()"
+            >
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">
+                            Grupo de Material
+                        </label>
+                        <div class="select">
+                            <select (change)='Cambio_opciones($event.target.value)' id='selected' value='otros'>
+                                <option value="{{seccion._id}}" *ngFor='let seccion of SECCIONES'>{{seccion.nombre}}</option>
+                                <option value="otros">Nuevo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" *ngIf='OTRO'>
+                    <div class="field">
+                        <label class="label">Nombre del Nuevo Grupo</label>
+                        <div class="control">
+                            <input type="text" class="input" formControlName="NewControl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns" *ngIf="caja_">
+                <div class="column">
+                    <div class="control">
+                        <label class="label">Metros de cinta por caja</label>
+                        <div class="control">
+                            <input type="number" class="input" placeholder="Metros de cinta por caja" formControlName='cinta'>
+                        </div>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
+            <div class="Tinta" *ngIf="New_color">
+                <div class="columns">
+                    <div class="column is-4">
+                        <div class="columns">
+                            <div class="column">
+                                <input type="radio" name="color" id="Negro" value="Negro" (click)="define_color($event.target.value)" checked>
+                                <label> Negro</label> <br>
+                                <input type="radio" name="color" id="Cyan" value="Cyan" (click)="define_color($event.target.value)">
+                                <label> Cyan</label> <br>
+                                <input type="radio" name="color" id="Magenta" value="Magenta" (click)="define_color($event.target.value)">
+                                <label> Magenta</label> <br>
+                            </div>
+                            <div class="column">
+                                <input type="radio" name="color" id="Amarillo" value="Amarillo" (click)="define_color($event.target.value)">
+                                <label> Amarillo</label> <br>
+                                <input type="radio" name="color" id="Pantone" value="Pantone" (click)="define_color($event.target.value)">
+                                <label> Pantone</label> <br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-5">
+                        <div class="columns">
+                            <div class="column is-3">
+                                <label class="label">Color:</label>
+                            </div>
+                            <div class="column">
+                                <input type="text" class="input" value="Negro" id="color" formControlName="color" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sustrato" *ngIf='New_Sustrato'>
+                <hr>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Ancho</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName='ancho'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Largo</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName='largo'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Gramaje</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName='gramaje'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Calibre</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName='calibre'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Material</label>
+                            <div class="control">
+                                <input type="text" class="input" formControlName="producto">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="column">
+                        <div class="field">
+                            <label class="label">Marca</label>
+                            <div class="control">
+                                <input type="text" class="input" formControlName="marca">
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="column is-3">
+                        <div class="field">
+                            <label class="label">Presentación</label>
+                            <div class="control">
+                                <input type="text" class="input" formControlName="presentacion">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column ">
+                        <div class="field has-addons">
+                            <p class="control">
+                              <span class="select">
+                                <select formControlName="unidad">
+                                    <option value="Kg">Kg.</option>
+                                    <option value="Und">Und.</option>
+                                    <option value="L">L.</option>
+                                </select>
+                              </span>
+                            </p>
+                            <p class="control">
+                              <input class="input" type="text" placeholder="Neto por unidad" formControlName="neto">
+                            </p>
+                        </div>
+                        <!-- <div class="field">
+                            <label class="label">Neto por Unidad</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName="neto">
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <div class="column is-3">
+                        <div class="field">
+                            <label class="label">Código</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName="codigo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <div class="field">
+                            <label class="label">Lote</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName="lote">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <div class="field">
+                            <label class="label">Cantidad</label>
+                            <div class="control">
+                                <input type="number" class="input" formControlName="cantidad">
+                            </div>
+                        </div>
+                    </div> -->
+
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Fabricante</label>
+                            <p class="control">
+                              <span class="select">
+                                <select formControlName="proveedor" (change)="addProveedor($event.target.value)">
+                                    <option value="{{proveedor._id}}" *ngFor="let proveedor of proveedores">{{proveedor.nombre}}</option>
+                                </select>
+                              </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field" *ngIf="exist_origenes">
+                            <label class="label">Origen</label>
+                            <p class="control">
+                              <span class="select">
+                                <select formControlName="proveedor" (change)="origenes__($event.target.value)">
+                                    <option value="{{origenes}}" *ngFor="let origenes of origenes">{{origenes}}</option>
+                                </select>
+                              </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <button class="button is-primary">Finalizar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- SUSTRATO -->
+
+<div class="card" *ngIf="_Sustrato">
+    <div class="card-content">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Sustrato</th>
+                    <th>Marca</th>
+                    <th>Gramaje</th>
+                    <th>Calibre</th>
+                    <th>
+                        Especificación
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let sustrato of Sustrato;index as i">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{sustrato.nombre}}</td>
+                        <td>{{sustrato.marca}}</td>
+                        <td>{{sustrato.gramaje}}</td>
+                        <td>{{sustrato.calibre}}</td>
+                        <td>
+                            <i class="fas fa-eye" (click)="modal_sustrato(sustrato._id)"></i>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- modal especificacion sustrato -->
+
+<div class="modal" [ngClass]="{'is-active':sustrato_modal}" *ngIf="sustrato_selected">
+    <div class="modal-background" (click)="modal_sustrato('x')"></div>
+    <div class="modal-card">
+      <section class="modal-card-body">
+        <span class="subtitulo__">
+            {{sustrato_selected.nombre}}, Marca: {{sustrato_selected.marca}}
+            <br>
+            Calibre: {{sustrato_selected.calibre}}, gramaje:{{sustrato_selected.gramaje}}
+        </span>
+        <hr>
+        <table class="table is-fullwidth">
+            <tr>
+                <th class="is-selected sized">Gramaje (g/m²)</th>
+                <td>
+                    <table class="table is-fullwidth is-bordered">
+                        <thead>
+                            <tr>
+                                <th>Mínimo</th>
+                                <th>Nominal</th>
+                                <th>Máximo</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.gramaje_e[0]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.gramaje_e[0]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.gramaje_e[1]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.gramaje_e[1]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.gramaje_e[2]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.gramaje_e[2]">
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th class="is-selected sized">Calibre</th>
+                <td>
+                    <table class="table is-fullwidth is-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Mínimo</th>
+                                <th>Nominal</th>
+                                <th>Máximo</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    (mm)
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[0]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[0]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[1]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[1]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[2]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[2]">
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    (pt)
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[3]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[3]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[4]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[4]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[5]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[5]">
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    (μm)
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[6]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[6]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[7]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[7]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.calibre_e[8]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.calibre_e[8]">
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th class="is-selected sized">Cobb 60" (g/m²)</th>
+                <td>
+                    <table class="table is-fullwidth is-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Mínimo</th>
+                                <th>Nominal</th>
+                                <th>Máximo</th>
+                            </tr>
+                            <tr>
+                                <td>TOP</td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[0]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[0]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[1]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[1]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[2]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[2]">
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>BACK</td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[3]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[3]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[4]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[4]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.cobb[5]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.cobb[5]">
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th class="is-selected sized">Curling (s)</th>
+                <td>
+                    <table class="table is-fullwidth is-bordered">
+                        <thead>
+                            <tr>
+                                <th>Mínimo</th>
+                                <th>Nominal</th>
+                                <th>Máximo</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.curling[0]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.curling[0]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.curling[1]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.curling[1]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.curling[2]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.curling[2]">
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th class="is-selected sized">Grado de blancura (%)</th>
+                <td>
+                    <table class="table is-fullwidth is-bordered">
+                        <thead>
+                            <tr>
+                                <th>Mínimo</th>
+                                <th>Nominal</th>
+                                <th>Máximo</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.blancura[0]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.blancura[0]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.blancura[1]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.blancura[1]">
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="!Edited_sustrato">
+                                        {{sustrato_selected.blancura[2]}}
+                                    </span>
+                                    <span *ngIf="Edited_sustrato">
+                                        <input type="number" class="input" [(ngModel)]="sustrato_selected.blancura[2]">
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <button class="button is-success" (click)="editar_sustrato()" *ngIf="!Edited_sustrato">
+            <span class="icon">
+                <i class="fas fa-edit"></i>
+            </span>
+            <span>
+                Editar
+            </span>
+        </button>
+        <button class="button is-success" *ngIf="Edited_sustrato" (click)="finalizar_sustrato()">
+            <span class="icon">
+                <i class="fas fa-check"></i>
+            </span>
+            <span>
+                Listo
+            </span>
+        </button>
+      </section>
+    </div>
+  </div>
+
+<!-- final modal especificacion sustrato -->
+
+<!-- FIN SUSTRATO -->
+
+<!-- TINTAS -->
+<div class="card" *ngIf="_Tintas">
+    <div class="card-content">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tinta</th>
+                    <th>Marca</th>
+                    <th>Color</th>
+                    <th>
+                        Especificación
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let tinta of Tintas;index as i">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{tinta.nombre}}</td>
+                        <td>{{tinta.marca}}</td>
+                        <td>{{tinta.color}}</td>
+                        <td>
+                            <ng-container *ngIf="tinta.color == 'Negro' || tinta.color == 'Amarillo'">
+                                <i class="fas fa-eye" (click)="modal_tintas(tinta._id)"></i>
+                                <!-- <ng-container *ngIf="tinta.color == 'Cyan' || tinta.color == 'Magenta' "> -->
+                                <!-- </ng-container> -->
+                            </ng-container>
+                            <ng-container *ngIf="tinta.color == 'Cyan' || tinta.color == 'Magenta' ">
+                                <i class="fas fa-eye" (click)="modal_tintas(tinta._id)"></i>
+                                <!-- </ng-container> -->
+                            </ng-container>
+                            <i class="fas fa-eye" (click)="modal_tintas(tinta._id)"></i>
+                            <!--  <button class="button is-small is-info" *ngIf="tinta.color != 'Negro' && tinta.color != 'Amarillo' && tinta.color != 'Cyan' && tinta.color != 'Magenta' " (click)="modal_tintas_(tinta._id)">
+                                <span class="icon">
+                                    <i class="fas fa-eye-dropper"></i>
+                                </span>
+                                <span>
+                                    Preparación
+                                </span>
+                            </button> -->
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':tinta_modal}" *ngIf="tinta_selected">
+    <div class="modal-background" (click)="modal_tintas('x')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo__">
+                {{tinta_selected.nombre}}, Marca:{{tinta_selected.marca}}
+            </div>
+            <hr>
+            <table class="table is-fullwidth" *ngIf="tinta_selected.marca == 'Huber'">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized_">Inko</th>
+                        <td>10 - 12</td>
+                    </tr>
+                </thead>
+            </table>
+            <table class="table is-fullwidth" *ngIf="tinta_selected.marca == 'Martínez Ayala (M.A.)' || tinta_selected.marca ==  'M.A.'">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized_">TACK (100m)@30°C</th>
+                        <td>115 - 135</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">FUERZA COLORANTE (%)</th>
+                        <td>95 - 105</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">VISCOSIDAD (POISES)@20°C</th>
+                        <td>400 - 450</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">RIGIDEZ nas/cm2, 20</th>
+                        <td>6.000 - 14.000</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">FLUIDEZ (CM)@20°C</th>
+                        <td>5 - 9</td>
+                    </tr>
+                </thead>
+            </table>
+
+            <table class="table is-fullwidth" *ngIf="tinta_selected.marca == 'Olin' || tinta_selected.marca == 'OLIN'">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized_">TONO, TRANSPARENCIA, OPACIDAD Y FUERZA DE COLOR</th>
+                        <td>Buena</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">VISCOSIDAD LARAY (POISES)@25°C</th>
+                        <td>200-450</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">RIGIDEZ (DINAS/CM2)@25°C</th>
+                        <td>10000 - 15000</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">INKO O TACK @400 RPM @32°C</th>
+                        <td>10 - 12</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">DISPERSION O FINURA (NPIRI)</th>
+                        <td>0 - 3</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">ADHERENCIA</th>
+                        <td>Buena</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">SECADO EN CAPA FINA (HORAS)</th>
+                        <td>2 - 3</td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized_">RESISTENCIA AL FROTE EN SECO</th>
+                        <td>Buena</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':preparacion_tinta}" *ngIf="tinta_selected">
+    <div class="modal-background" (click)="modal_tintas_('x')"></div>
+    <div class="modal-card">
+    <div class="modal-card-body">
+        <div class="subtitulo__">
+            {{tinta_selected.nombre}} ({{tinta_selected.color}})
+        </div>
+        Preparación: <br>
+        Cantidad para 1kg
+        <hr>
+        <div class="select is-small">
+            <select id="" #tinta_seleccionada>
+                <ng-container *ngFor="let tinta of Tintas;index as i">
+                    <option value="{{tinta._id}}" *ngIf="tinta.color == 'Negro' || tinta.color == 'Amarillo'">{{tinta.nombre}} ({{tinta.marca}})</option>
+                    <option value="{{tinta._id}}" *ngIf="tinta.color == 'Cyan' || tinta.color == 'Magenta' ">{{tinta.nombre}} ({{tinta.marca}})</option>
+                </ng-container>
+            </select>
+        </div>
+        <br> <br>
+        <div class="columns">
+            <div class="column is-3">
+                <div class="control">
+                    <input type="number" class="input is-small" placeholder="Cantidad" #cantidad_seleccionada>
+                </div>
+            </div>
+            <div class="column">
+                <button class="button is-small is-success" (click)="agregar_preparacion(tinta_seleccionada.value, cantidad_seleccionada.value)">
+                    <span class="icon">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span>
+                        Agregar
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Tinta</th>
+                    <th>Cantidad (g)</th>
+                    <th>Eliminar</th>
+                </tr>
+                <tr *ngFor="let tinta of preparacion_pendiente;index as i">
+                    <td>{{tinta.nombre}}</td>
+                    <td>{{tinta.cantidad}}</td>
+                    <td>
+                    <button class="button is-danger is-outlined" (click)="delete_formula(i)">
+                        <span class="icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </span>
+                    </button>
+                </td>
+                </tr>
+            </thead>
+        </table>
+        <button class="button is-small is-success" (click)="Finalizar_formula(tinta_selected._id)">
+            <span class="icon">
+                <i class="fas fa-check"></i>
+            </span>
+            <span>
+                Finalizar
+            </span>
+        </button>
+    </div>
+    </div>
+</div>
+
+
+<!-- Fin tintas -->
+
+<!-- SOLUCION DE FUENTE -->
+<div class="card" *ngIf="_Solucion">
+    <div class="card-content">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Solucion</th>
+                    <th>Marca</th>
+                    <th>Especificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let quimico of Quimicos;index as i">
+                    <tr *ngIf="quimico.nombre === 'Solución de Fuente'">
+                        <!-- <td>{{i+1}}</td> -->
+                        <td>{{quimico.nombre}}</td>
+                        <td>{{quimico.marca}}</td>
+                        <td>
+                            <i class="fas fa-eye" (click)="modal_fuentes(quimico._id)"></i>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':fuente_modal}" *ngIf="fuente_selected">
+    <div class="modal-background" (click)="modal_fuentes('x')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo__">
+                {{fuente_selected.nombre}}, Marca:{{fuente_selected.marca}}
+            </div>
+            <hr>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized">Fabricante</th>
+                        <td>
+                            <span *ngIf="!Edited_fuente">
+                                {{fuente_selected.chemical}} <br>
+                            </span>
+                            <span *ngIf="Edited_fuente">
+                               <input type="text" class="input is-small sized__" [(ngModel)]="fuente_selected.chemical">                        
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized">pH</th>
+                        <td>
+                            <span *ngIf="!Edited_fuente">
+                                {{fuente_selected.ph}} <br>
+                            </span>
+                            <span *ngIf="Edited_fuente">
+                               <input type="text" class="input is-small sized__" [(ngModel)]="fuente_selected.ph">         
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized">Conductividad (μS/cm)</th>
+                        <td>
+                            <span *ngIf="!Edited_fuente">
+                                {{fuente_selected.conductividad}} <br>
+                            </span>
+                            <span *ngIf="Edited_fuente">
+                               <input type="text" class="input is-small sized__" [(ngModel)]="fuente_selected.conductividad">         
+                            </span>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <button class="button is-success" *ngIf="!Edited_fuente" (click)="editar_fuente()">
+                <span class="icon">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span>
+                    Editar
+                </span>
+            </button>
+            <button class="button is-success" *ngIf="Edited_fuente" (click)="finalizar_edicion_fuente()">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>
+                    Lista
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- FIN SOLUCION DE FUENTE -->
+
+
+<!-- CAJAS CORRUGADAS -->
+
+<div class="card" *ngIf="_Cajas">
+<div class="card-content">
+    <table class="table is-fullwidth">
+        <thead>
+            <tr>
+                <th>Modelo</th>
+                <th>Especificación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let caja of Cajas;index as i">
+                <tr *ngIf="caja.nombre != ''">
+                    <td>{{caja.nombre}}</td>
+                    <td>
+                        <i class="fas fa-eye" (click)="modal_caja(caja._id)"></i>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':caja_modal}" *ngIf="caja_selected">
+    <div class="modal-background" (click)="modal_caja('x')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo__">
+                Caja: {{caja_selected.nombre}}
+            </span>
+            <hr>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized">Descripción</th>
+                        <td>
+                            <span *ngIf="!Edited_caja">
+                                {{caja_selected.descripcion}}
+                            </span>
+                            <span *ngIf="Edited_caja">
+                                <input type="text" class="input is-small sized__" [(ngModel)]="caja_selected.descripcion">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized">Tipo</th>
+                        <td>
+                            <span *ngIf="!Edited_caja">
+                                {{caja_selected.tipo}}
+                            </span>
+                            <span *ngIf="Edited_caja">
+                                <input type="text" class="input is-small sized__" [(ngModel)]="caja_selected.tipo">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="is-selected sized">ECT Mínimo (KN/m)</th>
+                        <td>
+                            <span *ngIf="!Edited_caja">
+                                {{caja_selected.ECT}}
+                            </span>
+                            <span *ngIf="Edited_caja">
+                                <input type="text" class="input is-small sized__" [(ngModel)]="caja_selected.ECT">
+                            </span>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <button class="button is-success" *ngIf="!Edited_caja" (click)="editar_caja()">
+                <span class="icon">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span>
+                    Editar
+                </span>
+            </button>
+            <button class="button is-success" *ngIf="Edited_caja" (click)="finalizar_edicion_caja()">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>
+                    Lista
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- FIN CAJAS CORRUGADAS  -->
+
+
+<!-- PLANCHA LITOGRAFICA -->
+<div class="card" *ngIf="_Plancha">
+    <div class="card-content">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Especificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let plancha of Planchas">
+                    <tr *ngIf="plancha.nombre === 'Planchas Litográficas'">
+                        <td>{{plancha.nombre}}</td>
+                        <td>{{plancha.marca}}</td>
+                        <td>
+                            <i class="fas fa-eye" (click)="modal_plancha(plancha._id)"></i>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':plancha_modal}" *ngIf="plancha_selected">
+    <div class="modal-background" (click)="modal_plancha('x')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo__">
+                {{plancha_selected.nombre}}, Marca: {{plancha_selected.marca}}
+            </span>
+            <hr>
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="is-selected sized">Tiempo de exposición de quemado</th>
+                        <td>
+                            <span *ngIf="!Edited_plancha">
+                                <br>
+                                {{plancha_selected.teq}}
+                            </span>
+                            <span *ngIf="Edited_plancha">
+                                <br>
+                                <input type="text" class="input is-small sized__" [(ngModel)]="plancha_selected.teq">
+                            </span>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <button class="button is-success" *ngIf="!Edited_plancha" (click)="editar_plancha()">
+                <span class="icon">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span>
+                    Editar
+                </span>
+            </button>
+            <button class="button is-success" *ngIf="Edited_plancha" (click)="finalizar_edicion_plancha()">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>
+                    Lista
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- FIN PLANCHA LITOGRAFICA -->
+

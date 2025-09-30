@@ -1,0 +1,198 @@
+<div class="ml-5 mt-5">
+    <div class="subtitulos">
+        <i class="fas fa-file-alt"></i> Nueva orden de compra
+    </div>
+</div>
+<br>
+<nav class="breadcrumb ml-5" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="/orden">Órdenes</a></li>
+      <li class="is-active"><a>Órdenes de compra</a></li>
+    </ul>
+</nav>
+
+<div class="mt-5 ml-5">
+    <div class="columns" >
+        <div class="column is-one-quarter">
+            <div class="tabs">
+                <ul>
+                  <li class="is-active"><a>Crear</a></li>
+                  <li><a routerLink="/orden/ver-oc">Consultar</a></li>
+                </ul>
+              </div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="field">
+                        <label class="label">Cliente:</label>
+                        <div class="control">
+                            <div class="select input_">
+                                <select (change)='cliente_selected($event)'>
+                                    <option value="#">Seleccionar cliente</option>
+                                    <option *ngFor='let cliente of CLIENTES' value="{{cliente._id}}">{{cliente.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="field" *ngIf="PRODUCTOS.length > 0">
+                        <label class="label">Producto:</label>
+                        <div class="control">
+                            <div class="select input_" >
+                                <select id='producto' (change)='producto_selected($event.target.value)'>
+                                    <option value='#'>Selecciona Producto</option>
+                                    <option *ngFor='let producto of PRODUCTOS' value='{{producto._id}}'>{{producto.producto}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="field" *ngIf="PRODUCTOS.length > 0">
+                        <label class="label">Orden de compra:</label>
+                        <div class="control">
+                            <div class="input_">
+                                <input type="text" class="input" placeholder="Orden de compra" (keydown)="OC($event.target.value)" (change)="OC($event.target.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field" *ngIf="ORDEN_COMPRA.length > 0">
+                        <label class="label">Fecha orden de compra:</label>
+                        <div class="control">
+                            <div class="input_">
+                                <input type="date" class="input" (change)="date_($event.target.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field" *ngIf="Fecha_entrega">
+                        <label class="label">Fecha de recepción:</label>
+                        <div class="control">
+                            <div class="input_">
+                                <input type="date" class="input" (change)="date__($event.target.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="button is-primary" *ngIf="_Fecha_entrega" (click)="datos()">
+                        <span class="icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span>
+                            Continuar
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" *ngIf="Loaded">
+                <div class="card-content">
+                    <div class="subtitulos">
+                        Selección de productos
+                    </div>
+                    <hr>
+                    <div class="field">
+                        <label class="label">Producto</label>
+                        <div class="control">
+                            <div class="select" >
+                                <select id='producto' (change)='producto_selected($event.target.value)'>
+                                    <option value='#'>Selecciona Producto</option>
+                                    <option *ngFor='let producto of PRODUCTOS' value='{{producto._id}}'>E-{{producto.cliente.codigo}}-{{producto.codigo}}-{{producto.version}}-{{producto.edicion}} {{producto.producto}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field" *ngIf="PRODUCTO.length > 0">
+                                <label class="label">Cantidad</label>
+                                <div class="control">
+                                    <!-- <input type="number" class="input" [(ngModel)]="_CANTIDAD"> -->
+                                    <input type="number" class="input" (keydown)="NuevaCantidad($event.target.value)" (change)="NuevaCantidad($event.target.value)">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field" *ngIf="_CANTIDAD.length > 0">
+                                <label class="label">Fecha solicitada</label>
+                                <div class="control">
+                                    <input type="date" class="input" (change)="Fecha__($event.target.value)">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field" *ngIf="__Fecha.length > 0">
+                                <label class="label"> </label>
+                                <div class="control">
+                                    <button class="button is-success" (click)="AgregarNuevo()">
+                                        <span class="icon">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span>
+                                            Agregar
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="table is-fullwidth">
+                        <tr>
+                            <th class="is-selected">Producto</th>
+                            <th class="is-selected">Cantidad</th>
+                            <th class="is-selected">Fecha solicitada</th>
+                            <th class="is-selected">Modificar</th>
+                        </tr>
+                        <tr *ngFor="let dato of DATOS;index as i">
+                            <td>{{dato.nombre}}</td>
+                            <td>
+                                <div id="dato_c{{i}}">
+                                    {{dato.cantidad}}
+                                </div>
+                                <ng-container>
+                                    <input type="number" class="input is-small" id="field_c{{i}}" style="display:none" value='DATO[i].cantidad' (change)="editarCantidad($event.target.value, i)">
+                                </ng-container>
+                            </td>
+                            <td>
+                                <div id="dato_f{{i}}">
+                                    {{dato.fecha}}
+                                </div>
+                                <ng-container>
+                                    <input type="date" class="input is-small" id="field_f{{i}}" style="display:none" value='DATO[i].fecha' (change)="editarFecha($event.target.value, i)">
+                                </ng-container>
+                            </td>
+                            <td>
+                                <div id="buttons{{i}}">
+                                    <button class="button is-success is-outlined is-small" (click)="Editar(i)">
+                                        <span>Editar</span>
+                                        <span class="icon is-small">
+                                            <i class="far fa-edit"></i>
+                                        </span>
+                                    </button> 
+                                    <button class="button is-danger is-outlined is-small" (click)="Eliminar(i)">
+                                        <span>Eliminar</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div id="buttons_{{i}}" style="display:none">
+                                    <button class="button is-success is-outlined is-small" (click)="FinalizarEdicion(i)">
+                                        <span>Listo</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </button> 
+                                </div>
+                            </td>
+                        </tr>
+                        
+                    </table>
+                    <button class="button is-primary" (click)="nueva_oc()">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>Finalizar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

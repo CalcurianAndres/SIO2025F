@@ -1,0 +1,51 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+
+.containe{
+    margin-left: 1%;
+    width: 98%;
+}
+.titulo{
+    font-size: 45px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.subtitulo_{
+    font-size: 20px;
+    font-family: Roboto;
+}
+
+.corto{
+    width: 150px;
+}
+.modificacion{
+    width: 250px;
+    margin-left: 30%;
+}
+.boton_continuar{
+    align-items: center;
+    align-self: center;
+    text-align: center;
+}
+
+.red{
+    color: red;
+}
+
+.short___{
+    width: 60px;
+}

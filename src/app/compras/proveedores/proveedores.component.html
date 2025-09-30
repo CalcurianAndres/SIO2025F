@@ -1,0 +1,631 @@
+<div class="container">
+    <span class="titulo">
+        <i class="fas fa-ship"></i> Proveedores
+    </span>
+    <div class="column is-5">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="#">Inicio</a></li>
+              <li><a href="/compras">Compras</a></li>
+              <li class="is-active"><a href="">Proveedores</a></li>
+            </ul>
+          </nav>
+      </div>
+    <div class="card">
+        <div class="card-content">
+            <button class="button is-info" (click)="nuevoProveedor_()">
+                <span class="icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span>
+                    Nuevo proveedor
+                </span>
+            </button>
+
+            <hr>
+
+            <div class="columns" *ngFor="let filas of [].constructor(filas);index as i">
+                <ng-container>
+                    <div class="column">
+                        <div class="card fabricante" *ngIf="Proveedores[(i*3)+i]">
+                            <div class="card-image">
+                                <figure class="image is-5by3">
+                                    <img src="http://192.168.0.23:8080/api/imagen/proveedor/{{Proveedores[(i*3)+i].logo}}" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                      <p class="title is-4" >{{Proveedores[(i*3)+i].nombre}}</p>
+                                      <span class="ver">
+                                        <i class="fas fa-eye" (click)="Editar(Proveedores[(i*3)+i]._id)"></i>
+                                      </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 2 -->
+                    <div class="column">
+                        <div class="card fabricante" *ngIf="Proveedores[(i*3)+i+1]">
+                            <div class="card-image">
+                                <figure class="image is-5by3">
+                                    <img src="http://192.168.0.23:8080/api/imagen/proveedor/{{Proveedores[(i*3)+i+1].logo}}" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                      <p class="title is-4">{{Proveedores[(i*3)+i+1].nombre}}</p>
+                                      <span class="ver">
+                                        <i class="fas fa-eye" (click)="Editar(Proveedores[(i*3)+i+1]._id)"></i>
+                                      </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 3 -->
+                    <div class="column">
+                        <div class="card fabricante" *ngIf="Proveedores[(i*3)+i+2]">
+                            <div class="card-image">
+                                <figure class="image is-5by3">
+                                    <img src="http://192.168.0.23:8080/api/imagen/proveedor/{{Proveedores[(i*3)+i+2].logo}}" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                      <p class="title is-4">{{Proveedores[(i*3)+i+2].nombre}}</p>
+                                      <span class="ver">
+                                        <i class="fas fa-eye" (click)="Editar(Proveedores[(i*3)+i+2]._id)"></i>
+                                      </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 4 -->
+                    <div class="column">
+                        <div class="card fabricante" *ngIf="Proveedores[(i*3)+i+3]">
+                            <div class="card-image">
+                                <figure class="image is-5by3">
+                                    <img src="http://192.168.0.23:8080/api/imagen/proveedor/{{Proveedores[(i*3)+i+3].logo}}" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                      <p class="title is-4">{{Proveedores[(i*3)+i+3].nombre}}</p>
+                                      <span class="ver">
+                                        <i class="fas fa-eye" (click)="Editar(Proveedores[(i*3)+i+3]._id)"></i>
+                                      </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" [ngClass]="{'is-active':NuevoProveedor}">
+    <div class="modal-background" (click)="nuevoProveedor_()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Nuevo proveedor
+                <figure class="image is-128x128 logo">
+                    <img class="is-rounded" [src]="imageSrc || 'http://placehold.it/180'">
+                </figure>
+            </span>
+            <hr>
+
+            
+                <div class="control">
+                    <label class="radio">
+                    <input type="radio" name="origen" checked (click)="origen_('n')">
+                        Nacional
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="origen" (click)="origen_('i')">
+                        Internacional
+                    </label>
+                </div>
+                <hr>
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Nombre / Razón Social:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                          <input class="input is-small" type="text" placeholder="Razón social" [(ngModel)]="Razon_social">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+                
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Dirección Fiscal:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                          <input class="input is-small" type="text" placeholder="Dirección Fiscal" [(ngModel)]="Direccion">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Rif:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                          <input class="input is-small" type="text" placeholder="Rif" [(ngModel)]="rif">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Grupos:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let grupo of Grupos_;index as i">
+                                        <th>{{grupo}}</th>
+                                        <th>
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteGrupo(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Grupo que provee:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="select is-small" (change)="addGrupo($event.target.value)">
+                                <select name="Grupos">
+                                    <option value="{{grupo.nombre}}" *ngFor="let grupo of Grupos">{{grupo.nombre}}</option>
+                                </select>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Persona de contacto:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let contacto of contacto;index as i">
+                                        <th>
+                                            <i class="fas fa-user"></i> {{contacto.nombre}} <br>
+                                            <i class="fas fa-phone"></i> {{contacto.telefono}} <br>
+                                            <i class="fas fa-envelope"></i> {{contacto.email}}
+                                        </th>
+                                        <th>
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteContacto(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Persona contacto:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="Nombre" [(ngModel)]="contacto_n">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </p>
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="Email" [(ngModel)]="contacto_e">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                        </p>
+                      </div>
+                      <div class="field">
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="teléfono" [(ngModel)]="contacto_t">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-phone"></i>
+                            </span>
+                        </p>
+                        <p class="control">
+                            <button type="button" class="button is-small is-success" *ngIf="contacto_n && contacto_e && contacto_t" (click)="AgregarContacto()">
+                                <span class="icon"></span>
+                                <span>
+                                    Agregar
+                                </span>
+                            </button>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Fabricantes:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let fabricante of Fabricantes__;index as i">
+                                        <th>{{fabricante}}</th>
+                                        <th>
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteFabricante(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Fabricante:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="select is-small" (change)="addFabricante($event.target.value)">
+                                <select name="Grupos">
+                                    <option value="#">Fabricante</option>
+                                    <option value="{{fabricante.nombre}}" *ngFor="let fabricante of fabricantes">{{fabricante.nombre}}</option>
+                                </select>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Logo empresa:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="file is-small has-name">
+                                <label class="file-label">
+                                  <input class="file-input is-info" type="file" name="resume" (change)="CambiarImagen($event)">
+                                  <span class="file-cta">
+                                    <span class="file-icon">
+                                      <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                      Logo
+                                    </span>
+                                  </span>
+                                  <span class="file-name">
+                                    Sin archivo
+                                  </span>
+                                </label>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+            
+
+                <button class="button is-success" (click)="FinalizarProveedor()">
+                    <span class="icon">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span>
+                        Finalizar
+                    </span>
+                </button>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" [ngClass]="{'is-active':EdicionProductos}">
+    <div class="modal-background" (click)="Editar('n')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Nuevo proveedor
+                <figure class="image is-128x128 logo">
+                    <img class="is-rounded" [src]="imageSrc || 'http://placehold.it/180'">
+                </figure>
+            </span>
+            <hr>
+
+            
+                <div class="control">
+                    <label class="radio">
+                    <input type="radio" name="origen" checked (click)="origen_('n')">
+                        Nacional
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="origen" (click)="origen_('i')">
+                        Internacional
+                    </label>
+                </div>
+                <hr>
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Nombre / Razón Social:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <span *ngIf="!AvailableEdition">
+                            {{Razon_social}}
+                        </span>
+                        <p class="control" *ngIf="AvailableEdition">
+                          <input class="input is-small" type="text" placeholder="Razón social" [(ngModel)]="Razon_social">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+                
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Dirección Fiscal:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <span *ngIf="!AvailableEdition">
+                            {{Direccion}}
+                        </span>
+                        <p class="control" *ngIf="AvailableEdition">
+                          <input class="input is-small" type="text" placeholder="Dirección Fiscal" [(ngModel)]="Direccion">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Rif:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <span *ngIf="!AvailableEdition">
+                            {{rif}}
+                        </span>
+                        <p class="control" *ngIf="AvailableEdition">
+                          <input class="input is-small" type="text" placeholder="Rif" [(ngModel)]="rif">
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Grupos:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let grupo of Grupos_;index as i">
+                                        <th>{{grupo}}</th>
+                                        <th *ngIf="AvailableEdition">
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteGrupo(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal" *ngIf="AvailableEdition">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Grupo que provee:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="select is-small" (change)="addGrupo($event.target.value)">
+                                <select name="Grupos">
+                                    <option value="{{grupo.nombre}}" *ngFor="let grupo of Grupos">{{grupo.nombre}}</option>
+                                </select>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Persona de contacto:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let contacto of contacto;index as i">
+                                        <th>
+                                            <i class="fas fa-user"></i> {{contacto.nombre}} <br>
+                                            <i class="fas fa-phone"></i> {{contacto.telefono}} <br>
+                                            <i class="fas fa-envelope"></i> {{contacto.email}}
+                                        </th>
+                                        <th *ngIf="AvailableEdition">
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteContacto(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal" *ngIf="AvailableEdition">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Persona contacto:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="Nombre" [(ngModel)]="contacto_n">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </p>
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="Email" [(ngModel)]="contacto_e">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                        </p>
+                      </div>
+                      <div class="field">
+                        <p class="control has-icons-left">
+                            <input type="text" class="input is-small" placeholder="teléfono" [(ngModel)]="contacto_t">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-phone"></i>
+                            </span>
+                        </p>
+                        <p class="control">
+                            <button type="button" class="button is-small is-success" *ngIf="contacto_n && contacto_e && contacto_t" (click)="AgregarContacto()">
+                                <span class="icon"></span>
+                                <span>
+                                    Agregar
+                                </span>
+                            </button>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label wdl">
+                        <label for="" class="label wdl">Fabricantes:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="control">
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr *ngFor="let fabricante of Fabricantes__;index as i">
+                                        <th>{{fabricante}}</th>
+                                        <th *ngIf="AvailableEdition">
+                                            <button class="button is-danger is-small is-outlined" type="button" (click)="deleteFabricante(i)">
+                                                <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                              </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal" *ngIf="AvailableEdition">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Fabricante:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="select is-small" (change)="addFabricante($event.target.value)">
+                                <select name="Grupos">
+                                    <option value="#">Fabricante</option>
+                                    <option value="{{fabricante.nombre}}" *ngFor="let fabricante of fabricantes">{{fabricante.nombre}}</option>
+                                </select>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal" *ngIf="AvailableEdition">
+                    <div class="field-label wdl">
+                      <label class="label wdl">Logo empresa:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control">
+                            <span class="file is-small has-name">
+                                <label class="file-label">
+                                  <input class="file-input is-info" type="file" name="resume" (change)="CambiarImagen($event)">
+                                  <span class="file-cta">
+                                    <span class="file-icon">
+                                      <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                      Logo
+                                    </span>
+                                  </span>
+                                  <span class="file-name">
+                                    Sin archivo
+                                  </span>
+                                </label>
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+            
+
+                <button class="button is-success" (click)="EdicionProvedor()" *ngIf="!AvailableEdition">
+                    <span class="icon">
+                        <i class="fas fa-edit"></i>
+                    </span>
+                    <span>
+                        Editar
+                    </span>
+                </button>
+
+                <button class="button is-success" (click)="FinalizarEdicion()" *ngIf="AvailableEdition">
+                    <span class="icon">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span>
+                        Finalizar
+                    </span>
+                </button>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,222 @@
+@font-face {
+    font-family: 'BarlowCondensed-Bold';
+    src: url(../../../assets/fuente/BarlowCondensed-Bold.ttf);
+  }
+
+  @font-face {
+    font-family: 'BarlowCondensed-Light';
+    src: url(../../../assets/fuente/BarlowCondensed-Light.ttf);
+  }
+  @font-face {
+    font-family: 'BarlowCondensed-Regular';
+    src: url(../../../assets/fuente/BarlowCondensed-Regular.ttf);
+  }
+.mt-5{
+    margin-top: 15px;
+}
+.mt-3{
+    margin-top: 3px;
+}
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.cargando{
+    display: block;
+    padding: 5px;
+    background-color: rgb(78, 243, 78);
+    color: white;
+}
+.modal-card{
+    width: 70%;
+}
+
+.nueva_escala{
+    display: none;
+}
+
+.close{
+    color: red;
+    cursor: pointer;
+}
+.subtitulos{
+    font-size: 35px;
+    font-family: Roboto;
+}
+.subtitulos-p{
+    font-size: 30px;
+    font-family: Roboto;
+}
+
+.number{
+    font-size: 30px;
+}
+.xwidth{
+    width: 150px;
+}
+
+.container_{
+    width: 10cm;
+    height: 6.5cm;
+    margin-left: 15px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.dato__{
+    padding: 0px;
+}
+.Orden__{
+    width: 3.5cm;
+    height: 1.5cm;
+    display: block;
+    background-color: black;
+    color: white;
+    font-family: 'BarlowCondensed-Bold';
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    margin-top: 13px;
+}
+.orden_pro{
+    font-size: 14.5px;
+}
+.Logo-etiquetas{
+    width: 3.5cm;
+    height: 1.5cm;
+    margin-top: 13px;
+}
+
+.qrcode{
+    width: 2.6cm;
+    height: 1.5cm;
+    text-align: center;
+}
+.subtitulo__{
+    display: block;
+    font-family: 'BarlowCondensed-Regular';
+    font-size: 10px;
+    height: 1px;
+}
+.titulo__{
+    display: block;
+    font-family: 'BarlowCondensed-Regular';
+    font-size: 18px;
+    margin-top: -15px;
+}
+.item__{
+    display: block;
+    border: solid 1px black;
+    border-radius: 5px;
+    width: 9.6cm;
+    height: 0.9cm;
+    margin-top: 3px;
+}
+.short{
+    width: 7cm;
+    float: left;
+}
+.shorter{
+    display: block;
+    border: solid 1px black;
+    border-radius: 5px;
+    width: 2.5cm;
+    margin-top: 3px;
+    float: left;
+    height: 0.9cm;
+    margin-left: 5px;
+}
+.shortest{
+    display: block;
+    border: solid 0.5px black;
+    border-radius: 5px;
+    width: 2.5cm;
+    margin-top: 3px;
+    float: left;
+}
+.ml{
+    margin-left: 5px;
+    width: 1.9cm;
+}
+.ml__{
+    width: 1.6cm;
+}
+._ml{
+    font-size: 15px;
+}
+
+.unidades__{
+    display: block;
+    float: left;
+    background-color: black;
+    background-color: black;
+    color: white;
+    font-family: 'BarlowCondensed-Bold';
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    margin: 5px;
+    width: 3.153cm;
+}
+
+.unidades{
+    display: block;
+    font-size: 38px;
+    margin-top: -13px;
+    margin-left: -10px;
+    height: 15px;
+    text-align: center;
+}
+.letter{
+    display: block;
+}
+
+.linea2{
+    display: block;
+    margin-top: -5px;
+}
+
+.mensaje{
+    display: block;
+    font-family: 'BarlowCondensed-Regular';
+    font-size: 10px;
+    margin-top: 2px;
+    margin-top: -25px;
+    text-align: center;
+}
+
+.FPR{
+    display: block;
+    font-family: 'BarlowCondensed-Regular';
+    font-size: 10px; 
+    float: right;
+    margin-right: 11px;
+    margin-top: -6px;
+}
+
+canvas{
+    height: 2cm;
+}
+
+.input_{
+    width: 100%;
+}
+
+.shot{
+    width: 30%;
+}
+
+.tablas{
+    font-size: xx-small;
+}
+
+.data__{
+    font-size: 13px;
+}
+._data__{
+    font-size: 15px;
+}
+
+.ml-5{
+    margin-left: 30px;
+}

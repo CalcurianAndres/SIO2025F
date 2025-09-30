@@ -1,0 +1,595 @@
+<app-navbar></app-navbar>
+<div class='mt-5'>
+    <div class="header-calendar">
+        <div>
+            <button class="button is-primary" (click)='changeMonth(-1)'>Anterior</button>
+        </div>
+        <h1>{{dateSelect | date: 'MMMM, yyyy'}}</h1>
+        <div>
+            <button class="button is-primary" (click)='changeMonth(1)'>Siguiente</button>
+        </div>
+    </div>
+    <ol>
+        <li *ngFor='let day of week' class="day-name">{{day | slice:0:3}}</li>
+        <li [style.gridColumnStart]="first ? day?.indexWeek : 'auto'"
+        *ngFor="let day of monthSelect;let first = first">
+        <span>{{day?.value}}</span>
+        <div *ngFor='let funcion of FUNCIONES'>
+            <div class='plan'>
+                <b class="titulo">{{funcion}}</b>
+                <!-- * -->
+                <ng-container *ngFor="let id of getFechas(day?.value, funcion);index as i">
+                    <ng-container *ngIf="id.orden">
+
+                        <div style="--i:{{id.orden.sort.charAt(id.orden.sort.length - 1)}}" class="op-{{id.orden.sort.charAt(id.orden.sort.length - 1)}} color">
+                            <span class="tooltip">
+                                <b>Producto: </b>{{id.orden.producto.producto}} <br>
+                                <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                <b>Cantidad de productos: </b>{{id.orden.cantidad}} <br>
+                                <b>Cantidad de hojas: </b>{{Cant_hojas(id.orden.cantidad, id.orden.producto.ejemplares[id.orden.montaje])}} <br>
+                                <b>Maquina: </b>{{id.maquina.nombre}}
+                            </span>
+                            {{id.orden.sort}}
+                            <br> 
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!id.orden">
+                        <div class="op-{{id.op.charAt(id.op.length - 1)}} color">
+                            <span class="tooltip">
+                                <b>Producto: </b>{{id.producto}} <br>
+                                <b>Numero de Orden: </b>{{id.op}} <br>
+                                <b>Cantidad a despachar: </b>{{id.cantidad}} <br>
+                            </span>
+                            {{id.op}}
+                        </div>
+                    </ng-container>
+                </ng-container>
+                <!-- * -->
+            </div>
+        </div>
+    </li>
+    </ol>
+</div>
+
+
+
+<!-- <div class="container">
+    <div class="card">
+        <div class="card-content">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>01/08</th>
+                        <th>02/08</th>
+                        <th>03/08</th>
+                        <th>04/08</th>
+                        <th>05/08</th>
+                        <th>06/08</th>
+                        <th>07/08</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let funcion of FUNCIONES'>
+                        <td>{{funcion}}</td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-01', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-02', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-03', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-04', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-05', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-06', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-07', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>08/08</th>
+                        <th>09/08</th>
+                        <th>10/08</th>
+                        <th>11/08</th>
+                        <th>12/08</th>
+                        <th>13/08</th>
+                        <th>14/08</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let funcion of FUNCIONES'>
+                        <td>{{funcion}}</td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-08', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-09', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-10', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-11', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-12', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-13', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-14', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>15/08</th>
+                        <th>16/08</th>
+                        <th>17/08</th>
+                        <th>18/08</th>
+                        <th>19/08</th>
+                        <th>20/08</th>
+                        <th>21/08</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let funcion of FUNCIONES'>
+                        <td>{{funcion}}</td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-15', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-16', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-17', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-18', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-19', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-20', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-21', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>22/08</th>
+                        <th>23/08</th>
+                        <th>24/08</th>
+                        <th>25/08</th>
+                        <th>26/08</th>
+                        <th>27/08</th>
+                        <th>28/08</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let funcion of FUNCIONES'>
+                        <td>{{funcion}}</td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-22', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-23', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-24', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-25', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-26', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-27', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-28', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>29/08</th>
+                        <th>30/08</th>
+                        <th>31/08</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let funcion of FUNCIONES'>
+                        <td>{{funcion}}</td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-29', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-30', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let id of getFechas('2021-08-31', funcion)">
+                            <div class="ids">
+                                {{id.orden.sort}}
+                                <span class="tooltip">
+                                    <b>Numero de Orden: </b>{{id.orden.sort}} <br>
+                                    <b>Cantidad: </b>{{id.orden.cantidad}} <br>
+                                    <b>Maquina: </b>{{id.maquina.nombre}}
+                                </span>
+                                <br>
+                            </div>
+                        </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> -->
+
+<!-- <div class="card" *ngIf='cargado'>
+    <div class="card-content">
+        <table class="table is-fullwidth is-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>15/08</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IMPRESION</td>
+                    <td>
+                        <ng-container *ngFor="let id of getFechas('2021-08-19', 'IMPRESION')">
+                            {{id._id.slice(3,6)}} <br>
+                        </ng-container>
+                        <br>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>  -->

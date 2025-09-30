@@ -1,0 +1,34 @@
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.mt-5{
+    margin-top: 5px;
+}
+.orden{
+    font-weight: bolder;
+}
+.error{
+    font-size: small;
+    color: red;
+    display: none;
+}
+
+.Asignacion{
+    font-size: 20px;
+    font-family: Roboto;
+}
+
+.bigga{
+    font-size: 25px;
+}
+
+.ASIG{
+    font-size: 20px;
+    color: #888888;
+    /* color:#616161; */
+}

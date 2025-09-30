@@ -1,0 +1,214 @@
+<div class="modal" [ngClass]="{'is-active':asignacion}">
+    <div class="modal-background" (click)='onClose()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <ng-container *ngIf="necesario">
+
+                <div *ngIf='necesario.length === 0'>
+                    <div class="empty">
+                        En estos momentos no hay solicitudes.
+                    </div>
+                </div> 
+            </ng-container>
+            <div class="materiales" *ngFor='let orden of necesario;let index = index' >
+                <ng-container *ngIf="orden.sort === '#'">
+                    <p class="subtitulo">Solicitud de Material</p>
+                </ng-container>
+                <ng-container *ngIf="orden.sort != '#'">
+                    <p class="subtitulo">{{orden.sort}}</p>
+                    <p class="subtitulo">{{orden.motivo}}</p>
+                </ng-container>
+                <ng-container *ngIf="orden.sort == '#'">
+                    <p class=""><b>Motivo: </b>{{orden.motivo}}</p>
+                </ng-container>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Resumen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor='let materiales of orden.producto.materiales[orden.montaje];index as i'>
+                            <ng-container>
+                                <tr>
+                                    <td>
+                                        <div class="material" >
+                                            <div class="field">
+                                                <label class="label"> <i>
+                                                    
+                                                    
+                                                    {{materiales.producto.nombre}} {{materiales.producto.marca}}
+                                                    <ng-container *ngIf="materiales.producto.ancho">
+                                                    {{materiales.producto.ancho}}x{{materiales.producto.largo}} (Cal: {{materiales.producto.calibre}}, gramaje: {{materiales.producto.gramaje}})
+                                                    </ng-container>: 
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Tinta'">
+                                                        {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}}{{Unidad(materiales.producto.nombre)}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Barniz'">
+                                                        {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}}{{Unidad(materiales.producto.nombre)}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Pega'">
+                                                        {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}}{{Unidad(materiales.producto.nombre)}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Cajas Corrugadas'">
+                                                        <ng-container *ngIf="orden.motivo">
+                                                            {{materiales.cantidad}}{{Unidad(materiales.producto.nombre)}}
+                                                        </ng-container>
+                                                        <ng-container *ngIf="!orden.motivo">
+                                                            {{Caja_((orden.cantidad / materiales.cantidad),materiales.producto.cinta,index)}}{{Unidad(materiales.producto.nombre)}}
+                                                        </ng-container>
+                                                    
+                                                    </ng-container>
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Insumos'">
+                                                        {{materiales.cantidad}}{{Unidad(materiales.producto.nombre)}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="materiales.producto.grupo.nombre == 'Cinta de Embalaje'">
+                                                        <ng-container *ngIf="_cinta_(index)">
+                                                            {{cintas_}}{{Unidad(materiales.producto.nombre)}}
+                                                        </ng-container>
+                                                        <ng-container *ngIf="!_cinta_(index)">
+                                                            {{materiales.cantidad}}{{Unidad(materiales.producto.nombre)}}
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container>
+                                                        
+                                                    </ng-container>
+        
+                                                </i></label>
+                                                <div class="control">
+                                                    <div class="select">
+                                                        <select id="" (change)='Lote($event.target.value,index,orden, materiales.producto.nombre, i, orden.paginas, materiales.producto.grupo.nombre,orden.cantidad,materiales.cantidad,materiales.producto.presentacion,materiales.cinta)'>
+                                                            <option value="#">Seleccionar LOTE</option>
+                                                            <ng-container *ngFor='let almacen of Almacenado'>
+                                                                <ng-container *ngIf='materiales.producto.grupo.nombre != "Cajas Corrugadas" && materiales.producto.grupo.nombre != "Barniz"'>
+                                                                    <option value="{{almacen.codigo}}*{{almacen.lote}}" *ngIf='almacen.material.nombre == materiales.producto.nombre && almacen.material.marca == materiales.producto.marca && almacen.material.ancho == materiales.producto.ancho && almacen.material.largo == materiales.producto.largo && almacen.material.calibre == materiales.producto.calibre' >
+                                                                   {{almacen.codigo}} Lote {{almacen.lote}} ({{almacen.material.presentacion}} {{almacen.material.neto}}{{almacen.material.unidad}}) Existencia: {{almacen.cantidad}} {{almacen.material.presentacion}}
+                                                                </option>
+                                                                </ng-container>
+                                                                <ng-container *ngIf='materiales.producto.grupo.nombre == "Cajas Corrugadas" || materiales.producto.grupo.nombre == "Barniz"'>
+                                                                    <option value="{{almacen.codigo}}*{{almacen.lote}}" *ngIf='almacen.material.nombre == materiales.producto.nombre && almacen.material.ancho == materiales.producto.ancho && almacen.material.largo == materiales.producto.largo' >
+                                                                        {{almacen.codigo}} Lote {{almacen.lote}} ({{almacen.material.presentacion}} {{almacen.material.neto}}{{almacen.material.unidad}}) Existencia: {{almacen.cantidad}} {{almacen.material.presentacion}}
+                                                                    </option>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="resumen">
+        
+                                            <div class="Inf_lotes">
+                                                <div class="informacion">
+                                                    <ng-container *ngFor='let lote of LOTES'>
+                                                        <ng-container *ngIf='lote.i == i'>
+                                                            Lote: {{lote.lote}} x {{lote.almacenado}} 
+                                                            <span class="icon has-text-danger" (click)="borrarLote(lote.lote)">
+                                                                <i class="fas fa-backspace"></i>
+                                                              </span>
+                                                              <br>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                                <b>
+                                                    Lotes con descuento ({{cantidad_lotes(i)}})
+                                                </b>
+                                            </div>
+                                            <div id='Almacenados-{{index}}-{{i}}'></div>
+                                            <div id='Necesario-{{index}}-{{i}}'></div>
+                                            <div id='Almacenados-{{index}}-{{i}}'></div>
+                                            <div id='Restante-{{index}}-{{i}}'></div>
+                                            <div class='fijar_lote' id='fijar_lote-{{index}}-{{i}}'>
+                                                <div id='boton_add'>Fijar lote</div>
+                                            </div>
+                                            
+        
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                        <tr *ngIf="cintas_.length > 0 && _cinta_(index) && !orden.motivo">
+                            <td>
+
+                                <div class="material">
+                                    <div class="field">
+                                        <label class="label"><i>CINTA DE EMBALAJE: {{(cintas_[index].cantidad).toFixed(2)}}</i></label>
+                                        <div class="control">
+                                            <div class="select">
+                                                <select id="" (change)='Lote($event.target.value,index,orden, "Cinta de embalaje 3430", 100, orden.paginas, "CINTA DE EMBALAJE",orden.cantidad,"Rollo","Rollo",index)'>
+                                                    <option value="#">Seleccionar LOTE</option>
+                                                    <ng-container *ngFor='let almacen of Almacenado'>
+                                                        <option value="{{almacen.codigo}}*{{almacen.lote}}" *ngIf="almacen.material.grupo.nombre === 'Cinta de Embalaje'">
+                                                            <!-- {{almacen.grupo}} -->
+                                                            {{almacen.codigo}} Lote {{almacen.lote}} ({{almacen.material.presentacion}} PRESENTACIÓN:{{almacen.material.neto}}{{almacen.material.unidad}})
+                                                        </option>
+                                                    </ng-container>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="resumen">
+
+                                    <div class="Inf_lotes">
+                                        <div class="informacion">
+                                            <ng-container *ngFor='let lote of LOTES'>
+                                                <ng-container *ngIf='lote.i == 100'>
+                                                    Lote: {{lote.lote}} x {{lote.almacenado}} 
+                                                    <span class="icon has-text-danger" (click)="borrarLote(lote.lote)">
+                                                        <i class="fas fa-backspace"></i>
+                                                      </span>
+                                                      <br>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                        <b>
+                                            Lotes con descuento ({{cantidad_lotes(100)}})
+                                        </b>
+                                    </div>
+                                    <div id='Almacenados-{{index}}-100'></div>
+                                    <div id='Necesario-{{index}}-100'></div>
+                                    <div id='Almacenados-{{index}}-100'></div>
+                                    <div id='Restante-{{index}}-100'></div>
+                                    <div class='fijar_lote' id='fijar_lote-{{index}}-100'>
+                                        <div id='boton_add'>Fijar lote</div>
+                                    </div>
+                                    
+
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <ng-container *ngIf="orden.motivo">
+                    <button class="button is-primary" (click)='Restar(orden.sort, orden.solicitud,index, 0, orden._id)'>
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>
+                            Confirmar
+                        </span>
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="!orden.motivo">
+                    <button class="button is-primary" (click)='Restar(orden.sort, orden.solicitud,index, 1)'>
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>
+                            Confirmar
+                        </span>
+                    </button>
+                </ng-container>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>

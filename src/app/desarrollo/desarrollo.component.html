@@ -1,0 +1,17 @@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Especificación</th>
+            <th>Producto</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let producto of productos;index as i">
+            <td>{{i+1}}</td>
+            <td>E-{{producto.cliente.codigo}}-{{producto.codigo}}-{{producto.version}}-{{producto.edicion}}</td>
+            <td>{{producto.producto}}</td>
+        </tr>
+    </tbody>
+</table>

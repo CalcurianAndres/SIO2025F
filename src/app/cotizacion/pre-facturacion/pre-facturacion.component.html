@@ -1,0 +1,349 @@
+<div class="containe">
+    <div class="titulo">
+        <i class="fas fa-check-double"></i> Pre-facturación
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="subtitulo">
+                Despachos pendientes:
+            </div>
+            <hr>
+            <ng-container *ngFor="let despacho of Despachos;index as i">
+                <ng-container *ngIf="despacho.despacho.status != 'NE'">
+                    <table class="table is-fullwidth is-bordered" *ngIf="despacho.despacho.documento === '' || despacho.despacho.documento.charAt(0) === 'N'">
+                        <thead>
+                            <tr>
+                                <td class="is-selected" colspan="2">
+                                    <b>Fecha: </b>{{despacho.fecha}}
+                                </td>
+                                <td *ngIf="despacho.despacho.documento[0] === 'N'" class="red">
+                                    <b>Nota de entrega: </b>{{despacho.despacho.documento}}
+                                </td>
+                                <td *ngIf="despacho.despacho.parcial_">
+                                    <span class="tag is-info">
+                                        Parcial
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="70px">OP</th>
+                                <th width="300px">Cliente</th>
+                                <th width="300px">Producto</th>
+                                <th width="125px">OC</th>
+                                <th width="100px">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{despacho.orden.sort}}</td>
+                                <td>{{despacho.orden.cliente.nombre}}</td>
+                                <td>{{despacho.despacho.producto}}</td>
+                                <td>{{despacho.orden.orden}}</td>
+                                <td>{{despacho.despacho.cantidad}}</td>
+                                <td>
+                                    <button class="button is-info is-small" (click)="ValidarDatos(i)">
+                                    <div class="icon">
+                                        <i class="far fa-calendar-check"></i>
+                                    </div>
+                                    <span>
+                                        Validar Datos
+                                    </span>
+                                    </button> 
+                                    <button class="button is-success is-small" (click)="openFacturacion(i)" *ngIf="despacho.despacho.precio >= 0">
+                                        <div class="icon">
+                                            <i class="far fa-calendar-check"></i>
+                                        </div>
+                                        <span>
+                                            Facturado
+                                        </span>
+                                        </button>
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMAR FACTURACION -->
+<div class="modal" [ngClass]="{'is-active':Facturacion}">
+    <div class="modal-background" (click)="closeFacturacion()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo_">
+                Confirmación de facturación
+            </span>
+            <hr>
+            <table class="table is-fullwidth">
+                <tr>
+                    <th class="is-selected">
+                        Producto:
+                    </th>
+                    <td>
+                        {{Despachos[INDEX].despacho.producto}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                       Orden de producción: 
+                    </th>
+                    <td>
+                        {{Despachos[INDEX].orden.sort}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Orden de compra:
+                    </th>
+                    <td>
+                        {{Despachos[INDEX].orden.orden}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Cantidad:
+                    </th>
+                    <td>
+                        {{puntoYcoma_(Despachos[INDEX].despacho.cantidad)}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Precio/millar (USD):
+                    </th>
+                    <td>
+                        {{puntoYcoma_(Despachos[INDEX].despacho.precio)}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Precio/millar (Bs):
+                    </th>
+                    <td>
+                        {{puntoYcoma_(Despachos[INDEX].despacho.precio * Despachos[INDEX].despacho.tasa)}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Subtotal (USD):
+                    </th>
+                    <td>
+                        {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * Despachos[INDEX].despacho.precio)}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
+                        Subtotal (Bs):
+                    </th>
+                    <td>
+                        {{calcularSub(Despachos[INDEX].despacho.cantidad, Despachos[INDEX].despacho.precio, Despachos[INDEX].despacho.tasa)}}
+                    </td>
+                </tr>
+            </table>
+            <button class="button is-success" (click)="confirmar()">
+                Validada
+            </button>  
+            <button class="button is-danger" (click)="closeFacturacion()">
+                Cancelar
+            </button>  
+            <hr>
+            <div class="columns" *ngIf="confirmed">
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">N° documento</label>
+                        <div class="field has-addons">
+                            <p class="control">
+                              <span class="select" id="tipo_documento">
+                                <select (change)="editTipo($event.target.value)">
+                                  <option value ='F - '>F</option>
+                                  <option value ='N - '>N</option>
+                                </select>
+                              </span>
+                            </p>
+                            <p class="control">
+                              <input class="input" type="text" placeholder="N° documento" id="factura_number" (change)="editDocumento($event.target.value)">
+                            </p>
+                          </div>  
+
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">Fecha</label>
+                        <input type="date" class="input" id="fecha_factura" (change)="fecha_modificacion($event.target.value)" [disabled]="!numero_facturacion">
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label"> </label>
+                        <button class="button is-success" (click)="confirmar_todo()" [disabled]="!fecha_facturacion">
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL CONFIRMAR FACTURACION -->
+
+<!-- MODAL DE VALIDACION DE DATOS -->
+<div class="modal" [ngClass]="{'is-active':Validacion}">
+    <div class="modal-background" (click)="closeModal()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo_">
+                Validación de datos
+            </span>
+            <hr>
+            <div class="columns">
+                <div class="column is-three-quarters">
+                    <span>
+                        <b>Cliente: </b>{{Despachos[INDEX].orden.cliente.nombre}}
+                    </span><br>
+                    <span>
+                        <b>Producto: </b>{{Despachos[INDEX].despacho.producto}}
+                    </span><br>
+                    <span>
+                        <b>OC: </b>{{Despachos[INDEX].orden.orden}}  
+                        <div class="field has-addons">
+                            <div class="control">
+                                <b>Cantidad en OC: </b> 
+                              <input class="input is-small corto" type="text" disabled id="Cantidad_en_OC" (change)="buscarEscala(Despachos[INDEX].orden.cantidad)" [(ngModel)]="Despachos[INDEX].orden.cantidad">
+                            </div>
+                            <div class="control">
+                              <a class="button is-success is-small" (click)="Editar_Cantidad_en_OC()">
+                                <i class="fas fa-edit"></i>
+                              </a>
+                            </div>
+                        </div>
+                    </span><br>
+                    <span>
+                        <div class="field has-addons">
+                            <div class="control">
+                              <b>Cantidad despachada: </b> 
+                              <input class="input is-small corto" type="text" disabled id="Cantidad_Despachada" [(ngModel)]="Despachos[INDEX].despacho.cantidad">
+                            </div>
+                            <div class="control">
+                              <a class="button is-success is-small" (click)="Editar_Cantidad_despachada()">
+                                <i class="fas fa-edit"></i>
+                              </a>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+                <div class="column">
+                    <span class="subtitulo_">
+                        <b>OP: </b>{{Despachos[INDEX].despacho.op}}
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Tabla</th>
+                        <th>Escala (Und)</th>
+                        <th>Precio (USD)</th>
+                        <th>BCV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>{{puntoYcoma_(Escala.cantidad)}} <a (click)="modificarModal('escala')"><i class="fas fa-edit" style="color: #48c78e;"></i></a></td>
+                        <td>{{puntoYcoma_(Escala.precio)}} <a (click)="modificarModal('precio')"><i class="fas fa-edit" style="color: #48c78e;"></i></a></td>
+                        <td>
+                            <input type="text" class="input is-small short___" [(ngModel)]="Tasa">
+                            {{Tasa}} <a href="https://www.bcv.org.ve/" target="_blank" (click)="habilitarBoton()"><i class="fas fa-globe"></i></a></td>
+                        <td>
+                            <button class="button is-small is-info" [disabled]="resumen" (click)="resumir()">
+                                <div class="icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <span>Ver total</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <div class="resumen" *ngIf="resumido">
+                <b>Resumen:</b><br>
+                {{Despachos[INDEX].despacho.producto}} <br>
+                <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * Escala.precio)}} </b><br>
+                <b>Subtotal (Bs): {{calcularSub(Despachos[INDEX].despacho.cantidad, Despachos[INDEX].despacho.precio, Despachos[INDEX].despacho.tasa)}}                </b><br>
+    
+                <br>
+                <div class="field">
+                    <label for="" class="label">Observaciones</label>
+                    <div class="control">
+                        <textarea class='textarea' id="" [(ngModel)]="Observacion"></textarea>
+                    </div>
+                </div>
+                <br>
+                <button class="button is-success" (click)="descargarPDF()">
+                    <div class="icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <span>
+                        Descargar
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- modal modificaciones pequeñas -->
+<div class="modal" [ngClass]="{'is-active':Modificacion}">
+    <div class="modal-background" (click)="Modificacion_close()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body modificacion">
+            <div class="escala" *ngIf="ModificaciondeEscala">
+                <span>
+                    <span class="subtitulo_">
+                        Escala Nueva
+                    </span><br>
+                    <div class="select is-small">
+                        <select #escalanueva placeholder="Seleccionar nueva escala">
+                            <option value="">Nueva escala</option>
+                            <option value="{{escala.cantidad}}" *ngFor="let escala of this.Despachos[this.INDEX].escala.escalas">{{puntoYcoma_(escala.cantidad)}}</option>
+                        </select>
+                    </div>
+                </span><br><br>
+                <button class="button is-success is-small" (click)="buscarEscala_(escalanueva.value)">
+                    Confirmar
+                </button> 
+                <button class="button is-danger is-small" (click)="Modificacion_close()">
+                    Cancelar
+                </button>
+            </div>
+
+
+            <div class="escala" *ngIf="ModificaciondePrecio">
+                <span class="subtitulo_">
+                    Precio (USD)
+                </span><br>
+                <input type='number' class="input is-small" [(ngModel)]="Escala.precio">
+                <br> <br>
+                <button class="button is-success is-small boton_continuar" (click)="Modificacion_close()">
+                    <span class="icon">
+                        <i class="fas fa-long-arrow-alt-right"></i>
+                    </span>
+                    <span>
+                        Continuar
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

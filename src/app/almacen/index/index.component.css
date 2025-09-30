@@ -1,0 +1,13 @@
+.hero{
+    height: 270px;
+    background-image: url("../../../assets/BANNER-SIO-1092x270-v03.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 270px;
+}
+.mt-5{
+    margin-top: 15px;
+}
+
+img{
+    cursor: pointer;
+}

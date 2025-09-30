@@ -1,0 +1,612 @@
+<div class="modal" [ngClass]="{'is-active':Observacion___}">
+    <div class="modal-background" (click)="verObservaciones('0')"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Observación
+            </span>
+            <hr>
+                <div class="control" *ngIf="Pedido">
+                    <textarea class="textarea" placeholder="Observación" [(ngModel)]="Pedido[porObservar].observacion" *ngIf="Pedido[porObservar]"></textarea>
+                </div>
+            <hr>
+            <button class="button is-success" (click)="GuardarObservacion()">
+                <span class="icon">
+                    <i class="fas fa-save"></i>
+                </span>
+                <span>
+                    Guardar Observación
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <span class="titulo"><i class="fas fa-pallet"></i> Recepción de material</span>
+</div>    
+<div class='long'>
+    <div class="card">
+        <div class="card-content">
+            <button class="button is-primary" (click)="NuevaRecepcion_()">
+                <span class="icon"><i class="fas fa-cash-register"></i></span>
+                <span>Nueva recepción</span>
+            </button>
+            <hr>
+            <table class="table is-fullwidth" *ngIf="Pedido">
+                <tr>
+                    <th>Factura</th>
+                    <th>OC</th>
+                    <th>Proveedor</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Estatus</th>
+                    <th>Editar</th>
+                    <th>Observación</th>
+                </tr>
+                <tr *ngFor="let Pedido of Pedido;index as i">
+                    <td>{{Pedido.factura}}</td>
+                    <td>{{Pedido.orden}}</td>
+                    <td>{{Pedido.proveedor.nombre}}</td>
+                    <td>
+                        <span *ngFor="let cantidad of Pedido.totales;index as n">
+                            <ng-container *ngIf="cantidad.resultado">
+                                <ng-container *ngIf="cantidad.resultado === 'APROBADO'">
+                                    <span class="tag is-success">A</span>
+                                </ng-container>
+                                <ng-container *ngIf="cantidad.resultado != 'APROBADO'">
+                                    <span class="tag is-danger">R</span>
+                                </ng-container>
+                            </ng-container>
+                            {{cantidad.producto}} 
+                            <ng-container *ngIf="cantidad.ancho">
+                                {{cantidad.ancho}}x{{cantidad.largo}}
+                                {{cantidad.gramaje}}g
+                                cal: {{cantidad.calibre}}
+                            </ng-container>
+                            ({{cantidad.marca}}) 
+                            <br>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngFor="let cantidad of Pedido.totales;index as n">
+                            {{cantidad.total}} 
+                            <i class="fas fa-eye click" (click)="abrirDetalles_(i,n,cantidad.producto, cantidad.marca)" *ngIf="Pedido.status === 'Por notificar'"></i>
+                            <i class="fas fa-eye click" (click)="_abrirDetalles__(i,n,cantidad.producto, cantidad.marca, cantidad.marca)" *ngIf="Pedido.status === 'Notificado' || Pedido.status === 'En Observacion'"></i>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="tag is-danger is-medium etiqueta" *ngIf="Pedido.status === 'Por notificar'">Por notificar</span> 
+                        <span class="tag is-info is-medium etiqueta" *ngIf="Pedido.status === 'Notificado'">Notificado</span> 
+                        <span class="tag is-warning is-medium etiqueta" *ngIf="Pedido.status === 'En Observacion'">En Observación</span> 
+                        <button class="button is-small is-outlined" (click)="Notificar(Pedido._id)"  *ngIf="Pedido.status === 'Por notificar'">
+                            <span class="icon"><i class="fas fa-bell"></i></span> 
+                        </button>
+                        <button class="button is-small is-outlined" (click)="Alert_(Pedido._id)"  *ngIf="Pedido.status === 'Notificado' ">
+                            <i class="far fa-check-circle"></i>
+                        </button>
+                        <button class="button is-small is-outlined" (click)="observacion(Pedido._id, Pedido)"  *ngIf="Pedido.status === 'En Observacion'">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <i class="fas fa-edit ed" (click)='EditarPedido(i)' *ngIf="Pedido.status === 'Por notificar'"></i>
+                        <!-- <button class="button is-success is-outlined is-small" (click)='EditarPedido(i)' *ngIf="Pedido.status === 'Por notificar'">
+                            <span class="icon"><i class="fas fa-edit"></i></span>
+                            <span>Editar</span>
+                        </button> -->
+                        <i class="fas fa-edit ed2" *ngIf="Pedido.status === 'Notificado' || Pedido.status === 'En Observacion'"></i>
+                    </td>
+                    <td>
+                        <i class="fas fa-comment obs" (click)="verObservaciones(i)"></i>
+                    </td>
+                </tr>
+            </table>
+            <!-- <button class="button is-primary" (click)="GenerarPDF()">
+                <span>Generar pdf</span>
+            </button> -->
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':Detallar_}">
+    <div class="modal-background" (click)="_abrirDetalles_()"></div>
+        <div class="modal-card ampliar">
+            <div class="modal-card-body">
+                <div class="subtitulo">
+                    Detalle
+                </div>
+                <hr>
+                <table class="table is-fullwidth">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Fabricación</th>
+                        <th>Lote</th>
+                        <th>Capacidad</th>
+                        <th>Codigo</th>
+                    </tr>
+                    <tr *ngFor="let detalle of Detallados;index as i">
+                        <td>{{detalle.nombre}}</td>
+                        <td>{{detalle.marca}}</td>
+                        <td>
+                            <input type="date" class="input is-small small_" [(ngModel)]="detalle.fabricacion" (change)="cambiar_fabricacion_Detalles($event.target.value)" disabled>
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.lote" (change)="cambiar_lote_Detalles($event.target.value)" disabled>
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.capacidad" disabled>
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.numero" disabled>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <b>
+                    Condiciones: <i class="fas fa-tasks click" (click)="ver_condiciones_(index_, index__, grupo)"></i>
+                </b>
+            </div>
+        </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':Detallar}">
+    <div class="modal-background" (click)="abrirDetalles()"></div>
+        <div class="modal-card ampliar">
+            <div class="modal-card-body">
+                <div class="subtitulo">
+                    Detalle
+                </div>
+                <hr>
+                <table class="table is-fullwidth">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Fabricación</th>
+                        <th>Lote</th>
+                        <th>Capacidad</th>
+                        <th>Codigo</th>
+                        <th>Borrar</th>
+                    </tr>
+                    <tr *ngFor="let detalle of Detallados;index as i">
+                        <td>{{detalle.nombre}}</td>
+                        <td>{{detalle.marca}}</td>
+                        <td>
+                            <input type="date" class="input is-small small_" [(ngModel)]="detalle.fabricacion" (change)="cambiar_fabricacion_Detalles($event.target.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.lote" (change)="cambiar_lote_Detalles($event.target.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.capacidad">
+                        </td>
+                        <td>
+                            <input type="text" class="input is-small small_" [(ngModel)]="detalle.numero">
+                        </td>
+                        <td>
+                            <button class="button is-small is-danger is-outlined" (click)="Borrar_detallado(i)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <button class="button is-small is-success" (click)="GuardarCambios()">
+                    <span>Guardar cambios</span>
+                </button> 
+                <button class="button is-small is-danger">
+                    <span>Cancelar</span>
+                </button>
+            </div>
+        </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':NuevaRecepcion}">
+    <div class="modal-background" (click)="NuevaRecepcion_()"></div>
+    <div class="modal-card ampliar_unpoco">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Nueva recepción de material
+            </span>
+            <hr>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label menor">N° Factura / NE</label>
+                        <div class="control">
+                            <input type="text" class="input is-small disabled" [(ngModel)]="N_factura" id="disabled_1">
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="column" >
+                    <div class="field" *ngIf="N_factura">
+                        <label class="label menor">N° Orden de compra</label>
+                        <div class="control">
+                            <input type="text" class="input is-small disabled" [(ngModel)]="N_OC" id="disabled_2">
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="column">
+                    <div class="field" *ngIf="N_OC">
+                        <label class="label menor">Recepción</label>
+                        <div class="control">
+                            <input type="date" class="input is-small disabled" [(ngModel)]="recepcion" id="disabled_3">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field" *ngIf="recepcion">
+                        <label class="label menor">Transportista</label>
+                        <div class="control">
+                            <input type="text" class="input is-small disabled" [(ngModel)]="Transportista" id="disabled_4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field" *ngIf="Transportista">
+                        <label class="label">Proveedor</label>
+                        <div class="control">
+                            <div class="select is-small">
+                                <select (change)="SeleccionarProveedor($event.target.value)" class="disabled" id="disabled_5" [(ngModel)]="proveedor_selected">
+                                    <option value="#">Seleccionar Proveedor</option>
+                                    <option value="{{proveedor._id}}" *ngFor="let proveedor of proveedores">{{proveedor.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" >
+                    <div class="field" *ngIf="Fabricantes_">
+                        <label class="label">Fabricantes</label>
+                        <div class="control">
+                            <div class="select is-small">
+                                <select (change)="SeleccionarFabricantes($event.target.value)">
+                                    <option value="#">Seleccionar fabricante</option>
+                                    <option value="{{fabricante}}" *ngFor="let fabricante of Fabricantes_">{{fabricante}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" >
+                    <div class="field" *ngIf="fabricante_selected">
+                        <label class="label">Grupo</label>
+                        <div class="control">
+                            <div class="select is-small">
+                                <select (change)="SeleccionarGrupo($event.target.value)" id="grupo">
+                                    <option value="#">Seleccionar grupo</option>
+                                    <option value="{{grupo}}" *ngFor="let grupo of fabricante_selected.grupo">{{grupo}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field" *ngIf="Materia_prima_filtered.length > 0">
+                        <label for="" class="label">Materia prima</label>
+                        <div class="control">
+                            <div class="select is-small">
+                                <select (change)="Selected_Materia($event.target.value)">
+                                    <option value="#">Materia Prima</option>
+                                    <option value="{{Materia._id}}" *ngFor="let Materia of Materia_prima_filtered">{{Materia.nombre}} ({{Materia.marca}}) {{Materia.presentacion}} {{Materia.neto}}{{Materia.unidad}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" *ngIf="cantidades">
+                    <div class="field">
+                        <label for="" class="label">Presentación</label>
+                        <input type="text" class="input is-small" placeholder="Presentación" [(ngModel)]="presentacion">
+                    </div>
+                </div>
+                <div class="column" *ngIf="presentacion">
+                    <div class="field has-addons">
+                        <p class="control">
+                          <span class="select">
+                            <select [(ngModel)]="u_medicion">
+                              <option value="Kg">Kg.</option>
+                              <option value="Und">Und.</option>
+                              <option value="L">L.</option>
+                            </select>
+                          </span>
+                        </p>
+                        <p class="control">
+                          <input class="input" type="text" placeholder="Neto" [(ngModel)]="cantidad___">
+                        </p>
+                      </div>
+                </div>
+            </div>
+
+            <hr *ngIf="cantidad___">
+
+            <div class="columns" *ngIf="cantidad___">
+                <div class="column">
+                    <div class="field">
+                        <label for="" class="label">N° Lote</label>
+                        <div class="control">
+                            <input type="text" class="input is-small" [(ngModel)]="Lote">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field" *ngIf="Lote">
+                        <label for="" class="label">Fabricación</label>
+                        <div class="control">
+                            <input type="date" class="input is-small" [(ngModel)]="F_fabricacion">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field" *ngIf="F_fabricacion">
+                        <label for="" class="label">Total {{Materia_prima_selected.unidad}}</label>
+                        <div class="control">
+                            <input type="text" class="input is-small" [(ngModel)]="total_kilos">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field" *ngIf="total_kilos">
+                        <label for="" class="label"> </label>
+                        <div class="control">
+                            <button class="button is-small is-success" (click)="calcularLatas(total_kilos)">
+                                <span>Avanzar</span>
+                                <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr *ngIf="Factura">
+            
+            <hr *ngIf="cantidad">
+            
+            <div class="columns" *ngIf="cantidad">
+                <div class="column">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <span (click)="verDetalles()" class="ver see"><i class="fas fa-eye"></i></span> 
+                            </td>
+                            <td>
+                                {{cantidad}} {{Materia_prima_selected.presentacion}}(s) {{Materia_prima_selected.neto}}{{Materia_prima_selected.unidad}}
+                                <span *ngIf="resto">
+                                    <br>1 {{Materia_prima_selected.presentacion}} {{resto}}{{Materia_prima_selected.unidad}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td *ngIf="confirmado"      >
+                                <i class="fas fa-search" (click)="verCondiciones()"></i>
+                            </td>
+                            <td *ngIf="confirmado">
+                                <span *ngIf="cantidad" class="ver">Condiciones del material</span>
+                            </td>
+                            <td *ngIf="condicionado">
+                                <button class="button is-success is-small" (click)="Guardar()">
+                                    <span class="icon"><i class="fas fa-plus"></i></span>
+                                    <span>Agregar</span>
+                                </button> 
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <table class="table is-fullwidth" *ngIf="Factura">
+                <tr>
+                    <th>Producto</th>
+                    <th>Lote</th>
+                    <th>Cantidad</th>
+                    <th>Condición</th>
+                </tr>
+                <tr *ngFor="let factura of Factura.totales;index as i">
+                    <td>{{factura.producto}}
+                        <ng-container *ngIf="factura.ancho">
+                            {{factura.ancho}} x {{factura.largo}} 
+                            {{factura.gramaje}}g cal:{{factura.calibre}}
+                        </ng-container>
+                        ({{factura.marca}})
+                    </td>
+                    <td>{{factura.lote}}</td>
+                    <td>{{factura.total}}</td>
+                    <th><i class="fas fa-list-ol" (click)="ver_condiciones(i, factura.grupo)"></i></th>
+                </tr>
+            </table>
+
+
+            <span class="buttons_" *ngIf="cantidad">
+                <!-- <button class="button is-primary is-small" (click)="finalizar()" *ngIf="Factura">
+                    <span class="icon"><i class="fas fa-check"></i></span>
+                    <span>Finalizar</span>
+                </button> -->
+            </span>
+            <span class="buttons_" *ngIf="Factura && !cantidades">
+                    <button class="button is-primary is-small" (click)="finalizar()" *ngIf="!Edicion">
+                        <span class="icon"><i class="fas fa-check"></i></span>
+                        <span>Finalizar</span>
+                    </button>
+                    <button class="button is-primary is-small" (click)="finalizar_()"*ngIf='Edicion'>
+                        <span class="icon"><i class="fas fa-check"></i></span>
+                        <span>Finalizar</span>
+                    </button>
+            </span>
+            
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" [ngClass]="{'is-active':detalles}">
+    <div class="modal-background"></div>
+    <div class="modal-card  ampliar">
+        <div class="modal-card-body">
+            <span class="subtitulo">Detalles</span>
+            <hr>
+            <table class="table is-fullwidth">
+                <tr>
+                    <th>Material</th>
+                    <th>Fabricacion</th>
+                    <th>Lote</th>
+                    <th>Capacidad</th>
+                    <th>Codigo</th>
+                    <th>Borrar</th>
+                </tr>
+                <tr *ngFor="let envase of envases;index as i">
+                    <td>{{envase.nombre}}
+                        <ng-container *ngIf="envase.ancho">
+                            {{envase.ancho}}
+                        </ng-container> 
+                        ({{envase.marca}})</td>
+                    <td>
+                        <input type="date" class="input is-small small_" [(ngModel)]="envases[i].fabricacion" (change)="cambiar_fabricacion($event.target.value)">
+                    </td>
+                    <td>
+                        <input type="text" class="input is-small small_" [(ngModel)]="envases[i].lote" (change)="cambiar_lote($event.target.value)">
+                    </td>
+                    <td>
+                        <input type="text" class="input is-small small_" [(ngModel)]="envases[i].capacidad" (change)="cambiar_capacidad()">
+                    </td>
+                    <td>
+                        <input type="text" class="input is-small small_" [(ngModel)]="envases[i].numero">
+                    </td>
+                    <td>
+                        <button class="button is-danger is-outlined is-small" (click)="delete(i)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+
+            <table class="table">
+                <tr>
+                    <th>
+                        <label for="" class="label"> </label>
+                        Agregar Item
+                    </th>
+                    <td>
+                        <div class="field">
+                            <label for="" class="label">Capacidad</label>
+                        <p class="control">
+                            <input type="text" class="input is-small small_" #capacidad__>
+                        </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="field">
+                            <label for="" class="label">Código</label>
+                        <p class="control">
+                            <input type="text" class="input is-small small_" #codigo__>
+                        </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="field">
+                            <label for="" class="label"> </label>
+                            <p class="control">
+                                <button class="button is-small is-success" (click)="AgregarNuevo(capacidad__.value, codigo__.value)">
+                                    <span>Agregar</span>
+                                </button>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            <table class="table">
+                <tr>
+                    <td>Total</td>
+                    <td>{{this.total_kilos}}</td>
+                </tr>
+            </table>
+
+            <hr>
+
+            <button class="button is-success is-small" (click)="verDetalles()">
+                <span>Confirmar</span>
+            </button> 
+            <button class="button is-danger is-small" (click)="verDetalles_()">
+                <span>Salir</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':Condicion}">
+    <div class="modal-background"></div>
+    <div class="modal-card ">
+        <div class="modal-card-body">
+            <span class="subtitulo">
+                Condición del material
+            </span>
+            <hr>
+            <label class="checkbox" *ngIf="grupo__ != 'Cajas Corrugadas' && grupo__ != 'Sustrato'">
+                <input type="checkbox" id="01">
+                Certificado de calidad <br>
+                <input type="checkbox" id="02">
+                Identificación de lote<br>
+                <input type="checkbox" id="03">
+                Cajas en buen estado<br>
+                <input type="checkbox" id="04">
+                Cajas limpias<br>
+                <input type="checkbox" id="05">
+                Envases cerrados herméticamente
+            </label>
+
+            <label class="checkbox" *ngIf="grupo__ === 'Sustrato'">
+                <input type="checkbox" id="11">
+                Certificado de calidad <br>
+                <input type="checkbox" id="12">
+                Identificación de lote<br>
+                <input type="checkbox" id="13">
+                Paleta en buen estado<br>
+                <input type="checkbox" id="14">
+                Paleta sin precencia de humedad<br>
+                <input type="checkbox" id="15">
+                Paleta libre de insectos <br>
+                <input type="checkbox" id="16">
+                Embalaje limpio (libre de excremento de animales, otros) <br>
+                <input type="checkbox" id="17">
+                Embalaje sin rotura <br>
+                <input type="checkbox" id="18">
+                Embalaje seco externamente <br>
+                <input type="checkbox" id="19">
+                Embalaje seco internamente <br>
+                <input type="checkbox" id="110">
+                Evidencia de fumigación o tratamiento termico (sello) <br>
+            </label>
+
+            <label class="checkbox" *ngIf="grupo__ === 'Cajas Corrugadas'">
+                <input type="checkbox" id="21">
+                Certificado de calidad <br>
+                <input type="checkbox" id="22">
+                Identificación de lote<br>
+                <input type="checkbox" id="23">
+                Bultos sin precencia de humedad<br>
+                <input type="checkbox" id="24">
+                Bultos sin precencia de insectos<br>
+                <input type="checkbox" id="25">
+                Bultos sin evidencia visible de excremento de animales
+            </label>
+            <hr>
+            <button class="button is-success is-small" (click)="guardarCondiciones()">
+                <span class="icon"><i class="fas fa-check"></i></span>
+                <span>Confirmar</span>
+            </button> 
+            <button class="button is-danger is-small" (click)="verCondiciones_()">
+                <span class="icon"><i class="fas fa-times"></i></span>
+                <span>Salir</span>
+            </button>
+        </div>
+    </div>
+</div>
