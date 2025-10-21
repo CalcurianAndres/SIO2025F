@@ -9,44 +9,99 @@ import * as XLSX from 'xlsx';
 })
 export class MovimientoMaterialComponent implements OnInit {
 
-  constructor(public api:RestApiService) {
+  /**
+   * Genera un resumen total de materiales de todas las facturas, sumando lo despachado por material.
+   * Para Tinta, solo muestra el total de kilos despachados.
+   */
+  getResumenTotalMateriales() {
+    const resumen: { [nombre: string]: { total: number, unidad: string, grupo: string } } = {};
+    if (!this.Resultado || !this.Resultado.despachos) return [];
+    for (const despachos of this.Resultado.despachos) {
+      if (!despachos.despacho) continue;
+      for (const factura of despachos.despacho) {
+        const grupos = this.sumarMaterialesPorGrupo(factura.op) || [];
+        for (const grupo of grupos) {
+          if (!grupo.detalles) continue;
+          for (const detalle of grupo.detalles) {
+            // Calcular lo despachado para cada material según si es parcial o completo
+            let despachado = 0;
+            if (factura.parcial_ === true) {
+              despachado = this.despachoParcial(detalle.cantidad, factura.cantidad, factura.op);
+            } else {
+              despachado = this.restaDeDevoluciones(detalle.cantidad, this.devolucionPorMaterialEspecifico(factura.op, detalle))
+                - this.despachoCompleto(detalle.cantidad, factura.op);
+            }
+            // Para Tinta, sumar solo el total de kilos despachados por grupo
+            if (grupo.grupo === 'Tinta') {
+              if (!resumen['Tinta']) {
+                resumen['Tinta'] = { total: 0, unidad: this.UnidadesMedicion('Tinta'), grupo: 'Tinta' };
+              }
+              resumen['Tinta'].total += Number(despachado);
+            } else {
+              if (!resumen[detalle.nombre]) {
+                resumen[detalle.nombre] = { total: 0, unidad: detalle.unidad, grupo: grupo.grupo };
+              }
+              resumen[detalle.nombre].total += Number(despachado);
+            }
+          }
+        }
+      }
+    }
+    // Convertir a array y mostrar Tinta primero si existe
+    const arr = Object.keys(resumen).map(nombre => ({
+      material: nombre,
+      total: resumen[nombre].total,
+      unidad: resumen[nombre].unidad,
+      grupo: resumen[nombre].grupo
+    }));
+    // Tinta primero, luego el resto
+    return arr.sort((a, b) => {
+      if (a.grupo === 'Tinta') return -1;
+      if (b.grupo === 'Tinta') return 1;
+      return a.material.localeCompare(b.material);
+    });
+  }
 
-   }
+  constructor(public api: RestApiService) {
 
-   colores = [
+  }
+
+  colores = [
     'Amarillo proceso',
     'Azul proceso',
     'Blanco',
     'Negro',
     'Dorado'
-   ]
+  ]
 
-   public grupos = []
-   public Resultado:any = [];
-   public fechas = {
-    desde:'',
-    hasta:''
-   }
+  public grupos = []
+  public Resultado: any = [];
+  public fechas = {
+    desde: '',
+    hasta: ''
+  }
 
-   public buscar = false;
+  public buscar = false;
 
-   mostrarDetalles: { [grupo: string]: boolean } = {};
+  mostrarDetalles: { [grupo: string]: boolean } = {};
 
-    toggleDetalles(grupo: string) {
-      this.mostrarDetalles[grupo] = !this.mostrarDetalles[grupo];
-    }
+  toggleDetalles(grupo: string) {
+    this.mostrarDetalles[grupo] = !this.mostrarDetalles[grupo];
+  }
 
 
-   exportToExcel(): void {
-    // Extraemos los datos de la tabla con la suma por grupo
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.getTableData());
+  exportToExcel(): void {
+    // Extraemos los datos del resumen total de materiales despachados
+    const resumen = this.getResumenTotalMateriales().map(item => ({
+      'Material': item.material,
+      'Total Despachado': item.total,
+      'Unidad': item.unidad
+    }));
 
-    // Crear el libro de trabajo
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(resumen);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Totales por Grupo');
-
-    // Generar el archivo Excel y hacer la descarga
-    XLSX.writeFile(wb, 'TotalesPorGrupo.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'Resumen Despachado');
+    XLSX.writeFile(wb, 'ResumenMaterialesDespachados.xlsx');
   }
 
   // Función que prepara los datos de la tabla con la suma de los totales por grupo
@@ -77,28 +132,28 @@ export class MovimientoMaterialComponent implements OnInit {
     }
 
     // Convertimos el objeto de totales a un array para exportarlo a Excel
-    return Object.values(totalsByGroup).map((item:any) => ({
+    return Object.values(totalsByGroup).map((item: any) => ({
       'Grupo': item.grupo,
       'Total Asignado': `${item.cantidad} ${item.unidad}`,
     }));
   }
 
-  
-   mostrarFechas(){
-    if(this.fechas.desde && this.fechas.hasta){
+
+  mostrarFechas() {
+    if (this.fechas.desde && this.fechas.hasta) {
       this.BuscarMovimientos();
     }
-   }
+  }
 
   BuscarGrupo = () => {
-    this.api.GetGrupoMp().subscribe((resp:any) => {
+    this.api.GetGrupoMp().subscribe((resp: any) => {
       this.grupos = resp
     })
   }
 
   BuscarMovimientos = () => {
     this.buscar = false;
-    this.api.getMovimientoMaterial(this.fechas.desde, this.fechas.hasta).subscribe((resp:any) => {
+    this.api.getMovimientoMaterial(this.fechas.desde, this.fechas.hasta).subscribe((resp: any) => {
       this.Resultado = resp;
 
       this.buscar = true;
@@ -106,11 +161,11 @@ export class MovimientoMaterialComponent implements OnInit {
   }
 
 
-  getKeys = (obj:any) => {
+  getKeys = (obj: any) => {
     return Object.keys(obj)
   }
 
-  
+
 
   ngOnInit(): void {
   }
@@ -122,18 +177,18 @@ export class MovimientoMaterialComponent implements OnInit {
    * @returns Un número aleatorio dentro del rango [min, max].
    */
   generarNumeroRandom(min: number, max: number): number {
-      if (min > max) {
-          throw new Error("El valor mínimo no puede ser mayor que el valor máximo.");
-      }
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    if (min > max) {
+      throw new Error("El valor mínimo no puede ser mayor que el valor máximo.");
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
 
-  asignaciones = (op:string) =>{
+  asignaciones = (op: string) => {
     return this.Resultado.asignaciones.filter(asignaciones => asignaciones.orden === op)
   }
 
-  devoluciones = (op:string) =>{
+  devoluciones = (op: string) => {
     return this.Resultado.devoluciones.filter(asignaciones => asignaciones.orden === op)
   }
 
@@ -144,14 +199,14 @@ export class MovimientoMaterialComponent implements OnInit {
     let i = 0
     devolucionesFiltradas.forEach(devolucion => {
       i++
-      devolucion.filtrado.forEach(material =>  {
+      devolucion.filtrado.forEach(material => {
         let grupoName = material.material.grupo.nombre
 
-        if(i > 1 && grupoName === 'Sustrato'){
+        if (i > 1 && grupoName === 'Sustrato') {
           grupoName = 'Papel / Cartón'
         }
 
-        if(!resumenPorGrupo[grupoName]){
+        if (!resumenPorGrupo[grupoName]) {
           resumenPorGrupo[grupoName] = 0
         }
         resumenPorGrupo[grupoName] += Number(material.cantidad)
@@ -159,7 +214,7 @@ export class MovimientoMaterialComponent implements OnInit {
     });
 
     return Object.keys(resumenPorGrupo).map(grupo => {
-      return {grupo, cantidad:resumenPorGrupo[grupo]};
+      return { grupo, cantidad: resumenPorGrupo[grupo] };
     })
   }
 
@@ -168,8 +223,8 @@ export class MovimientoMaterialComponent implements OnInit {
     let resumenPorGrupo = {};
 
     devolucionesFiltradas.forEach(devolucion => {
-      devolucion.filtrado.forEach(material =>  {
-        if(!resumenPorGrupo[material.material.grupo.nombre]){
+      devolucion.filtrado.forEach(material => {
+        if (!resumenPorGrupo[material.material.grupo.nombre]) {
           resumenPorGrupo[material.material.grupo.nombre] = 0
         }
         resumenPorGrupo[material.material.grupo.nombre] += Number(material.cantidad)
@@ -177,49 +232,49 @@ export class MovimientoMaterialComponent implements OnInit {
     });
 
     return Object.keys(resumenPorGrupo).map(grupo => {
-      return {grupo, cantidad:resumenPorGrupo[grupo]};
+      return { grupo, cantidad: resumenPorGrupo[grupo] };
     })
   }
 
-  BuscarDevolucionDeOrdenPorGrupo(grupo: string, op: string):any {
+  BuscarDevolucionDeOrdenPorGrupo(grupo: string, op: string): any {
     const devolucion = this.sumarDevolucionesPorGrupo(op).find(devoluciones => devoluciones.grupo === grupo);
     return devolucion ?? 0;
-}
+  }
 
-devolucionPorMaterialEspecifico = (op, material) =>{
-  const devolucionesFiltradas = this.devoluciones(op);
-  let total = 0
+  devolucionPorMaterialEspecifico = (op, material) => {
+    const devolucionesFiltradas = this.devoluciones(op);
+    let total = 0
 
-  devolucionesFiltradas.forEach(devolucion => {
-    devolucion.filtrado.forEach(material_ =>{
-      const nombreCompleto = `${material_.material.nombre}${material_.material.marca ? ' ' + material_.material.marca : ''}`;
+    devolucionesFiltradas.forEach(devolucion => {
+      devolucion.filtrado.forEach(material_ => {
+        const nombreCompleto = `${material_.material.nombre}${material_.material.marca ? ' ' + material_.material.marca : ''}`;
         if (material.nombre === nombreCompleto) {
           total += Number(material_.cantidad || 0);
         }
+      })
     })
-  })
 
-  return total
-}
+    return total
+  }
 
 
-  UnidadesMedicion(Grupo:any){
+  UnidadesMedicion(Grupo: any) {
     switch (Grupo) {
       case 'Sustrato':
         return 'Und.'
-      break;
+        break;
 
       case 'Tinta':
         return 'kg.'
-      break
+        break
 
       case 'Barniz':
         return 'kg.'
-      break
-    
+        break
+
       default:
         return 'Und.'
-      break;
+        break;
     }
   }
 
@@ -229,10 +284,10 @@ devolucionPorMaterialEspecifico = (op, material) =>{
     const resumenPorGrupo: {
       [grupo: string]: {
         cantidad: number;
-        detalles: { [nombre: string]: { cantidad: number; devolucion:number; despachado:number; unidad: string } };
+        detalles: { [nombre: string]: { cantidad: number; devolucion: number; despachado: number; unidad: string } };
       };
     } = {};
-  
+
     let i = 0;
     let primerSustratoNombre = '';
 
@@ -245,45 +300,45 @@ devolucionPorMaterialEspecifico = (op, material) =>{
         const gramaje = material.material.gramaje || '';
         const calibre = material.material.calibre || '';
         let nombreMaterial = `${material.material.nombre} ${material.material.marca}`;
-        if(ancho && largo && gramaje && calibre){
+        if (ancho && largo && gramaje && calibre) {
           nombreMaterial = `${material.material.nombre} ${material.material.marca} (${ancho}x${largo}) ${gramaje}g/m² - ${calibre}pt`
         }
         const unidad = material.material.unidad || 'und';
-  
-         // Guardamos el primer Sustrato original (i == 0)
-          if (i === 1 && GrupoNombre === 'Sustrato' && !primerSustratoNombre) {
-            primerSustratoNombre = nombreMaterial;
-          }
 
-          // Si no es el primero, es Sustrato y diferente del primero: renombrar a Papel / Cartón
-          if (i > 1 && GrupoNombre === 'Sustrato' && nombreMaterial !== primerSustratoNombre) {
-            GrupoNombre = 'Papel / Cartón';
-          }
-  
+        // Guardamos el primer Sustrato original (i == 0)
+        if (i === 1 && GrupoNombre === 'Sustrato' && !primerSustratoNombre) {
+          primerSustratoNombre = nombreMaterial;
+        }
+
+        // Si no es el primero, es Sustrato y diferente del primero: renombrar a Papel / Cartón
+        if (i > 1 && GrupoNombre === 'Sustrato' && nombreMaterial !== primerSustratoNombre) {
+          GrupoNombre = 'Papel / Cartón';
+        }
+
         if (!resumenPorGrupo[GrupoNombre]) {
           resumenPorGrupo[GrupoNombre] = {
             cantidad: 0,
             detalles: {}
           };
         }
-  
+
         // Sumar cantidad total por grupo
         resumenPorGrupo[GrupoNombre].cantidad += Number(material.cantidad);
-  
+
         // Agrupar materiales iguales por nombre
         if (!resumenPorGrupo[GrupoNombre].detalles[nombreMaterial]) {
           resumenPorGrupo[GrupoNombre].detalles[nombreMaterial] = {
             cantidad: 0,
-            devolucion:0,
-            despachado:0,
+            devolucion: 0,
+            despachado: 0,
             unidad
           };
         }
-  
+
         resumenPorGrupo[GrupoNombre].detalles[nombreMaterial].cantidad += Number(material.cantidad);
       });
     });
-  
+
     // Transformar en array para la vista
     const resultado = Object.keys(resumenPorGrupo).map(grupo => ({
       grupo,
@@ -295,7 +350,7 @@ devolucionPorMaterialEspecifico = (op, material) =>{
         unidad: resumenPorGrupo[grupo].detalles[nombre].unidad
       }))
     }));
-  
+
     // Ordenar como antes
     return resultado.sort((a, b) => {
       if (a.grupo === 'Sustrato') return -1;
@@ -313,11 +368,11 @@ devolucionPorMaterialEspecifico = (op, material) =>{
       return a.grupo.localeCompare(b.grupo);
     });
   };
-  
-  
 
 
-  despachoParcial( asignado:any, producto_despachado:any, op:string){
+
+
+  despachoParcial(asignado: any, producto_despachado: any, op: string) {
 
 
     let sustrato_asignado = this.sumarMaterialesPorGrupo(op).find(material => material.grupo === 'Sustrato')
@@ -325,21 +380,21 @@ devolucionPorMaterialEspecifico = (op, material) =>{
 
     let orden = this.Resultado.ordenes.find(orden => orden.sort === op)
 
-    
-    let producto_maximo:any = '';
-    
-    if(!sustrato_asignado){
+
+    let producto_maximo: any = '';
+
+    if (!sustrato_asignado) {
       let cajas_cajas = orden.producto.materiales[orden.montaje].find(m => Number(m.cantidad) > 5);
       producto_maximo = cajas_asignadas.cantidad * Number(cajas_cajas.cantidad)
-    }else{
+    } else {
       producto_maximo = sustrato_asignado.cantidad * orden.producto.ejemplares[orden.montaje]
     }
 
     return (asignado * producto_despachado) / producto_maximo
   }
 
-  despachoCompleto(asignado:any, op: string) {
-    const parciales = this.Resultado.parciales.filter(desp => 
+  despachoCompleto(asignado: any, op: string) {
+    const parciales = this.Resultado.parciales.filter(desp =>
       desp.despacho.some(filt => filt.op === op && filt.parcial_ === true)
     );
     const documentosProcesados = new Set(); // Rastrear documentos ya procesados
@@ -347,36 +402,36 @@ devolucionPorMaterialEspecifico = (op, material) =>{
     let cantidades = 0
 
     for (let i = 0; i < parciales.length; i++) {
-      for(let j=0;j < parciales[i].despacho.length; j++){
+      for (let j = 0; j < parciales[i].despacho.length; j++) {
         const documento = parciales[i].despacho[j]._id; // Identificador único del parcial
-        
+
         // Verifica si el documento ya fue procesado
         if (documentosProcesados.has(documento)) {
-            continue; // Saltar al siguiente si ya fue procesado
-        }else{
+          continue; // Saltar al siguiente si ya fue procesado
+        } else {
           // Agregar el documento al conjunto de procesados
           documentosProcesados.add(documento)
-          if(parciales[i].despacho[j].op === op){
+          if (parciales[i].despacho[j].op === op) {
             cantidades += parciales[i].despacho[j].cantidad
           }
         }
 
 
       }
-        if (i === parciales.length -1) {
-            suma_de_parciales += this.despachoParcial(asignado, cantidades, op);
-        }
+      if (i === parciales.length - 1) {
+        suma_de_parciales += this.despachoParcial(asignado, cantidades, op);
+      }
     }
     return suma_de_parciales
-}
-
-
-restaDeDevoluciones(asignado:any, devoluciones:any){
-  if(!devoluciones){
-    devoluciones = 0
   }
 
-  return asignado - devoluciones
-}
-  
+
+  restaDeDevoluciones(asignado: any, devoluciones: any) {
+    if (!devoluciones) {
+      devoluciones = 0
+    }
+
+    return asignado - devoluciones
+  }
+
 }

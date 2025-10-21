@@ -3,7 +3,8 @@
         <!-- track: se arrastra y se transforma -->
         <div #carousel class="carousel-track">
             <!-- cada card -->
-            <div class="carousel-card" #carouselCard *ngFor="let s of slides; let i = index" [attr.data-index]="i">
+            <div class="carousel-card" #carouselCard *ngFor="let s of slides; let i = index" [attr.data-index]="i"
+                style="width: 90%;">
                 <div class="card">
                     <div class="card-content">
                         <p class="title is-5">{{ s.title }}</p>
@@ -11,6 +12,22 @@
                         <div class="content">
                             <ng-container *ngIf="s.numba === 1">
                                 <div class="field is-grouped">
+                                    <div class="control">
+                                        <div class="control">
+                                            <div class="select">
+                                                <select [(ngModel)]="cliente_selected"
+                                                    (change)="getProductos($event.target.value); ObtenerElCliente()">
+                                                    <option value="Otro">Otro</option>
+                                                    <option value="{{cliente._id}}" *ngFor="let cliente of Clientes">
+                                                        {{cliente.nombre}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="field is-grouped" *ngIf="cliente_selected === 'Otro'">
                                     <div class="control">
                                         <label for="" class="label">Cliente</label>
                                         <input type="text" class="input">
@@ -24,6 +41,28 @@
                                         <input type="text" class="input">
                                     </div>
                                 </div>
+                                <br>
+                                <div class="field is-grouped" *ngIf="cliente_selected && cliente_selected !== 'Otro'">
+                                    <div class="control">
+                                        <label for="" class="label">Producto</label>
+                                        <div class="select">
+                                            <select [(ngModel)]="producto_selected">
+                                                <option value="otro">Otro producto</option>
+                                                <option value="{{producto._id}}"
+                                                    *ngFor="let producto of producto; index as i">
+                                                    {{producto.producto}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control is-grouped"
+                                    *ngIf="cliente_selected === 'Otro' || producto_selected === 'otro'">
+                                    <div class="control">
+                                        <label for="" class="label">Producto</label>
+                                        <input type="text" class="input">
+                                    </div>
+                                </div>
+                                <br>
                             </ng-container>
 
                             <ng-container *ngIf="s.numba === 2">
@@ -59,7 +98,7 @@
                                         <input type="text" class="input">
                                     </div>
                                 </div>
-
+                                <br>
                                 <div class="field is-grouped">
                                     <div class="control">
                                         <label for="" class="label">&nbsp;</label>
@@ -93,11 +132,37 @@
                                             </select>
                                         </span>
                                     </div>
-                                    <div class="control" *ngIf="precios.sustrato > 0 || precios.sustrato === -1">
-                                        <label for="" class="label">&nbsp;</label>
-                                        ({{precios.sustrato}}$)
-                                    </div>
                                 </div>
+                                <br>
+                                <table class="table is-fullwidth is-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Precio actual</th>
+                                            <th>Ajuste</th>
+                                            <th>Aumento ({{aumento_sustrato}}%)</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td *ngIf="precios.sustrato >= 0">{{precio_base_sustrato}}$</td>
+                                            <td><input type="number" name="" id="" step="1" style="width: 100px;"
+                                                    [(ngModel)]="aumento_sustrato" (input)="ajustarPrecioSustrato()"> %
+                                            </td>
+                                            <!-- Aumento en dinero -->
+                                            <td>
+                                                {{ (precio_base_sustrato * (aumento_sustrato / 100) ) | number:'1.2-2'
+                                                }}$
+                                            </td>
+
+                                            <!-- Total con aumento -->
+                                            <td>
+                                                {{ precios.sustrato |
+                                                number:'1.2-2' }}$
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
                                 <div class="field is-grouped" *ngIf="sustrato_selected == 'Otro'">
                                     <div class="control">
@@ -284,7 +349,7 @@
                                         <label for="" class="label">Cant. escalas</label>
                                         <input type='number' name="" id="" class="input" style="width: 100px;"
                                             [(ngModel)]="cantidad_escalas"
-                                            (change)="cantidad_por_escala[cantidad_por_escala.length - 1] = 0">
+                                            (change)="cantidad_por_escala[cantidad_por_escala.length - 1] = 0; UpdatePreciosTransporte()">
                                     </div>
                                 </div>
                                 <hr>
@@ -459,6 +524,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                            <td>{{maquinaLitografica().nombre}}</td>
+                                            <ng-container
+                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller;">
+                                                    {{maquinaLitografica().horas |
+                                                    number:'1.2-2'}} h
+                                                </td>
+                                                <td [ngClass]="['col-par', 'col-' + (i % 2)]"
+                                                    style="font-size: smaller; text-align: right;">
+                                                    {{maquinaLitografica().precio |
+                                                    number:'1.2-2'}}
+                                                </td>
+                                            </ng-container>
+                                        </tr>
                                         <tr *ngFor="let maquina of maquinas_selected; index as y">
                                             <td>{{maquina.nombre}}</td>
                                             <ng-container
@@ -530,7 +611,11 @@
                                             <ng-container
                                                 *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
                                                 <td style="width: 150px; text-align: right;" colspan="2">
-                                                    {{precio_transporte}}$</td>
+                                                    <input type="number" name="" id="" class="input"
+                                                        [(ngModel)]="precios_transporte[i]"
+                                                        (ngModelChange)="onInputChangeTransporte($event, i)"
+                                                        placeholder="0,0">
+                                                </td>
                                             </ng-container>
                                         </tr>
                                     </thead>
@@ -559,23 +644,11 @@
                                                 *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
                                                 <td colspan="2" style="text-align: right;"><strong>{{
                                                         getTotalConMargen(i) +
-                                                        getTotalMaquinasConMargen(i) + precio_transporte |
+                                                        getTotalMaquinasConMargen(i) + precios_transporte[i] |
                                                         number:'1.2-2' }}
                                                         $</strong></td>
                                             </ng-container>
                                         </tr>
-                                        <!-- <tr class="fila-total-resumen">
-                                            <td><strong>Totales / {{division}}</strong></td>
-                                            <ng-container
-                                                *ngFor="let escala of [].constructor(cantidad_escalas); index as i">
-                                                <td colspan="2" style="text-align: right"><strong>{{
-                                                        ((getTotalConMargen(i) +
-                                                        getTotalMaquinasConMargen(i) + precio_transporte) * division) /
-                                                        cantidad_por_escala[i] |
-                                                        number:'1.2-2' }}
-                                                        $</strong></td>
-                                            </ng-container>
-                                        </tr> -->
                                         <tr>
                                             <td>
                                                 Otros:
@@ -591,7 +664,8 @@
                                                     <strong>
                                                         {{
                                                         (getTotalConMargen(i) +
-                                                        getTotalMaquinasConMargen(i) + precio_transporte) * (1 + (otro /
+                                                        getTotalMaquinasConMargen(i) + precios_transporte[i]) * (1 +
+                                                        (otro /
                                                         100)) |
                                                         number:'1.2-2' }}
                                                     </strong>
@@ -622,7 +696,8 @@
                                                     <strong>
                                                         {{
                                                         (((getTotalConMargen(i) +
-                                                        getTotalMaquinasConMargen(i) + precio_transporte) * division) /
+                                                        getTotalMaquinasConMargen(i) + precios_transporte[i]) *
+                                                        division) /
                                                         cantidad_por_escala[i]) * (1 + (otro/100)) |
                                                         number:'1.2-2' }}
                                                     </strong>
@@ -632,6 +707,36 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div class="field is-grouped">
+                                    <div class="control" style="width: 250px;">
+                                        <label for="" class="label">Condición de Pago:</label>
+                                        <textarea name="" id="" class="textarea"
+                                            [(ngModel)]="condicion_pago"></textarea>
+                                    </div>
+                                    <div class="control" style="width: 250px;">
+                                        <label for="" class="label">Condición de Pago:</label>
+                                        <textarea name="" id="" class="textarea" [(ngModel)]="nota"></textarea>
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Entrega de almacén:</label>
+                                        <div class="select">
+                                            <select [(ngModel)]="almacen_selected">
+                                                <option value="{{almacen}}"
+                                                    *ngFor="let almacen of Cliente_selected.almacenes">
+                                                    {{almacen}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="control" style="width: 100px;">
+                                        <label for="" class="label">Dias de validez del presupuesto:</label>
+                                        <input type="number" name="" id="" class="input" [(ngModel)]="dias_validez">
+                                    </div>
+                                </div>
+                                <button class="button is-success" (click)="DescargarPDF()">
+                                    <span class="icon"><i class="fa-solid fa-download"></i></span>
+                                    <span>Generar Cotización</span>
+                                </button>
                             </ng-container>
 
                         </div>
@@ -641,13 +746,14 @@
         </div>
     </div>
 
+
     <!-- flechas -->
-    <button class="carousel-btn left" (click)="moveSlide(-1)" aria-label="Anterior">❮</button>
-    <button class="carousel-btn right" (click)="moveSlide(1)" aria-label="Siguiente">❯</button>
+    <!-- <button class="carousel-btn left" (click)="moveSlide(-1)" aria-label="Anterior">❮</button>
+    <button class="carousel-btn right" (click)="moveSlide(1)" aria-label="Siguiente">❯</button> -->
 
     <!-- puntos -->
-    <div class="carousel-dots">
+    <!-- <div class="carousel-dots">
         <button class="dot" *ngFor="let s of slides; let i = index" [class.is-active]="i === index" (click)="goTo(i)"
             aria-label="Ir al slide {{ i + 1 }}"></button>
-    </div>
+    </div> -->
 </div>

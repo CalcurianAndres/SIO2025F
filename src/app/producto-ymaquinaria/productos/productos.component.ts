@@ -1,3 +1,29 @@
+// /**
+//  * Mueve el material necesario seleccionado una posición arriba en el arreglo MATERIALES_NECESARIOS[i_montajes_].
+//  * @param index Índice del material a mover.
+//  */
+// moveUpNecesario(index: number): void {
+//   if(this.MATERIALES_NECESARIOS[this.i_montajes_] && index > 0) {
+//   const temp = this.MATERIALES_NECESARIOS[this.i_montajes_][index];
+//   this.MATERIALES_NECESARIOS[this.i_montajes_][index] = this.MATERIALES_NECESARIOS[this.i_montajes_][index - 1];
+//   this.MATERIALES_NECESARIOS[this.i_montajes_][index - 1] = temp;
+// }
+//   }
+
+// /**
+//  * Mueve el material necesario seleccionado una posición abajo en el arreglo MATERIALES_NECESARIOS[i_montajes_].
+//  * @param index Índice del material a mover.
+//  */
+// moveDownNecesario(index: number): void {
+//   if(
+//     this.MATERIALES_NECESARIOS[this.i_montajes_] &&
+//       index < this.MATERIALES_NECESARIOS[this.i_montajes_].length - 1
+//     ) {
+//   const temp = this.MATERIALES_NECESARIOS[this.i_montajes_][index];
+//   this.MATERIALES_NECESARIOS[this.i_montajes_][index] = this.MATERIALES_NECESARIOS[this.i_montajes_][index + 1];
+//   this.MATERIALES_NECESARIOS[this.i_montajes_][index + 1] = temp;
+// }
+//   }
 import { Component, OnInit } from '@angular/core';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -15,11 +41,11 @@ export class ProductosComponent implements OnInit {
 
   baseUrl = environment.api
 
-  public NUEVO_CLIENTE:boolean = false;
+  public NUEVO_CLIENTE: boolean = false;
   public CLIENTES;
   public MATERIALES;
   public MATERIALES_NECESARIOS = [];
-  public NUEVO_PRODUCTO:boolean = false;
+  public NUEVO_PRODUCTO: boolean = false;
   public GRUPOS;
 
   public ImageProducto;
@@ -35,70 +61,72 @@ export class ProductosComponent implements OnInit {
   public PRODUCTOS;
   public SUSTRATO = [];
 
-  public Sus_Done:boolean = false;
+  public Sus_Done: boolean = false;
 
   public dimensiones = []
 
   product_selected;
-  _producto_seleccionado:boolean = false;
+  _producto_seleccionado: boolean = false;
 
   montajes = 1;
   i_montajes = 0;
   i_montajes_ = 0;
 
   necesidad = 0;
-  listo:boolean = true;
-  
-  cinco:boolean = true;
-  seis:boolean = true;
-  siete:boolean = true;
-  ocho:boolean = true;
+  listo: boolean = true;
 
-  public ImgSubir:File;
+  cinco: boolean = true;
+  seis: boolean = true;
+  siete: boolean = true;
+  ocho: boolean = true;
+
+  public ImgSubir: File;
 
 
   almacenes = [];
   public new_almacen = ''
   public cargando = false;
 
-  public VER_PRODUCTO:boolean = false;
-  OneProduct:any = {producto:'',
-                          cliente:{
-                            nombre:'',
-                            codigo:''
-                          },
-                          grupo:{_id:''},
-                          codigo:'',
-                          version:'',
-                          ejemplares:[],
-                          dimensiones:'',
-                          fibra:'',
-                          post:[],
-                          sustrato:[{
-                            nombre:'',
-                            marca:'',
-                            calibre:'',
-                            gramaje:''
-                          }],
-                          materiales:[]};
+  public VER_PRODUCTO: boolean = false;
+  OneProduct: any = {
+    producto: '',
+    cliente: {
+      nombre: '',
+      codigo: ''
+    },
+    grupo: { _id: '' },
+    codigo: '',
+    version: '',
+    ejemplares: [],
+    dimensiones: '',
+    fibra: '',
+    post: [],
+    sustrato: [{
+      nombre: '',
+      marca: '',
+      calibre: '',
+      gramaje: ''
+    }],
+    materiales: []
+  };
 
-  ClienteForm:FormGroup = this.fb.group({
-    nombre:['',Validators.required],
-    codigo:['',Validators.required],
-    rif:['J-',Validators.required],
-    direccion:['',Validators.required],
-    almacenes:['', Validators.required],
-    contactos:['',Validators.required]
+  ClienteForm: FormGroup = this.fb.group({
+    nombre: ['', Validators.required],
+    codigo: ['', Validators.required],
+    rif: ['J-', Validators.required],
+    direccion: ['', Validators.required],
+    almacenes: ['', Validators.required],
+    contactos: ['', Validators.required]
   })
 
-  constructor(private api:RestApiService,
-              private subirArchivo:SubirArchivosService,
-              private fb:FormBuilder) { 
-                this.usuario = api.usuario
-              }
+  constructor(private api: RestApiService,
+    private subirArchivo: SubirArchivosService,
+    private fb: FormBuilder) {
+    this.usuario = api.usuario
+  }
 
   ngOnInit(): void {
-    this. obtenerGrupodeMateriales();
+    this.obtenerGrupodeMateriales();
     this.BuscarGruposEnAlmacen();
     this.obtenerClientes();
     this.obtenerMateriales();
@@ -108,108 +136,107 @@ export class ProductosComponent implements OnInit {
   }
   public usuario
 
-  NumToLet(n){
-    switch(n)
-    {
-        case 0: return "A";
-        case 1: return "B";
-        case 2: return "C";
-        case 3: return "D";
-        case 4: return "E";
-        case 5: return "F";
-        case 6: return "G";
-        case 7: return "H";
-        case 8: return "I";
+  NumToLet(n) {
+    switch (n) {
+      case 0: return "A";
+      case 1: return "B";
+      case 2: return "C";
+      case 3: return "D";
+      case 4: return "E";
+      case 5: return "F";
+      case 6: return "G";
+      case 7: return "H";
+      case 8: return "I";
     }
 
   }
 
-  CambiarImagen( event:any ){
+  CambiarImagen(event: any) {
     this.ImgSubir = (event.target).files[0];
     document.getElementsByClassName('file-name')[0].innerHTML = this.ImgSubir.name;
   }
 
   public contactos = []
-  public contactoInput:boolean = false;
-  agregarContactoNuevo(a,b,c,d){
+  public contactoInput: boolean = false;
+  agregarContactoNuevo(a, b, c, d) {
     this.contactoInput = true;
-    this.contactos.push({nombre:a,cargo:b,email:c,trato:d});
+    this.contactos.push({ nombre: a, cargo: b, email: c, trato: d });
     (<HTMLInputElement>document.getElementById('Nombre_cn')).value = '';
     (<HTMLInputElement>document.getElementById('Cargo_cn')).value = '';
     (<HTMLInputElement>document.getElementById('Email_cn')).value = '';
     return
   }
 
-  contact_delete(i){
-    this.contactos.splice(i,1)
+  contact_delete(i) {
+    this.contactos.splice(i, 1)
   }
 
-  subirImagen(){
+  subirImagen() {
     this.cargando = true;
-    this.subirArchivo.actualizarFoto(this.ImgSubir, 'producto', this.OneProduct._id )
-    .then(img => {
-      if(img){
-        this.usuario.img = img;
-        document.getElementsByClassName('file-name')[0].innerHTML = 'Sin archivo...';
-        this.ImgSubir = null;
-      }
-      this.verProducto(this.OneProduct._id)
-      this.verProducto(this.OneProduct._id)
-      this.cargando = false;
+    this.subirArchivo.actualizarFoto(this.ImgSubir, 'producto', this.OneProduct._id)
+      .then(img => {
+        if (img) {
+          this.usuario.img = img;
+          document.getElementsByClassName('file-name')[0].innerHTML = 'Sin archivo...';
+          this.ImgSubir = null;
+        }
+        this.verProducto(this.OneProduct._id)
+        this.verProducto(this.OneProduct._id)
+        this.cargando = false;
       });
   }
 
   public item_Selected = null
-  producto_seleccionado(e){
-    if(e === 0){
+  producto_seleccionado(e) {
+    if (e === 0) {
       this._producto_seleccionado = false;
-    }else{
+    } else {
       this.item_Selected = e
       this._producto_seleccionado = true;
-      if(this.product_selected == 'Sustrato'){
+      if (this.product_selected == 'Sustrato') {
         this._producto_seleccionado = false;
         document.getElementById('cant').hidden = true;
-      }else{
+      } else {
         this._producto_seleccionado = true;
         document.getElementById('cant').hidden = false;
       }
     }
   }
 
-  selecciona_producto(e){
+  selecciona_producto(e) {
     let clase = this.i_montajes.toString()
-    if(e === "#"){
+    if (e === "#") {
       (<HTMLInputElement>document.getElementById(clase)).disabled = true;
-    }else{
+    } else {
       (<HTMLInputElement>document.getElementById(clase)).disabled = false;
       // alert(clase)
       this.product_selected = e;
-      if(this.product_selected != 'Sustrato'){
-        this.MATERIALES = [...this.MATERIALES.reduce((map, obj) => map.set({nombre:obj.nombre,marca:obj.marca}, obj), new Map()).values()];
+      if (this.product_selected != 'Sustrato') {
+        this.MATERIALES = [...this.MATERIALES.reduce((map, obj) => map.set({ nombre: obj.nombre, marca: obj.marca }, obj), new Map()).values()];
 
       }
     }
   }
 
-  selecciona_producto2(e){
+  selecciona_producto2(e) {
     let clase = this.i_montajes_.toString()
-    if(e == 0){
+    if (e == 0) {
       (<HTMLInputElement>document.getElementById(`x-${clase}`)).disabled = true;
-    }else{
+    } else {
       (<HTMLInputElement>document.getElementById(`x-${clase}`)).disabled = false;
       this.product_selected = e;
-      if(this.product_selected != 'Sustrato'){
-        this.MATERIALES = [...this.MATERIALES.reduce((map, obj) => map.set({nombre:obj.nombre,marca:obj.marca}, obj), new Map()).values()];
+      if (this.product_selected != 'Sustrato') {
+        this.MATERIALES = [...this.MATERIALES.reduce((map, obj) => map.set({ nombre: obj.nombre, marca: obj.marca }, obj), new Map()).values()];
 
       }
     }
   }
 
-  post_impresion(e){
+  post_impresion(e) {
     let Included = this.POST.includes(e);
-    if(!Included){
+    if (!Included) {
       this.POST.push(e);
-    }else{
+    } else {
       let i = this.POST.indexOf(e)
       this.POST.splice(i, 1)
     }
@@ -217,146 +244,146 @@ export class ProductosComponent implements OnInit {
     // // console.log(this.POST)
   }
 
-  troquel(e){
+  troquel(e) {
     this.TROQUEL = e.target.value;
   }
 
-  Ejemplar(e){
-    if(!this.EJEMPLARES[this.i_montajes]){
+  Ejemplar(e) {
+    if (!this.EJEMPLARES[this.i_montajes]) {
       this.EJEMPLARES[this.i_montajes] = ''
     }
     this.EJEMPLARES[this.i_montajes] = e;
   }
 
-  public Modal_Cliente(){
-    if(this.NUEVO_CLIENTE){
+  public Modal_Cliente() {
+    if (this.NUEVO_CLIENTE) {
       this.NUEVO_CLIENTE = false;
-    }else{
+    } else {
       this.NUEVO_CLIENTE = true;
     }
   }
 
-  public Modal_Producto(){
-    if(this.NUEVO_PRODUCTO){
+  public Modal_Producto() {
+    if (this.NUEVO_PRODUCTO) {
       this.NUEVO_PRODUCTO = false;
-    }else{
+    } else {
       this.NUEVO_PRODUCTO = true;
     }
   }
 
-  public ver_Modal_Producto(){
-    if(this.VER_PRODUCTO){
+  public ver_Modal_Producto() {
+    if (this.VER_PRODUCTO) {
       this.VER_PRODUCTO = false;
-    }else{
+    } else {
       this.VER_PRODUCTO = true;
       this.i_montajes = 0;
       this.listo = true;
     }
   }
 
-  sumaTintas(n){
+  sumaTintas(n) {
 
-    if(this.listo){
+    if (this.listo) {
       this.listo = false;
       this.necesidad = n - 5;
       return n + Math.abs(this.necesidad);
-    }else{
+    } else {
       return n + Math.abs(this.necesidad);
     }
   }
 
-  cambiarCalculo(){
+  cambiarCalculo() {
     this.listo = true;
   }
 
-  add_almacen(){
+  add_almacen() {
     this.almacenes.push(this.new_almacen)
     this.new_almacen = ''
   }
 
-  delete_this_almacen(i){
+  delete_this_almacen(i) {
     let buscar = this.almacenes.find(x => x == i)
     let index = this.almacenes.indexOf(buscar)
-    this.almacenes.splice(index,1)
+    this.almacenes.splice(index, 1)
   }
 
-  enable(input){
+  enable(input) {
     let campo = (<HTMLInputElement>document.getElementById(input)).disabled;
 
-    if(campo){
+    if (campo) {
       (<HTMLInputElement>document.getElementById(input)).disabled = false;
       (<HTMLInputElement>document.getElementById(input)).focus();
     } else {
       (<HTMLInputElement>document.getElementById(input)).disabled = true;
       let buscarSiExiste = this.MATERIALES_NECESARIOS.find(c => c.material == input);
-      if(buscarSiExiste){
+      if (buscarSiExiste) {
         let index = this.MATERIALES_NECESARIOS.indexOf(buscarSiExiste)
         this.MATERIALES_NECESARIOS.splice(index, 1)
       }
-  }
-}
-
-just_a_sec(e){
-  let nuevo = this.MATERIALES_NECESARIOS.find(c => c.material == e.target.id);
-  let index;
-  if(!nuevo){
-    let data = {
-      material:e.target.id,
-      cantidad:e.target.value
     }
-
-    this.MATERIALES_NECESARIOS.push(data)
-  }else{
-    index = this.MATERIALES_NECESARIOS.indexOf(nuevo)
-    this.MATERIALES_NECESARIOS[index].cantidad = e.target.value
   }
-}
 
-  obtenerGrupodeMateriales(){
+  just_a_sec(e) {
+    let nuevo = this.MATERIALES_NECESARIOS.find(c => c.material == e.target.id);
+    let index;
+    if (!nuevo) {
+      let data = {
+        material: e.target.id,
+        cantidad: e.target.value
+      }
+
+      this.MATERIALES_NECESARIOS.push(data)
+    } else {
+      index = this.MATERIALES_NECESARIOS.indexOf(nuevo)
+      this.MATERIALES_NECESARIOS[index].cantidad = e.target.value
+    }
+  }
+
+  obtenerGrupodeMateriales() {
     this.api.GetGrupoMp()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.GRUPOS_MATERIA = resp;
       })
   }
-  obtenerClientes(){
+  obtenerClientes() {
     this.api.GetClientes()
-      .subscribe((resp:any) =>{
+      .subscribe((resp: any) => {
         this.CLIENTES = resp.clientes
       })
   }
 
-  public Nombre_contact:boolean = false;
-  nombre_cont(e){
-    if(e === ''){
+  public Nombre_contact: boolean = false;
+  nombre_cont(e) {
+    if (e === '') {
       this.Nombre_contact = false
     }
-    else{
+    else {
       this.Nombre_contact = true
     }
   }
 
-  public enable_contact:boolean = false
-  email_cont(e){
-    if(e === ''){
+  public enable_contact: boolean = false
+  email_cont(e) {
+    if (e === '') {
       this.enable_contact = false
     }
-    else{
+    else {
       this.enable_contact = true
     }
   }
 
-  public Cargo_contact:boolean = false
-  cargo_cont(e){
-    if(e === ''){
+  public Cargo_contact: boolean = false
+  cargo_cont(e) {
+    if (e === '') {
       this.Cargo_contact = false
-    }else{
+    } else {
       this.Cargo_contact = true
     }
   }
 
-  addCliente(){
+  addCliente() {
 
-    if(this.contactoInput){
+    if (this.contactoInput) {
       this.contactoInput = false;
       return
     }
@@ -364,74 +391,74 @@ just_a_sec(e){
     this.ClienteForm.get('almacenes').setValue(this.almacenes)
     this.ClienteForm.get('contactos').setValue(this.contactos)
 
-    if(this.ClienteForm.invalid) {
+    if (this.ClienteForm.invalid) {
       Swal.fire({
-        title:'Oops!',
-        text:'Debes rellenar todos los campos para continuar',
-        icon:'error',
-        showConfirmButton:false,
-        timer:1500
+        title: 'Oops!',
+        text: 'Debes rellenar todos los campos para continuar',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 1500
       })
       return;
     }
-    
+
 
     this.api.PostClientes(this.ClienteForm.value)
-        .subscribe((resp:any)=>{
-          this.obtenerClientes();
-          this.ClienteForm.reset();
-          this.NUEVO_CLIENTE = false;
-          this.almacenes = []
-          this.contactos = []
-          Swal.fire({
-            title:'Excelente!',
-            text:'Se registro nuevo cliente',
-            showConfirmButton:false,
-            icon:'success',
-            timer:2000
-          })
+      .subscribe((resp: any) => {
+        this.obtenerClientes();
+        this.ClienteForm.reset();
+        this.NUEVO_CLIENTE = false;
+        this.almacenes = []
+        this.contactos = []
+        Swal.fire({
+          title: 'Excelente!',
+          text: 'Se registro nuevo cliente',
+          showConfirmButton: false,
+          icon: 'success',
+          timer: 2000
         })
+      })
   }
 
   //--------------------- PRODUCTOS----
 
-  obtenerMateriales(){
+  obtenerMateriales() {
     this.api.getAlmacen()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.MATERIALES = resp.materiales
         // // console.log(this.MATERIALES)
       })
   }
 
-  obtenerGrupos(){
+  obtenerGrupos() {
     this.api.getGrupos()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.GRUPOS = resp.grupos
         // // console.log(this.GRUPOS,'GRUPOOOOS')
       })
   }
 
-  Ordenar_Producto(){
+  Ordenar_Producto() {
     let valor = (<HTMLInputElement>document.getElementById('material_Necesario')).value
     let inde = this.MATERIALES_NECESARIOS.includes(valor);
 
-    if(!inde){
+    if (!inde) {
       this.MATERIALES_NECESARIOS.push(valor)
     }
 
-    
+
   }
 
-  BuscarGruposEnAlmacen(){
+  BuscarGruposEnAlmacen() {
     this.api.GetGrupoMp()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.SECCIONES = resp
         // alert('THIS IS WORKING')
         // // console.log(this.SECCIONES,'SECCIONEEEES');
       })
   }
 
-  finalizar(){
+  finalizar() {
 
     // let name = (<HTMLInputElement>document.getElementById('sustrato_name')).value
 
@@ -449,31 +476,31 @@ just_a_sec(e){
 
     let data = {
       cliente: (<HTMLInputElement>document.getElementById('cliente_Seleccionado')).value,
-      producto:(<HTMLInputElement>document.getElementById('nombre_nuevo_producto')).value,
-      grupo:(<HTMLInputElement>document.getElementById('grupo_producto')).value,
-      cod_cliente:(<HTMLInputElement>document.getElementById('cod_cliente')).value,
+      producto: (<HTMLInputElement>document.getElementById('nombre_nuevo_producto')).value,
+      grupo: (<HTMLInputElement>document.getElementById('grupo_producto')).value,
+      cod_cliente: (<HTMLInputElement>document.getElementById('cod_cliente')).value,
       materiales: this.MATERIALES_NECESARIOS,
-      post:this.POST,
-      ejemplares:this.EJEMPLARES,
+      post: this.POST,
+      ejemplares: this.EJEMPLARES,
       // sustrato: sustrato,
-      codigo:(<HTMLInputElement>document.getElementById('cod_producto')).value,
-      version:(<HTMLInputElement>document.getElementById('version')).value,
-      edicion:(<HTMLInputElement>document.getElementById('edicion')).value,
-      montajes:this.montajes
+      codigo: (<HTMLInputElement>document.getElementById('cod_producto')).value,
+      version: (<HTMLInputElement>document.getElementById('version')).value,
+      edicion: (<HTMLInputElement>document.getElementById('edicion')).value,
+      montajes: this.montajes
     }
 
-    
+
     this.api.postProducto(data)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.Modal_Producto();
         let cliente_id = (<HTMLInputElement>document.getElementById('cliente_Seleccionado')).value;
         this.buscar_producto(cliente_id);
       })
   }
 
-  ancho(e){
+  ancho(e) {
     let ancho = e.target.value;
-    
+
     this.dimensiones.push(ancho);
     let tamano = this.dimensiones.length
 
@@ -482,7 +509,7 @@ just_a_sec(e){
 
     largo.disabled = false;
 
-    if(ancho == ''){
+    if (ancho == '') {
       this.dimensiones = []
 
       largo.value = ''
@@ -490,94 +517,94 @@ just_a_sec(e){
       DirFibra.disabled = true;
     }
 
-    if(largo.value != ''){
+    if (largo.value != '') {
       DirFibra.disabled = false
     }
-    
+
   }
 
-  largo(e){
+  largo(e) {
     let largo = e.target.value;
 
     let tamano = this.dimensiones.length;
-    
+
     const DirFibra = (<HTMLInputElement>document.getElementById('d_fibra'))
-    
-    if(largo == ''){
+
+    if (largo == '') {
       this.dimensiones.pop();
       DirFibra.disabled = true;
     }
-    
-    if(largo != ''){
-      if(tamano>1){
+
+    if (largo != '') {
+      if (tamano > 1) {
         this.dimensiones.pop();
       }
       this.dimensiones.push(largo);
       DirFibra.disabled = false;
     }
-      // }else{
+    // }else{
     //   DirFibra.disabled = false;
     // }
 
 
   }
 
-  public Edit_cliente:boolean = false;
+  public Edit_cliente: boolean = false;
   public cliente_selected
-  Modal_Edit_cliente(){
-    if(this.Edit_cliente){
+  Modal_Edit_cliente() {
+    if (this.Edit_cliente) {
       this.Edit_cliente = false
-    }else{
+    } else {
       this.Edit_cliente = true
     }
   }
 
-  ElminarAlmacen(i){
-    this.cliente_selected.almacenes.splice(i,1)
+  ElminarAlmacen(i) {
+    this.cliente_selected.almacenes.splice(i, 1)
     // console.log(this.cliente_selected)
     // delete(this.cliente_selected.almacenes[i])
     var x = document.getElementById(i)
-    x.style.display = "none";  
+    x.style.display = "none";
     (<HTMLInputElement>document.getElementById(i)).disabled;
     document.getElementById(i).addEventListener('change', (event) => {
       (<HTMLInputElement>document.getElementById(i)).disabled;
     })
   }
 
-  AgregarAlmacen(almacen){
+  AgregarAlmacen(almacen) {
     this.cliente_selected.almacenes.push(almacen)
   }
 
-  Editar_Cliente(){
+  Editar_Cliente() {
     this.api.putCliente(this.cliente_selected, this.cliente_selected._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         Swal.fire({
-          title:'Editado',
-          text:'Se realizó la actualización de información de este cliente',
-          icon:'success',
-          showConfirmButton:false
+          title: 'Editado',
+          text: 'Se realizó la actualización de información de este cliente',
+          icon: 'success',
+          showConfirmButton: false
         })
       })
   }
-  
-  public edicion:boolean = false
-  buscar_producto(e){
+
+  public edicion: boolean = false
+  buscar_producto(e) {
     this.api.getById(e)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.PRODUCTOS = resp.productos;
         // // console.log(this.PRODUCTOS)
       });
 
-      if(e == ""){
-        (<HTMLInputElement>document.getElementById('NP_button')).disabled = true;
-        this.edicion = false
-      }else{
-        (<HTMLInputElement>document.getElementById('NP_button')).disabled = false;
-        // console.log(e)
-        this.cliente_selected = this.CLIENTES.find(x=> x._id === e)
-        // console.log( this.cliente_selected)
-        this.edicion = true
-      }
+    if (e == "") {
+      (<HTMLInputElement>document.getElementById('NP_button')).disabled = true;
+      this.edicion = false
+    } else {
+      (<HTMLInputElement>document.getElementById('NP_button')).disabled = false;
+      // console.log(e)
+      this.cliente_selected = this.CLIENTES.find(x => x._id === e)
+      // console.log( this.cliente_selected)
+      this.edicion = true
+    }
   }
 
   // sustratos(e){
@@ -588,14 +615,14 @@ just_a_sec(e){
 
   //   this.Sus_Done = true;
 
-    
+
   // }
-  NuevoSustrato(){
+  NuevoSustrato() {
     this.SUSTRATO = [];
     this.Sus_Done = false;
   }
 
-  add_materia2(producto, cantidad){
+  add_materia2(producto, cantidad) {
 
     let i = this.i_montajes.toString();
 
@@ -609,18 +636,18 @@ just_a_sec(e){
     let size = cantidad
     let name = Material.nombre
 
-    if(this.product_selected == "Sustrato"){
+    if (this.product_selected == "Sustrato") {
       size = '0'
     }
 
-    if(Material.ancho){
+    if (Material.ancho) {
       name = `${Material.nombre} (${Material.ancho} x ${Material.largo})`;
     }
 
     let productos = {
-      material:name,
-      marca:Material.marca,
-      producto:producto,
+      material: name,
+      marca: Material.marca,
+      producto: producto,
       cantidad: size
     }
 
@@ -648,86 +675,88 @@ just_a_sec(e){
     // field_material.value = '';
   }
 
-add_materia3(producto, cantidad){
-  let i = this.i_montajes_.toString();
+  add_materia3(producto, cantidad) {
+    let i = this.i_montajes_.toString();
 
-  producto = (<HTMLInputElement>document.getElementById(`x-${i}`)).value
-  cantidad = (<HTMLInputElement>document.getElementById(`xcantidad${this.i_montajes_}`)).value
-
-
-  let Material = this.MATERIALES.find(x => x._id == producto)
+    producto = (<HTMLInputElement>document.getElementById(`x-${i}`)).value
+    cantidad = (<HTMLInputElement>document.getElementById(`xcantidad${this.i_montajes_}`)).value
 
 
-  // // console.log(Material,'/*/*/*/*/*/*/*/*/*/*/*/')
-
-  let size = cantidad
-  let name = Material.nombre
-
-  if(this.product_selected == "Sustrato"){
-    size = '0'
-  }
-
-  if(Material.ancho){
-    name = `${Material.nombre} (${Material.ancho} x ${Material.largo})`;
-  }
+    let Material = this.MATERIALES.find(x => x._id == producto)
 
 
+    // // console.log(Material,'/*/*/*/*/*/*/*/*/*/*/*/')
 
-  let productos = {
-    material:name,
-    marca:Material.marca,
-    producto:producto,
-    cantidad: size
-  }
+    let size = cantidad
+    let name = Material.nombre
 
-  if(!this.OneProduct.materiales[this.i_montajes_]){
-    this.OneProduct.materiales[this.i_montajes_] = [];
-  }
-  
-  this.OneProduct.materiales[this.i_montajes_].push(productos)
-  console.log(this.OneProduct.materiales[this.i_montajes_])
+    if (this.product_selected == "Sustrato") {
+      size = '0'
+    }
 
-  this.api.updateProducto(this.OneProduct, this.OneProduct._id)
-      .subscribe((resp:any)=>{
+    if (Material.ancho) {
+      name = `${Material.nombre} (${Material.ancho} x ${Material.largo})`;
+    }
+
+
+
+    let productos = {
+      material: name,
+      marca: Material.marca,
+      producto: producto,
+      cantidad: size
+    }
+
+    if (!this.OneProduct.materiales[this.i_montajes_]) {
+      this.OneProduct.materiales[this.i_montajes_] = [];
+    }
+
+    this.OneProduct.materiales[this.i_montajes_].push(productos)
+    console.log(this.OneProduct.materiales[this.i_montajes_])
+
+    this.api.updateProducto(this.OneProduct, this.OneProduct._id)
+      .subscribe((resp: any) => {
         // // console.log(resp,'respuesta')
         // this.editar(this.OneProduct)
         this.api.getOneById(this.OneProduct._id)
-          .subscribe((resp:any)=>{
+          .subscribe((resp: any) => {
             // // console.log('ok')
           })
-          // this.Modal_Producto_E()
-          // this.Modal_Producto_E()
+        // this.Modal_Producto_E()
+        // this.Modal_Producto_E()
       });
-  
-  
-  
-  
-
-  // this.verProducto(producto)
-}
-
-eliminarContacto(i){
-  this.cliente_selected.contactos.splice(i,1)
-}
 
 
-AgregarContacto(a,b,c,d){
-
-  this.cliente_selected.contactos.push({nombre:a,
-    cargo:b,
-    email:c,
-    trato:d });
-
-  (<HTMLInputElement>document.getElementById('Name_c')).value = '';
-  (<HTMLInputElement>document.getElementById('Cargo_c')).value = '';
-  (<HTMLInputElement>document.getElementById('Email_c')).value = '';
-  
-}
-  
-add_materia(producto, cantidad, id){
 
 
-  // console.log(this.item_Selected)
+
+    // this.verProducto(producto)
+  }
+
+  eliminarContacto(i) {
+    this.cliente_selected.contactos.splice(i, 1)
+  }
+
+
+  AgregarContacto(a, b, c, d) {
+
+    this.cliente_selected.contactos.push({
+      nombre: a,
+      cargo: b,
+      email: c,
+      trato: d
+    });
+
+    (<HTMLInputElement>document.getElementById('Name_c')).value = '';
+    (<HTMLInputElement>document.getElementById('Cargo_c')).value = '';
+    (<HTMLInputElement>document.getElementById('Email_c')).value = '';
+
+  }
+
+  add_materia(producto, cantidad, id) {
+
+
+    // console.log(this.item_Selected)
 
     let i = this.i_montajes.toString();
 
@@ -739,28 +768,27 @@ add_materia(producto, cantidad, id){
     let size = cantidad
     let name = Material.nombre
 
-    if(this.product_selected == "Sustrato"){
+    if (this.product_selected == "Sustrato") {
       size = '0'
     }
 
-    if(Material.ancho){
+    if (Material.ancho) {
       name = `${Material.nombre} (${Material.ancho} x ${Material.largo})`;
     }
 
     let productos = {
-      material:name,
-      marca:Material.marca,
-      producto:this.item_Selected,
+      material: name,
+      marca: Material.marca,
+      producto: this.item_Selected,
       cantidad: size
     }
 
-    
+
     // // console.log(productos);
-    if(!this.MATERIALES_NECESARIOS[this.i_montajes])
-    { 
+    if (!this.MATERIALES_NECESARIOS[this.i_montajes]) {
       this.MATERIALES_NECESARIOS[this.i_montajes] = []
     }
-    
+
     this.MATERIALES_NECESARIOS[this.i_montajes].push(productos)
     // console.log(this.MATERIALES_NECESARIOS[this.i_montajes])
     // // console.log(this.MATERIALES_NECESARIOS, 'this')
@@ -784,15 +812,15 @@ add_materia(producto, cantidad, id){
     // field_material.value = '';
   }
 
-  Delete_Material(material2){
+  Delete_Material(material2) {
 
-        let deleted = this.MATERIALES_NECESARIOS[this.i_montajes].findIndex(x => x.material == material2)
+    let deleted = this.MATERIALES_NECESARIOS[this.i_montajes].findIndex(x => x.material == material2)
 
-        // console.log(this.MATERIALES_NECESARIOS)
+    // console.log(this.MATERIALES_NECESARIOS)
 
-        this.MATERIALES_NECESARIOS[this.i_montajes].splice(deleted, 1);
+    this.MATERIALES_NECESARIOS[this.i_montajes].splice(deleted, 1);
   }
-  Delete_Material2(material2){
+  Delete_Material2(material2) {
 
     // // console.log(this.OneProduct.materiales[this.i_montajes])
     let deleted = this.OneProduct.materiales[this.i_montajes_].findIndex(x => x.producto.nombre == material2)
@@ -805,15 +833,15 @@ add_materia(producto, cantidad, id){
     // // // console.log(deleted)
 
     // this.MATERIALES_NECESARIOS.splice(deleted, 1);
-}
+  }
 
-  borrarPost(post){
+  borrarPost(post) {
     let i = this.POST.indexOf(post)
 
     this.POST.splice(i, 1)
   }
 
-  borrarPost2(post){
+  borrarPost2(post) {
     let i = this.OneProduct.post.indexOf(post)
 
     // // console.log(i)
@@ -821,14 +849,14 @@ add_materia(producto, cantidad, id){
     this.POST.splice(i, 1)
   }
 
-  editar_producto(){
-    
+  editar_producto() {
+
     this.api.updateProducto(this.OneProduct, this.OneProduct._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         Swal.fire({
-          title:'Producto editado con exito!',
-          icon:'success',
-          showConfirmButton:false
+          title: 'Producto editado con exito!',
+          icon: 'success',
+          showConfirmButton: false
         })
         this.editar(this.OneProduct)
         this.buscar_producto(this.OneProduct.cliente._id)
@@ -836,44 +864,44 @@ add_materia(producto, cantidad, id){
       });
   }
 
-  verProducto(producto){
+  verProducto(producto) {
 
     this.api.getOneById(producto)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.OneProduct = resp.producto
 
-        if( this.OneProduct.img) {
-          this.ImageProducto =  `${this.baseUrl}/imagen/producto/${this.OneProduct.img}`;
-        }else{
+        if (this.OneProduct.img) {
+          this.ImageProducto = `${this.baseUrl}/imagen/producto/${this.OneProduct.img}`;
+        } else {
           this.ImageProducto = `../../../assets/no-picture.png`;
         }
 
         this.ver_Modal_Producto()
       })
   }
-  public EDITAR_PRODUCTO:boolean = false;
-  Modal_Producto_E(){
-    if(this.EDITAR_PRODUCTO){
+  public EDITAR_PRODUCTO: boolean = false;
+  Modal_Producto_E() {
+    if (this.EDITAR_PRODUCTO) {
       this.EDITAR_PRODUCTO = false
-    }else{
+    } else {
       this.EDITAR_PRODUCTO = true
-      if(this.OneProduct.materiales[this.i_montajes_]){
-        if(this.OneProduct.materiales[this.i_montajes_].length > 0){
+      if (this.OneProduct.materiales[this.i_montajes_]) {
+        if (this.OneProduct.materiales[this.i_montajes_].length > 0) {
           this.EDITAR_PRODUCTO = true
         }
       }
     }
   }
 
-  editar(producto){
+  editar(producto) {
     this.api.getOneById(producto)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.OneProduct = resp.producto;
         // // console.log('AQUIIIIIIIIIIIIII', this.OneProduct);
       })
-      if(this.OneProduct){
-        this.Modal_Producto_E();
-      }
+    if (this.OneProduct) {
+      this.Modal_Producto_E();
+    }
   }
 
   moveUp(index: number): void {
@@ -883,12 +911,42 @@ add_materia(producto, cantidad, id){
       this.OneProduct.materiales[this.i_montajes_][index - 1] = temp;
     }
   }
-  
+
   moveDown(index: number): void {
     if (index < this.OneProduct.materiales[this.i_montajes_].length - 1) {
       const temp = this.OneProduct.materiales[this.i_montajes_][index];
       this.OneProduct.materiales[this.i_montajes_][index] = this.OneProduct.materiales[this.i_montajes_][index + 1];
       this.OneProduct.materiales[this.i_montajes_][index + 1] = temp;
+    }
+  }
+
+  /**
+   * Mueve el material necesario seleccionado una posición arriba en el arreglo MATERIALES_NECESARIOS[i_montajes_].
+   * @param index Índice del material a mover.
+   */
+  moveUpNecesario(index: number): void {
+    if (
+      this.MATERIALES_NECESARIOS[this.i_montajes_] &&
+      index > 0
+    ) {
+      const temp = this.MATERIALES_NECESARIOS[this.i_montajes_][index];
+      this.MATERIALES_NECESARIOS[this.i_montajes_][index] = this.MATERIALES_NECESARIOS[this.i_montajes_][index - 1];
+      this.MATERIALES_NECESARIOS[this.i_montajes_][index - 1] = temp;
+    }
+  }
+
+  /**
+   * Mueve el material necesario seleccionado una posición abajo en el arreglo MATERIALES_NECESARIOS[i_montajes_].
+   * @param index Índice del material a mover.
+   */
+  moveDownNecesario(index: number): void {
+    if (
+      this.MATERIALES_NECESARIOS[this.i_montajes_] &&
+      index < this.MATERIALES_NECESARIOS[this.i_montajes_].length - 1
+    ) {
+      const temp = this.MATERIALES_NECESARIOS[this.i_montajes_][index];
+      this.MATERIALES_NECESARIOS[this.i_montajes_][index] = this.MATERIALES_NECESARIOS[this.i_montajes_][index + 1];
+      this.MATERIALES_NECESARIOS[this.i_montajes_][index + 1] = temp;
     }
   }
 

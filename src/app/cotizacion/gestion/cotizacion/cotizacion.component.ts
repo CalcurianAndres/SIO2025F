@@ -1,3 +1,7 @@
+import * as moment from 'moment';
+import { Cell, Img, Line, PdfMakeWrapper, Table, Txt } from 'pdfmake-wrapper';
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
+
 import {
   Component,
   ElementRef,
@@ -68,6 +72,18 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
     maquinas: []
   }
 
+  precios_transporte: number[] = []
+  public Clientes = []
+
+  public cliente_selected = ''
+  public producto = []
+  public producto_selected = ''
+  public aumento_sustrato = 0;
+  public condicion_pago = 'Crédito 15 días a partir de la fecha de entrega.'
+  public almacen_selected = ''
+  public dias_validez = 7
+  public nota = 'Este precio no incluye costo de troquel ni de las peliculas para su impresión, se puede pagar por separado o amortizarlos en la primera corrida, según su conveniencia.'
+
   ngOnInit(): void {
 
     this.getMateriales()
@@ -77,11 +93,39 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
     this.GetGrupoMp()
     this.getTintas()
     this.buscarPlancha()
+    this.ObtenerClientes()
   }
+
+  constructor(private renderer: Renderer2, private api: RestApiService) { }
 
   margenGanancia: number = 20; // porcentaje por defecto
 
   margenGananciaMaquinas: number = 20; // valor inicial
+
+  public Cliente_selected = ''
+  ObtenerElCliente() {
+    this.Cliente_selected = this.Clientes.find(c => c._id === this.cliente_selected)
+  }
+
+  ObtenerClientes() {
+    this.api.GetClientes()
+      .subscribe((response: any) => {
+        console.log(response)
+        this.Clientes = response.clientes;
+      })
+  }
+
+  getProductos(cliente: string) {
+    this.api.getById(cliente)
+      .subscribe((response: any) => {
+        console.log(response, '=> productos')
+        this.producto = response.productos
+      });
+  }
+
+  UpdatePreciosTransporte() {
+    this.precios_transporte = this.syncPrecios(this.precios_transporte);
+  }
 
   getSumaPorEscala(i: number): number {
     return this.getTotalConMargen(i) + this.getTotalMaquinasConMargen(i);
@@ -103,7 +147,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
       const data = this.calcularPreciosMaquina(this.cantidad_por_escala[i], y);
       total += data.precio;
     });
-    return total;
+    return total + this.maquinaLitografica().precio;
   }
 
   getTotalMaquinasConMargen(i: number): number {
@@ -329,26 +373,11 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
     let precio_unidad = this.planchas.ultimoPrecio / cantidad_paquete;
 
-    // Obtener la máquina de pre-impresión
-    let pre_impresion: any = this.maquinas.find(m => m.tipo === 'PRE-IMPRESIÓN');
-
-    let cph = pre_impresion.cph;     // trabajos por hora
-    let precioHora = pre_impresion.precio; // precio por hora
-
     // Planchas a utilizar
     let total_planchas = this.cantidad_planchas + this.barniz_existente;
 
-    // Calcular horas necesarias
-    let horas = total_planchas / cph;
-
-    // Redondear: mínimo 1h, múltiplos de 0.5h
-    horas = Math.max(1, Math.ceil(horas * 2) / 2);
-
-    // Costo de máquina
-    let costo_maquina = horas * precioHora;
-
     // Retornar costo total = costo de planchas + costo de máquina
-    return (precio_unidad * total_planchas) + costo_maquina;
+    return (precio_unidad * total_planchas)
   }
 
 
@@ -358,13 +387,19 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // separador de miles con "."
   }
 
+  public precio_base_sustrato = 0;
   calcularPrecioSustrato() {
     let sustrato = this.sustrato.find((s: any) => s._id === this.sustrato_selected)
     if (!sustrato.ultimoPrecio) {
       this.precios.sustrato = -1
     } else {
       this.precios.sustrato = sustrato.ultimoPrecio
+      this.precio_base_sustrato = sustrato.ultimoPrecio
     }
+  }
+
+  ajustarPrecioSustrato() {
+    this.precios.sustrato = (this.precio_base_sustrato + (this.precio_base_sustrato * (this.aumento_sustrato / 100)))
   }
 
   add_material() {
@@ -443,6 +478,51 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   }
 
 
+  maquinaLitografica() {
+    // Obtener la máquina de pre-impresión
+    let pre_impresion: any = this.maquinas.find(m => m.tipo === 'PRE-IMPRESIÓN');
+
+    let cph = pre_impresion.cph;     // trabajos por hora
+    let precioHora = pre_impresion.precio; // precio por hora
+
+    // Planchas a utilizar
+    let total_planchas = this.cantidad_planchas + this.barniz_existente;
+
+    // Calcular horas necesarias
+    let horas = total_planchas / cph;
+
+    // Redondear: mínimo 1h, múltiplos de 0.5h
+    horas = Math.max(1, Math.ceil(horas * 2) / 2);
+
+    // Costo de máquina
+    let costo_maquina = horas * precioHora;
+
+    return {
+      nombre: pre_impresion.nombre,
+      horas: horas,
+      precio: costo_maquina
+    }
+  }
+
+  syncPrecios(precios: number[]): number[] {
+    let transporte = this.precio_transporte || 0;
+    let escalas = this.cantidad_escalas || 0;
+    let result = [...precios];
+
+    // Si hay menos precios que escalas, agregar con valor por defecto (transporte)
+    while (result.length < escalas) {
+      result.push(transporte);
+    }
+
+    // Si hay más precios que escalas, cortar el exceso
+    if (result.length > escalas) {
+      result = result.slice(0, escalas);
+    }
+
+    return result;
+  }
+
+
 
 
 
@@ -512,7 +592,6 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   private onWindowResize = () => this.updateCardWidth();
   private autoplayHandle: any = null;
 
-  constructor(private renderer: Renderer2, private api: RestApiService) { }
 
   ngAfterViewInit(): void {
     // Esperar microtask para asegurar QueryList populated
@@ -601,10 +680,10 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
   // --- keyboard navigation ---
   @HostListener('document:keydown', ['$event'])
-  handleKeyboard(event: KeyboardEvent) {
-    if (event.key === 'ArrowRight') this.moveSlide(1);
-    if (event.key === 'ArrowLeft') this.moveSlide(-1);
-  }
+  // handleKeyboard(event: KeyboardEvent) {
+  //   if (event.key === 'ArrowRight') this.moveSlide(1);
+  //   if (event.key === 'ArrowLeft') this.moveSlide(-1);
+  // }
 
   // --- Autoplay (opcional) ---
   // startAutoplay(intervalMs = 5000) {
@@ -618,4 +697,439 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
       this.autoplayHandle = null;
     }
   }
+
+
+  DescargarPDF() {
+
+    const cliente = this.Clientes.find(c => c._id === this.cliente_selected)
+    const producto = this.producto.find(p => p._id === this.producto_selected)
+    const tipos = this.grupos[this.grupo_selected].tipos
+    const escalas_ = this.cantidad_por_escala;
+    const precios: any = [];
+    const condicion = this.condicion_pago;
+    const almacen = this.almacen_selected;
+    const sustrato: any = this.sustrato.find((s: any) => s._id === this.sustrato_selected)
+    let colores = ''
+    const dias = this.dias_validez;
+    const usuario = `${this.api.usuario.Nombre} ${this.api.usuario.Apellido}`;
+    const departamento = this.api.usuario.Departamento;
+    const fecha = moment().format('DD/MM/YYYY');
+    const firma = `../../assets/firmas/${this.api.usuario._id}.png`;
+    const nota = this.nota;
+
+    if (this.barniz_existente > 0) {
+      colores = `${this.cantidad_planchas} Colores + Barniz`
+    } else {
+      colores = `${this.cantidad_planchas} Colores`
+    }
+
+
+    for (let i = 0; i < escalas_.length; i++) {
+      precios.push((((this.getTotalConMargen(i) + this.getTotalMaquinasConMargen(i) + this.precios_transporte[i]) * this.division) / this.cantidad_por_escala[i]) * (1 + (this.otro / 100)))
+    }
+
+    const pdf = new PdfMakeWrapper();
+    PdfMakeWrapper.setFonts(pdfFonts);
+
+    async function generarPDF() {
+
+      // ==================== ENCABEZADO ====================
+      pdf.add(
+        new Table([
+          [
+            new Cell(await new Img('../../assets/poli_cintillo.png').width(85).margin([20, 5, 0, -5]).build()).rowSpan(4).end,
+            new Cell(new Txt(`
+              COTIZACIÓN
+              `).bold().end).alignment('center').fontSize(13).rowSpan(4).end,
+            new Cell(new Txt('Código: FDE-001').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+          ],
+          [
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('N° de Revisión: 0').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+          ],
+          [
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('Fecha de Revisión: 14/04/2023').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+          ],
+          [
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('Página: 1 de 1').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+          ],
+        ])
+          .widths(['25%', '50%', '25%'])
+          .end
+      );
+
+      pdf.add(pdf.ln(1));
+
+      // ==================== TABLA DE CABECERA DE LA COTIZACIÓN (NUEVO ESTILO) ====================
+      pdf.add(
+        new Table([
+          [
+            new Cell(new Txt('').end).end,
+            new Cell(new Txt('').end).end,
+            new Cell(
+              new Table([
+                [
+                  new Cell(new Txt('PRESUPUESTO').bold().alignment('center').color('#ffffff').end)
+                    .colSpan(2)
+                    .fillColor('#000000')
+                    .end,
+                  new Cell(new Txt('').end).end
+                ],
+                [
+                  new Cell(new Txt('N°').bold().alignment('center').color('#000000').end)
+                    .fillColor('#cccccc').end,
+                  new Cell(new Txt('AR-25-xx').bold().color('#e74c3c').alignment('center').end)
+                    .fillColor('#ededed').end,
+                ],
+                [
+                  new Cell(new Txt('Fecha').bold().alignment('center').color('#000000').end)
+                    .fillColor('#cccccc').end,
+                  new Cell(new Txt(fecha).alignment('center').color('#000000').end)
+                    .fillColor('#ededed').end,
+                ],
+              ])
+                .widths(['35%', '65%'])
+                .layout({
+                  hLineWidth: () => 0.7,
+                  vLineWidth: () => 0.7,
+                  hLineColor: () => '#bdc3c7',
+                  vLineColor: () => '#bdc3c7',
+                  paddingLeft: () => 6,
+                  paddingRight: () => 6,
+                  paddingTop: () => 4,
+                  paddingBottom: () => 4,
+                })
+                .end
+            ).end,
+          ],
+        ])
+          .widths(['25%', '40%', '35%'])
+          .layout('noBorders')
+          .end
+      );
+
+      // ==================== INFO DEL CLIENTE (ESTILIZADA) ====================
+      pdf.add(
+        new Table([
+          // === Fila 1: datos del cliente ===
+          [
+            new Cell(
+              new Table([
+                [
+                  new Cell(
+                    new Txt(`Cliente: ${cliente.nombre || ''}`)
+                      .bold()
+                      .color('#000000')
+                      .end
+                  ).colSpan(2).end,
+                  new Cell(new Txt('').end).end
+                ],
+                [
+                  new Cell(
+                    new Txt(`Rif: ${cliente.rif || ''}`)
+                      .bold()
+                      .color('#000000')
+                      .end
+                  ).colSpan(2).end,
+                  new Cell(new Txt('').end).end
+                ],
+                [
+                  new Cell(
+                    new Txt('Dirección Fiscal:')
+                      .bold()
+                      .color('#000000')
+                      .end
+                  ).colSpan(2).end,
+                  new Cell(new Txt('').end).end
+                ],
+                [
+                  new Cell(
+                    new Txt(cliente.direccion || 'No especificada')
+                      .color('#000000')
+                      .fontSize(9)
+                      .end
+                  ).colSpan(2).end,
+                  new Cell(new Txt('').end).end
+                ]
+              ])
+                .widths(['25%', '75%'])
+                .layout('noBorders')
+                .end
+            ).end,
+
+            // celda derecha vacía (espacio para la sección de contactos en la siguiente fila)
+            new Cell(new Txt('').end).end
+          ],
+
+          // === Fila 2: contactos (alineado a la derecha, debajo) ===
+          [
+            new Cell(new Txt('').end).end,
+            new Cell(
+              new Table([
+                [
+                  new Cell(new Txt('Atención:').bold().color('#000000').alignment('right').end).end
+                ],
+                [
+                  new Cell(
+                    new Txt(
+                      (cliente.contactos && cliente.contactos[0] && cliente.contactos[0].nombre) ||
+                      ''
+                    )
+                      .bold()
+                      .color('#000000')
+                      .alignment('right')
+                      .end
+                  ).end
+                ],
+                [
+                  new Cell(
+                    new Txt(
+                      (cliente.contactos && cliente.contactos[0] && cliente.contactos[0].cargo) ||
+                      ''
+                    )
+                      .italics()
+                      .fontSize(9)
+                      .color('#000000')
+                      .alignment('right')
+                      .end
+                  ).end
+                ]
+              ])
+                .widths(['100%'])
+                .layout('noBorders')
+                .end
+            )
+              .fillColor('#ffffff')
+              .margin([0, 10, 0, 0]) // espacio arriba
+              .end
+          ]
+        ])
+          .widths(['65%', '35%']) // contactos en el lado derecho
+          .layout('noBorders')
+          .end
+      );
+
+      pdf.add(pdf.ln(1));
+
+
+      // ==================== DESCRIPCIÓN DEL PRODUCTO ====================
+      const detalles = tipos;
+      const detallesTexto = detalles.join(' – ');
+
+      pdf.add(
+        new Table([
+          [
+            new Cell(
+              new Txt(producto.producto || 'Producto no especificado')
+                .bold()
+                .color('#000000')
+                .alignment('left')
+                .lineHeight(0.6) // interlineado más pequeño
+                .end
+            )
+              .fillColor('#ffffff')
+              .end
+          ],
+          [
+            new Cell(
+              new Txt(
+                `Sustrato: ${sustrato.nombre} ${sustrato.gramaje}g/m² Cal. ${sustrato.calibre}pt` ||
+                'Sustrato no especificado'
+              )
+                .color('#000000')
+                .alignment('left')
+                .lineHeight(0.6)
+                .end
+            )
+              .fillColor('#ffffff')
+              .end
+          ],
+          [
+            new Cell(
+              new Txt(`Colores: ${colores}` || 'Colores no especificados')
+                .color('#000000')
+                .alignment('left')
+                .lineHeight(0.6)
+                .end
+            )
+              .fillColor('#ffffff')
+              .end
+          ],
+          [
+            new Cell(
+              new Txt(`Procesos: ${detallesTexto}`)
+                .color('#000000')
+                .alignment('left')
+                .lineHeight(0.6)
+                .end
+            ).end
+          ]
+        ])
+          .widths(['100%'])
+          .layout({
+            hLineWidth: () => 0.7,
+            vLineWidth: () => 0.7,
+            hLineColor: () => '#ffffff',
+            vLineColor: () => '#ffffff',
+            paddingLeft: () => 6,
+            paddingRight: () => 6,
+            paddingTop: () => 3, // puedes bajar también el padding si quieres más compacto
+            paddingBottom: () => 3
+          })
+          .end
+      );
+
+      pdf.add(pdf.ln(1)); // Espacio antes de la siguiente sección
+
+
+      // ======================= DESCRIPCION DEL PRODUCTO =======================
+
+
+
+
+      // ==================== TABLA DE ESCALAS HORIZONTAL ====================
+      const escalas = escalas_;
+      const precios_ = precios;
+
+      const headerRow = [
+        new Cell(new Txt('Escala').bold().color('#ffffff').alignment('center').fontSize(10).end)
+          .fillColor('#000000').end,
+        ...escalas.map(e =>
+          new Cell(new Txt(e.toLocaleString('es-VE')).bold().color('#ffffff').alignment('center').fontSize(10).end)
+            .fillColor('#000000').end
+        )
+      ];
+
+      const priceRow = [
+        new Cell(new Txt(`Precio/1000 (USD)`).bold().color('#000000').alignment('center').fontSize(9).end)
+          .fillColor('#cccccc').end,
+        ...precios_.map(p =>
+          new Cell(new Txt(p.toLocaleString('es-VE')).bold().color('#000000').alignment('center').fontSize(10).end)
+            .fillColor('#cccccc').end
+        )
+      ];
+
+      pdf.add(
+        new Table([headerRow, priceRow])
+          .widths(['20%', ...Array(escalas.length).fill(`${80 / escalas.length}%`)])
+          .layout({
+            hLineWidth: () => 0.7,
+            vLineWidth: () => 0.7,
+            hLineColor: () => '#bdc3c7',
+            vLineColor: () => '#bdc3c7',
+            paddingLeft: () => 6,
+            paddingRight: () => 6,
+            paddingTop: () => 4,
+            paddingBottom: () => 4,
+          })
+          .end
+      );
+
+      pdf.add(pdf.ln(1));
+
+      // ==================== NOTA ADICIONAL ====================
+      if (nota && nota.trim() !== '') {
+        pdf.add(
+          new Table([
+            [
+              new Cell(
+                new Txt('Importante:').bold().fontSize(10).end
+              ).end
+            ],
+            [
+              new Cell(
+                new Txt(
+                  `${nota.trim()}`
+                )
+                  .fontSize(9)
+                  .alignment('justify')
+                  .end
+              ).end
+            ]
+          ])
+            .layout('noBorders')
+            .end
+        );
+
+      }
+
+      pdf.add(pdf.ln(1));
+
+      // ==================== OBSERVACIONES (CONDICIONES) ====================
+      pdf.add(
+        new Table([
+          [
+            new Cell(
+              new Txt('Nota:').bold().fontSize(10).end
+            ).end
+          ],
+          [
+            new Cell(
+              new Txt(
+                `1. Condición de Pago: ${condicion}\n` +
+                `2. Entrega de mercancía ${almacen}.\n` +
+                `3. Validez del presupuesto: ${dias} dias.\n` +
+                `4. El cliente acepta una variación de hasta un 10% (diez por ciento) de más o de menos respecto a la cantidad del servicio solicitado, de acuerdo con la práctica en la industria de artes gráficas, ajustándose el monto total del precio del producto proporcionalmente a la cantidad despachada.`
+              )
+                .fontSize(9)
+                .alignment('justify')
+                .end
+            ).end
+          ]
+        ])
+          .layout('noBorders')
+          .end
+      );
+
+      pdf.add(pdf.ln(2));
+
+
+      // ==================== FIRMA ====================
+      pdf.add(
+        new Table([
+          [new Cell(new Txt('Emitido por:').bold().end).end],
+          [
+            new Cell(
+              await new Img(firma)
+                .width(95)
+                .height(45) // 🔹 Controla la altura fija para evitar saltos
+                .margin([0, -15, 0, 0]) // 🔹 Ajusta la posición vertical más precisa
+                .build()
+            )
+              .end,
+          ],
+          [new Cell(new Txt(usuario).end).end],
+          [new Cell(new Txt(departamento).italics().fontSize(9).end).end],
+        ])
+          .layout('noBorders')
+          .end
+      );
+
+      pdf.add(pdf.ln(2));
+
+      // ==================== PIE DE PÁGINA ====================
+      pdf.add(
+        new Txt('Calle Pantín,  Local Galpón Nro 29, Urb. Chacao-Caracas, Miranda, Venezuela. ZP: 1060,')
+          .italics().fontSize(9).alignment('center').end
+      );
+      pdf.add(
+        new Txt('email: info@poligraficaindustrial.com')
+          .italics().fontSize(9).alignment('center').end
+      );
+
+      // ==================== DESCARGA ====================
+      pdf.create().download(`nn-C-25-xx`);
+    }
+
+    generarPDF();
+  }
+
+
+
+
 }

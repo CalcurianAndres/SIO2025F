@@ -8,7 +8,8 @@
                         <div class="select">
                             <select id='cliente_Seleccionado' (change)='buscar_producto($event.target.value)' value=''>
                                 <option value="">Seleccionar Cliente</option>
-                                <option *ngFor='let cliente of CLIENTES' value='{{cliente._id}}'>{{cliente.nombre}}</option>
+                                <option *ngFor='let cliente of CLIENTES' value='{{cliente._id}}'>{{cliente.nombre}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -21,7 +22,8 @@
                         Nuevo Cliente
                     </span>
                 </button>
-                <button class="button is-primary" (click)='Modal_Edit_cliente()' *ngIf='usuario.Maquinaria == 2 && edicion'>
+                <button class="button is-primary" (click)='Modal_Edit_cliente()'
+                    *ngIf='usuario.Maquinaria == 2 && edicion'>
                     <span class="icon">
                         <i class="fas fa-user-edit"></i>
                     </span>
@@ -36,7 +38,8 @@
         <div class="card">
             <div class="card-content">
                 <div class="titulo">Productos</div>
-                <button class="button is-primary" (click)='Modal_Producto()' disabled id='NP_button' *ngIf='usuario.Maquinaria == 2'>
+                <button class="button is-primary" (click)='Modal_Producto()' disabled id='NP_button'
+                    *ngIf='usuario.Maquinaria == 2'>
                     <span class="icon">
                         <i class="fas fa-list-ol"></i>
                     </span>
@@ -56,7 +59,8 @@
                     </thead>
                     <tbody>
                         <tr *ngFor='let producto of PRODUCTOS;let i = index'>
-                            <td>E - {{producto.cliente.codigo}} - {{producto.codigo}} - {{producto.version}} - {{producto.edicion}}</td>
+                            <td>E - {{producto.cliente.codigo}} - {{producto.codigo}} - {{producto.version}} -
+                                {{producto.edicion}}</td>
                             <td>{{producto.producto}}</td>
                             <td>
                                 <button class="button is-info is-outlined" (click)='verProducto(producto._id)'>
@@ -67,14 +71,14 @@
                                 </button>
                             </td>
                             <td *ngIf='usuario.Maquinaria == 2'>
-                            
-                            <button class="button is-success is-outlined" (click)='editar(producto._id)'>
-                                <span class="icon is-small">
-                                    <i class="far fa-edit"></i>
-                                </span>
-                                <span>Editar</span>
-                            </button>
-                        </td>
+
+                                <button class="button is-success is-outlined" (click)='editar(producto._id)'>
+                                    <span class="icon is-small">
+                                        <i class="far fa-edit"></i>
+                                    </span>
+                                    <span>Editar</span>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -117,7 +121,8 @@
             </div>
             <div class="field">
                 <label class="label">Dirección fiscal:</label>
-                <textarea class="textarea" placeholder="Dirección Fiscal" [(ngModel)]="cliente_selected.direccion"></textarea>
+                <textarea class="textarea" placeholder="Dirección Fiscal"
+                    [(ngModel)]="cliente_selected.direccion"></textarea>
             </div>
             <table class="table is-fullwidth">
                 <tr>
@@ -126,38 +131,41 @@
                 <tr *ngFor="let contacto of cliente_selected.contactos;index as i">
                     <td>
                         <label class="label">Nombre:</label>
-                                <div class="field has-addons">
-                                    <p class="control">
-                                        <span class="select">
-                                            <select [(ngModel)]="cliente_selected.contactos[i].trato">
-                                              <option value="Sr.">Sr.</option>
-                                              <option value="Sra.">Sra.</option>
-                                            </select>
-                                          </span>
-                                    </p>
-                                    <p class="control">
-                                        <input type="text" class="input" id='Nombre_cn' [(ngModel)]="cliente_selected.contactos[i].nombre">
-                                    </p>
-                                </div>
+                        <div class="field has-addons">
+                            <p class="control">
+                                <span class="select">
+                                    <select [(ngModel)]="cliente_selected.contactos[i].trato">
+                                        <option value="Sr.">Sr.</option>
+                                        <option value="Sra.">Sra.</option>
+                                    </select>
+                                </span>
+                            </p>
+                            <p class="control">
+                                <input type="text" class="input" id='Nombre_cn'
+                                    [(ngModel)]="cliente_selected.contactos[i].nombre">
+                            </p>
+                        </div>
                         <div class="columns">
                             <div class="column is-half">
                                 <div class="field">
-                                <label class="label">Cargo:</label>
+                                    <label class="label">Cargo:</label>
                                     <div class="control">
-                                        <input type="text" class="input" [(ngModel)]="cliente_selected.contactos[i].cargo">
+                                        <input type="text" class="input"
+                                            [(ngModel)]="cliente_selected.contactos[i].cargo">
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-two-thirds">
                                 <div class="field">
-                                <label class="label">Correo:</label>
+                                    <label class="label">Correo:</label>
                                     <div class="control">
-                                        <input type="text" class="input" [(ngModel)]="cliente_selected.contactos[i].email">
+                                        <input type="text" class="input"
+                                            [(ngModel)]="cliente_selected.contactos[i].email">
                                     </div>
                                 </div>
                             </div>
                             <div class="column">
-                            
+
                             </div>
                         </div>
                     </td>
@@ -167,7 +175,8 @@
                                 <div class="field">
                                     <label class="label"> </label>
                                     <div class="control">
-                                        <button class="button is-danger is-outlined is-small" (click)="eliminarContacto(i)">Eliminar</button>
+                                        <button class="button is-danger is-outlined is-small"
+                                            (click)="eliminarContacto(i)">Eliminar</button>
                                     </div>
                                 </div>
                             </div>
@@ -179,25 +188,25 @@
                 <tr>
                     <td>
                         <label class="label">Nombre:</label>
-                                <div class="field has-addons">
-                                    <p class="control">
-                                        <span class="select">
-                                            <select #trato>
-                                              <option value="Sr.">Sr.</option>
-                                              <option value="Sra.">Sra.</option>
-                                            </select>
-                                          </span>
-                                    </p>
-                                    <p class="control">
-                                        <input type="text" class="input" id='Nombre_cn' #Nombre_Contacto>
-                                    </p>
-                                </div>
+                        <div class="field has-addons">
+                            <p class="control">
+                                <span class="select">
+                                    <select #trato>
+                                        <option value="Sr.">Sr.</option>
+                                        <option value="Sra.">Sra.</option>
+                                    </select>
+                                </span>
+                            </p>
+                            <p class="control">
+                                <input type="text" class="input" id='Nombre_cn' #Nombre_Contacto>
+                            </p>
+                        </div>
                         <div class="columns">
                             <div class="column is-half">
                                 <div class="field">
                                     <label class="label">Cargo:</label>
                                     <div class="control">
-                                        <input type="text" id="Cargo_c" class="input" #Cargo_Contacto>  
+                                        <input type="text" id="Cargo_c" class="input" #Cargo_Contacto>
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +229,8 @@
                                 <div class="field">
                                     <label class="label"> </label>
                                     <div class="control">
-                                        <button class="button is-success is-outlined is-small" (click)="AgregarContacto(Nombre_Contacto.value, Cargo_Contacto.value, Correo_Contacto.value, trato.value)">Agregar</button>
+                                        <button class="button is-success is-outlined is-small"
+                                            (click)="AgregarContacto(Nombre_Contacto.value, Cargo_Contacto.value, Correo_Contacto.value, trato.value)">Agregar</button>
                                     </div>
                                 </div>
                             </div>
@@ -231,14 +241,15 @@
             <table class="table is-fullwidth">
                 <tr>
                     <th colspan="2">Almacenes</th>
-                    
+
                 </tr>
                 <tr *ngFor="let almacen of cliente_selected.almacenes;index as i" [id]="i">
                     <td>
                         <input type="text" class="input" [id]='i' [(ngModel)]="cliente_selected.almacenes[i]">
                     </td>
                     <td>
-                        <button class="button is-danger is-outlined is-small" (click)="ElminarAlmacen(i)">Eliminar</button>
+                        <button class="button is-danger is-outlined is-small"
+                            (click)="ElminarAlmacen(i)">Eliminar</button>
                     </td>
                 </tr>
             </table>
@@ -248,7 +259,8 @@
                         <input type="text" class="input" placeholder="Nuevo Almacen" #NewAlmacen>
                     </td>
                     <td>
-                        <button class="button is-success is-outlined is-small" (click)="AgregarAlmacen(NewAlmacen.value)">Agregar</button>
+                        <button class="button is-success is-outlined is-small"
+                            (click)="AgregarAlmacen(NewAlmacen.value)">Agregar</button>
                     </td>
                 </tr>
             </table>
@@ -261,10 +273,7 @@
     <div class="modal-background" (click)='Modal_Cliente()'></div>
     <div class="modal-card">
         <div class="modal-card-body">
-            <form
-            autocomplete="off"
-            [formGroup]="ClienteForm"
-            (ngSubmit)="addCliente()">
+            <form autocomplete="off" [formGroup]="ClienteForm" (ngSubmit)="addCliente()">
                 <div class="subtitulo">Nuevo Cliente</div>
                 <hr>
                 <div class="columns">
@@ -308,10 +317,12 @@
                     <tbody>
                         <tr *ngFor="let contacto of contactos;index as i">
                             <td>
-                                <b>Nombre: </b>{{contacto.nombre}} <b>Cargo: </b>{{contacto.cargo}} <br><b>Email: </b>{{contacto.email}}
+                                <b>Nombre: </b>{{contacto.nombre}} <b>Cargo: </b>{{contacto.cargo}} <br><b>Email:
+                                </b>{{contacto.email}}
                             </td>
                             <td>
-                                <a (click)="contact_delete(i)"><i class="fas fa-trash-alt" style="color: #ff0000;"></i></a>
+                                <a (click)="contact_delete(i)"><i class="fas fa-trash-alt"
+                                        style="color: #ff0000;"></i></a>
                             </td>
                         </tr>
                         <tr>
@@ -321,42 +332,52 @@
                                     <p class="control">
                                         <span class="select">
                                             <select #trato>
-                                              <option value="Sr.">Sr.</option>
-                                              <option value="Sra.">Sra.</option>
+                                                <option value="Sr.">Sr.</option>
+                                                <option value="Sra.">Sra.</option>
                                             </select>
-                                          </span>
+                                        </span>
                                     </p>
                                     <p class="control">
-                                        <input type="text" class="input" id='Nombre_cn' #Nombre_cn (keydown)="nombre_cont($event.target.value)" (change)="nombre_cont($event.target.value)">
+                                        <input type="text" class="input" id='Nombre_cn' #Nombre_cn
+                                            (keydown)="nombre_cont($event.target.value)"
+                                            (change)="nombre_cont($event.target.value)">
                                     </p>
                                 </div>
                                 <div class="columns">
-                                <div class="column is-half">
-                                    <div class="field">
-                                        <label class="label">Cargo:</label>
-                                        <div class="control">
-                                            <input type="text" class="input" id="Cargo_cn" #Cargo_cn (keydown)="cargo_cont($event.target.value)"  (change)="cargo_cont($event.target.value)" [disabled]="!Nombre_contact">
+                                    <div class="column is-half">
+                                        <div class="field">
+                                            <label class="label">Cargo:</label>
+                                            <div class="control">
+                                                <input type="text" class="input" id="Cargo_cn" #Cargo_cn
+                                                    (keydown)="cargo_cont($event.target.value)"
+                                                    (change)="cargo_cont($event.target.value)"
+                                                    [disabled]="!Nombre_contact">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="column is-two-thirds">
-                                    <div class="field">
-                                        <label class="label">Email:</label>
-                                        <div class="control">
-                                            <input type="email" class="input" id="Email_cn" required #Email_cn  [disabled]="!Cargo_contact" (keydown)="email_cont($event.target.value)"  (change)="email_cont($event.target.value)">
+                                    <div class="column is-two-thirds">
+                                        <div class="field">
+                                            <label class="label">Email:</label>
+                                            <div class="control">
+                                                <input type="email" class="input" id="Email_cn" required #Email_cn
+                                                    [disabled]="!Cargo_contact"
+                                                    (keydown)="email_cont($event.target.value)"
+                                                    (change)="email_cont($event.target.value)">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="column">
+                                    <div class="column">
 
-                                </div>
+                                    </div>
                                 </div>
                             </td>
                             <td>
                                 <div class="field">
                                     <label class="label"> </label>
                                     <div class="control">
-                                        <button class="button is-success is-outlined" (click)="agregarContactoNuevo(Nombre_cn.value, Cargo_cn.value, Email_cn.value, trato.value)" [disabled]="!enable_contact">Agregar</button>
+                                        <button class="button is-success is-outlined"
+                                            (click)="agregarContactoNuevo(Nombre_cn.value, Cargo_cn.value, Email_cn.value, trato.value)"
+                                            [disabled]="!enable_contact">Agregar</button>
                                     </div>
                                 </div>
                             </td>
@@ -364,7 +385,7 @@
                     </tbody>
                 </table>
                 <table class="table is-fullwidth">
-                    
+
                 </table>
                 <table class="table is-fullwidth">
                     <thead>
@@ -386,15 +407,17 @@
                     <div class="column">
                         <div class="field">
                             <div class="control">
-                                <input type="text" class="input" id="almacen_nuevo" formControlName='almacenes' [(ngModel)]="new_almacen" name="nuevoAlmacen">
+                                <input type="text" class="input" id="almacen_nuevo" formControlName='almacenes'
+                                    [(ngModel)]="new_almacen" name="nuevoAlmacen">
                             </div>
                         </div>
                     </div>
                     <div class="column is-3">
-                        <button class="button is-success is-outlined" (click)="add_almacen()" [disabled]="!new_almacen">Agregar</button>
+                        <button class="button is-success is-outlined" (click)="add_almacen()"
+                            [disabled]="!new_almacen">Agregar</button>
                     </div>
                 </div>
-                <br>                
+                <br>
                 <button class="button is-primary">Nuevo Cliente</button>
             </form>
         </div>
@@ -465,14 +488,18 @@
                     <div class="field">
                         <label class="label">Código de producto de cliente</label>
                         <div class="control">
-                            <input type="text" class="input" placeholder="Código de producto de cliente" id="cod_cliente">
+                            <input type="text" class="input" placeholder="Código de producto de cliente"
+                                id="cod_cliente">
                         </div>
                     </div>
                 </div>
                 <div class="column">
-                    <input type="checkbox" name="troquelado" id="troquelado" (click)='post_impresion("Troquelado")'><label> Troquelado</label><br>
-                    <input type="checkbox" name="pegado" id="pegado" (click)='post_impresion("Pegado")'><label> Pegado</label><br>
-                    <input type="checkbox" name="corte" id="corte" (click)='post_impresion("Corte Recto")'><label> Corte Recto</label><br>
+                    <input type="checkbox" name="troquelado" id="troquelado"
+                        (click)='post_impresion("Troquelado")'><label> Troquelado</label><br>
+                    <input type="checkbox" name="pegado" id="pegado" (click)='post_impresion("Pegado")'><label>
+                        Pegado</label><br>
+                    <input type="checkbox" name="corte" id="corte" (click)='post_impresion("Corte Recto")'><label> Corte
+                        Recto</label><br>
                 </div>
             </div>
             <div class="separador">
@@ -481,7 +508,7 @@
             <br>
 
             <!-- <div class="columns"> -->
-            
+
             <div class="columns is-3">
                 <div class="column">
                     <div class="columns">
@@ -490,7 +517,8 @@
                         </div>
                         <div class="column is-4">
                             <div class="control">
-                                <input type="number" class="input" min="1" max="5" placeholder="Cantidad de montajes" [(ngModel)]="montajes">
+                                <input type="number" class="input" min="1" max="5" placeholder="Cantidad de montajes"
+                                    [(ngModel)]="montajes">
                             </div>
                         </div>
                     </div>
@@ -505,7 +533,9 @@
                                 <div class="control">
                                     <div class="select">
                                         <select name="montajes" [(ngModel)]="i_montajes">
-                                            <option value="{{i}}" *ngFor="let e of [].constructor(montajes); let i = index">Montaje {{NumToLet(i)}}</option>
+                                            <option value="{{i}}"
+                                                *ngFor="let e of [].constructor(montajes); let i = index">Montaje
+                                                {{NumToLet(i)}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -527,7 +557,8 @@
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
-                                    <input type="number" class="input" placeholder="Ejemplares montados" (change)="Ejemplar($event.target.value)" [(ngModel)]="EJEMPLARES[i_montajes]">
+                                    <input type="number" class="input" placeholder="Ejemplares montados"
+                                        (change)="Ejemplar($event.target.value)" [(ngModel)]="EJEMPLARES[i_montajes]">
                                 </div>
                             </div>
                         </div>
@@ -540,7 +571,8 @@
             <div class="materiales" *ngFor="let e of [].constructor(montajes); let i = index">
                 <table class="table is-fullwidth" *ngIf="i == i_montajes">
                     <thead>
-                    <tr>
+                        <tr>
+                            <th></th>
                             <th>Materia</th>
                             <th>Marca</th>
                             <th>Cantidad</th>
@@ -549,7 +581,21 @@
                     </thead>
                     <tbody>
                         <tr *ngFor='let Material of MATERIALES_NECESARIOS[i_montajes]'>
-                            <td>{{Material.material}} 
+                            <td>
+                                <button class="button is-small is-info is-outlined" (click)="moveUpNecesario(i)"
+                                    title="Mover arriba">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                </button>
+                                <button class="button is-small is-info is-outlined" (click)="moveDownNecesario(i)"
+                                    title="Mover abajo">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </span>
+                                </button>
+                            </td>
+                            <td>{{Material.material}}
                                 <ng-container *ngIf='Material.ancho'>
                                     ({{Material.ancho}} x {{Material.ancho}})
                                 </ng-container>
@@ -557,12 +603,13 @@
                             <td>{{Material.marca}}</td>
                             <td>{{Material.cantidad}}</td>
                             <td>
-                                <button class="button is-danger is-outlined is-small" (click)='Delete_Material(Material.material)'>
+                                <button class="button is-danger is-outlined is-small"
+                                    (click)='Delete_Material(Material.material)'>
                                     <span class="icon is-small">
-                                      <i class="fas fa-check"></i>
+                                        <i class="fas fa-check"></i>
                                     </span>
                                     <span>Eliminar</span>
-                                  </button>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -575,7 +622,8 @@
                             <div class="select">
                                 <select name="" id="" (change)='selecciona_producto($event.target.value)'>
                                     <option value="#">Selecciona Categoria</option>
-                                    <option value="{{seccion.nombre}}" *ngFor='let seccion of SECCIONES'>{{seccion.nombre}}</option>
+                                    <option value="{{seccion.nombre}}" *ngFor='let seccion of SECCIONES'>
+                                        {{seccion.nombre}}</option>
                                 </select>
                             </div>
                         </div>
@@ -586,13 +634,15 @@
                         <div class="field">
                             <label class="label">Producto:</label>
                             <div class="select">
-                                <select name="" id="{{i_montajes}}" (change)='producto_seleccionado($event.target.value)' #producto>
+                                <select name="" id="{{i_montajes}}"
+                                    (change)='producto_seleccionado($event.target.value)' #producto>
                                     <option value="0">Selecciona Producto</option>
                                     <ng-container *ngFor='let producto of MATERIALES'>
                                         <ng-container *ngIf='producto.grupo.nombre === product_selected'>
                                             <option value="{{producto._id}}">{{producto.nombre}} ({{producto.marca}})
                                                 <ng-container *ngIf='producto.ancho'>
-                                                    ({{producto.ancho}} x {{producto.largo}} Gramaje:{{producto.gramaje}} Calibre:{{producto.calibre}}
+                                                    ({{producto.ancho}} x {{producto.largo}}
+                                                    Gramaje:{{producto.gramaje}} Calibre:{{producto.calibre}}
                                                 </ng-container>
                                             </option>
                                         </ng-container>
@@ -605,22 +655,23 @@
                         <div class="field" id='cant'>
                             <label class="label">Cantidad:</label>
                             <div class="control">
-                                <input type="text" id='cantidad{{i}}' class="input" #size [disabled]='!_producto_seleccionado'>
+                                <input type="text" id='cantidad{{i}}' class="input" #size
+                                    [disabled]='!_producto_seleccionado'>
                             </div>
                         </div>
                     </div>
                 </div>
-                    <div class="field" *ngIf="i == i_montajes">
-                        <label class="label"></label>
-                        <div class="control">
-                            <button class="button is-success is-outlined" (click)="add_materia(i, size, producto)">
-                                <span class="icon is-small">
-                                  <i class="fas fa-check"></i>
-                                </span>
-                                <span>Agregar</span>
-                              </button>
-                        </div>
+                <div class="field" *ngIf="i == i_montajes">
+                    <label class="label"></label>
+                    <div class="control">
+                        <button class="button is-success is-outlined" (click)="add_materia(i, size, producto)">
+                            <span class="icon is-small">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span>Agregar</span>
+                        </button>
                     </div>
+                </div>
             </div>
             <hr>
             <button class="button is-primary" (click)='finalizar()'>Registrar Producto</button>
@@ -645,39 +696,39 @@
                                 Especificación del Producto
                             </th>
                         </thead>
-                        <tbody><tr>
-                            <td>
-           E-{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-{{OneProduct.edicion}}
-                            </td></tr>
+                        <tbody>
+                            <tr>
+                                <td>
+                                               E-{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-{{OneProduct.edicion}}
+                                </td>
+                            </tr>
                             <tr>
                                 <td>
                                     <br>
                                     <br>
                                     <div class="file is-small has-name is-primary">
                                         <label class="file-label">
-                                          <input class="file-input" type="file" name="resume"
-                                          (change)="CambiarImagen($event)">
-                                          <span class="file-cta">
-                                            <span class="file-icon">
-                                              <i class="fas fa-upload"></i>
+                                            <input class="file-input" type="file" name="resume"
+                                                (change)="CambiarImagen($event)">
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                    <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                    Seleccionar Imagen
+                                                </span>
                                             </span>
-                                            <span class="file-label">
-                                              Seleccionar Imagen
+                                            <span class="file-name">
+                                                Sin archivo
                                             </span>
-                                          </span>
-                                          <span class="file-name">
-                                            Sin archivo
-                                          </span>
                                         </label>
-                                      </div>
+                                    </div>
                                     <!--
                                         
                                     -->
-                                    <button class="button is-primary mt-5 is-small"
-                                    [disabled]="!ImgSubir"
-                                    [ngClass]="{'is-loading': cargando}"
-                                    (click)='subirImagen()'>
-                                    Cambiar imagen
+                                    <button class="button is-primary mt-5 is-small" [disabled]="!ImgSubir"
+                                        [ngClass]="{'is-loading': cargando}" (click)='subirImagen()'>
+                                        Cambiar imagen
                                     </button>
                                 </td>
                             </tr>
@@ -689,7 +740,7 @@
                 Identificación del Producto
             </div>
             <br>
-            
+
             <table class="table is-fullwidth">
                 <tr>
                     <th>Cliente:</th>
@@ -709,7 +760,9 @@
                 <label class="label">Montaje</label>
                 <div class="select">
                     <select id="" class="select" (click)="cambiarCalculo()" name="montaje" [(ngModel)]="i_montajes">
-                        <option value="{{i}}" *ngFor="let e of [].constructor(OneProduct.montajes); let i = index">M-{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-{{NumToLet(i)}}</option>
+                        <option value="{{i}}" *ngFor="let e of [].constructor(OneProduct.montajes); let i = index">
+                            M-{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-{{NumToLet(i)}}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -728,9 +781,11 @@
                 <tbody>
                     <ng-container *ngIf="this.OneProduct.materiales[this.i_montajes_]">
                         <tr *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                            <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo  && TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                            <ng-container
+                                *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo  && TintaProducto.producto.grupo.nombre === 'Sustrato'">
                                 <td>
-                                    {{TintaProducto.producto.nombre}} ({{TintaProducto.producto.ancho}} x {{TintaProducto.producto.largo}})
+                                    {{TintaProducto.producto.nombre}} ({{TintaProducto.producto.ancho}} x
+                                    {{TintaProducto.producto.largo}})
                                     <br>
                                     <table class="table is-bordered">
                                         <thead>
@@ -764,7 +819,8 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Tinta'">
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Tinta'">
                             <td>
                                 {{TintaProducto.producto.color}}
                             </td>
@@ -778,12 +834,13 @@
             <table class="table is-fullwidth">
                 <thead>
                     <th>
-                        Barniz aprobado 
+                        Barniz aprobado
                     </th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Barniz'">
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Barniz'">
                             {{TintaProducto.producto.nombre}} ({{TintaProducto.producto.marca}})
                         </ng-container>
                     </tr>
@@ -801,51 +858,61 @@
                     </th>
                     <td>
                         <ng-container tr *ngFor="let TintaProducto of OneProduct.materiales[i_montajes];let i = index">
-                            <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Tinta'">
-                                <p *ngIf="TintaProducto.producto.color === 'Negro'"><b>Negro:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
+                            <ng-container
+                                *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Tinta'">
+                                <p *ngIf="TintaProducto.producto.color === 'Negro'">
+                                    <b>Negro:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
                                     <!-- {{NumToLet(i_montajes)}} -->
                                     <ng-container *ngIf="i_montajes == 0">A</ng-container>
                                     <ng-container *ngIf="i_montajes == 1">B</ng-container>
                                     <ng-container *ngIf="i_montajes == 2">C</ng-container>
                                     <ng-container *ngIf="i_montajes == 3">D</ng-container>
                                     <ng-container *ngIf="i_montajes == 4">E</ng-container>
-                                    -1 </p>
-                                <p *ngIf="TintaProducto.producto.color === 'Cyan'"><b>Cyan:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
+                                    -1
+                                </p>
+                                <p *ngIf="TintaProducto.producto.color === 'Cyan'">
+                                    <b>Cyan:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
                                     <ng-container *ngIf="i_montajes == 0">A</ng-container>
                                     <ng-container *ngIf="i_montajes == 1">B</ng-container>
                                     <ng-container *ngIf="i_montajes == 2">C</ng-container>
                                     <ng-container *ngIf="i_montajes == 3">D</ng-container>
                                     <ng-container *ngIf="i_montajes == 4">E</ng-container>
-                                    -2 </p>
-                                <p *ngIf="TintaProducto.producto.color === 'Magenta'"><b>Magenta:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
+                                    -2
+                                </p>
+                                <p *ngIf="TintaProducto.producto.color === 'Magenta'">
+                                    <b>Magenta:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
                                     <ng-container *ngIf="i_montajes == 0">A</ng-container>
                                     <ng-container *ngIf="i_montajes == 1">B</ng-container>
                                     <ng-container *ngIf="i_montajes == 2">C</ng-container>
                                     <ng-container *ngIf="i_montajes == 3">D</ng-container>
                                     <ng-container *ngIf="i_montajes == 4">E</ng-container>
-                                    -3 </p>
-                                <p *ngIf="TintaProducto.producto.color === 'Amarillo'"><b>Amarillo:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
+                                    -3
+                                </p>
+                                <p *ngIf="TintaProducto.producto.color === 'Amarillo'">
+                                    <b>Amarillo:</b>{{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
                                     <ng-container *ngIf="i_montajes == 0">A</ng-container>
                                     <ng-container *ngIf="i_montajes == 1">B</ng-container>
                                     <ng-container *ngIf="i_montajes == 2">C</ng-container>
                                     <ng-container *ngIf="i_montajes == 3">D</ng-container>
                                     <ng-container *ngIf="i_montajes == 4">E</ng-container>
-                                    -4 </p>
-                                <div *ngIf="TintaProducto.producto.color != 'Amarillo' && TintaProducto.producto.color != 'Magenta' && TintaProducto.producto.color != 'Cyan' && TintaProducto.producto.color != 'Negro' ">
-                                    <b>{{TintaProducto.producto.color}}:</b> 
+                                    -4
+                                </p>
+                                <div
+                                    *ngIf="TintaProducto.producto.color != 'Amarillo' && TintaProducto.producto.color != 'Magenta' && TintaProducto.producto.color != 'Cyan' && TintaProducto.producto.color != 'Negro' ">
+                                    <b>{{TintaProducto.producto.color}}:</b>
                                     <ng-container *ngIf="cinco">
                                         {{OneProduct.cliente.codigo}}-{{OneProduct.codigo}}-{{OneProduct.version}}-
-                                    <ng-container *ngIf="i_montajes == 0">A</ng-container>
-                                    <ng-container *ngIf="i_montajes == 1">B</ng-container>
-                                    <ng-container *ngIf="i_montajes == 2">C</ng-container>
-                                    <ng-container *ngIf="i_montajes == 3">D</ng-container>
-                                    <ng-container *ngIf="i_montajes == 4">E</ng-container>
-                                    <ng-container *ngIf="i_montajes == 0">
-                                        -{{sumaTintas(i, TintaProducto.producto.color)}}
-                                    </ng-container>    
-                                    <ng-container *ngIf="i_montajes != 0">
-                                        -{{sumaTintas(i, TintaProducto.producto.color) - 2}}
-                                    </ng-container>    
+                                        <ng-container *ngIf="i_montajes == 0">A</ng-container>
+                                        <ng-container *ngIf="i_montajes == 1">B</ng-container>
+                                        <ng-container *ngIf="i_montajes == 2">C</ng-container>
+                                        <ng-container *ngIf="i_montajes == 3">D</ng-container>
+                                        <ng-container *ngIf="i_montajes == 4">E</ng-container>
+                                        <ng-container *ngIf="i_montajes == 0">
+                                            -{{sumaTintas(i, TintaProducto.producto.color)}}
+                                        </ng-container>
+                                        <ng-container *ngIf="i_montajes != 0">
+                                            -{{sumaTintas(i, TintaProducto.producto.color) - 2}}
+                                        </ng-container>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -872,7 +939,8 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                                    <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Sustrato'">
+                                    <ng-container
+                                        *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Sustrato'">
                                         <td>{{TintaProducto.producto.ancho}} cm.</td>
                                         <td>{{TintaProducto.producto.largo}} cm.</td>
                                     </ng-container>
@@ -881,7 +949,7 @@
                         </table>
                     </td>
                     <td>
-                       {{ OneProduct.ejemplares[i_montajes] }} Ejemplares
+                        {{ OneProduct.ejemplares[i_montajes] }} Ejemplares
                     </td>
                 </tbody>
             </table>
@@ -892,22 +960,26 @@
             <table class="table is-fullwidth">
                 <thead>
                     <ng-container *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Pega'">
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Pega'">
                             <th>Pegamento aprobado</th>
                         </ng-container>
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
                             <th>Cantidad de unidades por caja</th>
                         </ng-container>
                     </ng-container>
                 </thead>
                 <tbody>
                     <ng-container *ngFor="let TintaProducto of OneProduct.materiales[i_montajes]">
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Pega'">
-                        <td>
-                            {{TintaProducto.producto.nombre}} ({{TintaProducto.producto.marca}})
-                        </td>
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Pega'">
+                            <td>
+                                {{TintaProducto.producto.nombre}} ({{TintaProducto.producto.marca}})
+                            </td>
                         </ng-container>
-                        <ng-container *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
+                        <ng-container
+                            *ngIf="TintaProducto && TintaProducto.producto && TintaProducto.producto.grupo && TintaProducto.producto.grupo.nombre === 'Cajas Corrugadas'">
                             <td>{{TintaProducto.cantidad}}</td>
                         </ng-container>
                     </ng-container>
@@ -942,7 +1014,8 @@
                     <div class="field">
                         <label class="label">Nombre Producto</label>
                         <div class="control">
-                            <input type="text" class="input" id='nombre_nuevo_producto' placeholder="Nombre Producto" [(ngModel)]="OneProduct.producto">
+                            <input type="text" class="input" id='nombre_nuevo_producto' placeholder="Nombre Producto"
+                                [(ngModel)]="OneProduct.producto">
                         </div>
                     </div>
                 </div>
@@ -962,7 +1035,8 @@
                     <div class="field">
                         <label class="label">Cod. Producto</label>
                         <div class="control">
-                            <input type="text" class="input" id='cod_producto' placeholder="Código de producto" [(ngModel)]="OneProduct.codigo">
+                            <input type="text" class="input" id='cod_producto' placeholder="Código de producto"
+                                [(ngModel)]="OneProduct.codigo">
                         </div>
                     </div>
                 </div>
@@ -972,7 +1046,8 @@
                     <div class="field">
                         <label class="label">Versión</label>
                         <div class="control">
-                            <input type="text" class="input" id='version' placeholder="Versión" [(ngModel)]="OneProduct.version">
+                            <input type="text" class="input" id='version' placeholder="Versión"
+                                [(ngModel)]="OneProduct.version">
                         </div>
                     </div>
                 </div>
@@ -980,7 +1055,8 @@
                     <div class="field">
                         <label class="label">Especificación</label>
                         <div class="control">
-                            <input type="text" class="input" id='edicion' placeholder="Especificación" [(ngModel)]="OneProduct.edicion">
+                            <input type="text" class="input" id='edicion' placeholder="Especificación"
+                                [(ngModel)]="OneProduct.edicion">
                         </div>
                     </div>
                 </div>
@@ -990,14 +1066,18 @@
                     <div class="field">
                         <label class="label">Código de producto de cliente</label>
                         <div class="control">
-                            <input type="text" class="input" placeholder="Código de producto de cliente" id="cod_cliente" [(ngModel)]="OneProduct.cod_cliente">
+                            <input type="text" class="input" placeholder="Código de producto de cliente"
+                                id="cod_cliente" [(ngModel)]="OneProduct.cod_cliente">
                         </div>
                     </div>
                 </div>
                 <div class="column">
-                    <input type="checkbox" name="troquelado" id="troquelado" (click)='post_impresion("Troquelado")'><label> Troquelado</label><br>
-                    <input type="checkbox" name="pegado" id="pegado" (click)='post_impresion("Pegado")'><label> Pegado</label><br>
-                    <input type="checkbox" name="corte" id="corte" (click)='post_impresion("Corte Recto")'><label> Corte Recto</label><br>
+                    <input type="checkbox" name="troquelado" id="troquelado"
+                        (click)='post_impresion("Troquelado")'><label> Troquelado</label><br>
+                    <input type="checkbox" name="pegado" id="pegado" (click)='post_impresion("Pegado")'><label>
+                        Pegado</label><br>
+                    <input type="checkbox" name="corte" id="corte" (click)='post_impresion("Corte Recto")'><label> Corte
+                        Recto</label><br>
                 </div>
             </div>
             <div class="separador">
@@ -1006,7 +1086,7 @@
             <br>
 
             <!-- <div class="columns"> -->
-            
+
             <div class="columns is-3">
                 <div class="column">
                     <div class="columns">
@@ -1015,7 +1095,8 @@
                         </div>
                         <div class="column is-4">
                             <div class="control">
-                                <input type="number" class="input" min="1" max="5" placeholder="Cantidad de montajes" [(ngModel)]="OneProduct.montajes">
+                                <input type="number" class="input" min="1" max="5" placeholder="Cantidad de montajes"
+                                    [(ngModel)]="OneProduct.montajes">
                             </div>
                         </div>
                     </div>
@@ -1030,7 +1111,9 @@
                                 <div class="control">
                                     <div class="select">
                                         <select name="montajes" [(ngModel)]="i_montajes_">
-                                            <option value="{{i}}" *ngFor="let e of [].constructor(OneProduct.montajes); let i = index">Montaje {{NumToLet(i)}}</option>
+                                            <option value="{{i}}"
+                                                *ngFor="let e of [].constructor(OneProduct.montajes); let i = index">
+                                                Montaje {{NumToLet(i)}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1052,7 +1135,9 @@
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
-                                    <input type="number" class="input" placeholder="Ejemplares montados" (change)="Ejemplar($event.target.value)" [(ngModel)]="OneProduct.ejemplares[i_montajes_]">
+                                    <input type="number" class="input" placeholder="Ejemplares montados"
+                                        (change)="Ejemplar($event.target.value)"
+                                        [(ngModel)]="OneProduct.ejemplares[i_montajes_]">
                                 </div>
                             </div>
                         </div>
@@ -1066,45 +1151,59 @@
                 <ng-container *ngIf="OneProduct.materiales[i_montajes_]">
                     <table class="table is-fullwidth" *ngIf="i == i_montajes_">
                         <thead>
-                        <tr>
+                            <tr>
                                 <th></th>
                                 <th>Materia</th>
                                 <th>Marca</th>
                                 <th>Cantidad</th>
+                                <th>Editar</th>
                                 <th>Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container >
+                            <ng-container>
                                 <tr *ngFor='let Material of OneProduct.materiales[i_montajes_];index as x'>
                                     <td>
-                                        <i class="fas fa-arrow-up" style="font-size: xx-small; cursor:pointer" (click)="moveUp(x)"></i> <br>
-                                        <i class="fas fa-arrow-down" style="font-size: xx-small; cursor:pointer" (click)="moveDown(x)"></i>
+                                        <i class="fas fa-arrow-up" style="font-size: xx-small; cursor:pointer"
+                                            (click)="moveUp(x)"></i> <br>
+                                        <i class="fas fa-arrow-down" style="font-size: xx-small; cursor:pointer"
+                                            (click)="moveDown(x)"></i>
                                     </td>
-                                    <td *ngIf="Material.producto.nombre">
-                                        {{Material.producto.nombre}} 
-                                        <ng-container *ngIf='Material.ancho'>
-                                            ({{Material.producto.ancho}} x {{Material.producto.ancho}})
-                                        </ng-container>
+                                    <td *ngIf="!Material.editando">
+                                        {{Material.producto.nombre || Material.material}}
                                     </td>
-                                    <td *ngIf="Material.material">
-                                        {{Material.material}} 
-                                        <ng-container *ngIf='Material.ancho'>
-                                            ({{Material.producto.ancho}} x {{Material.producto.ancho}})
-                                        </ng-container>
+                                    <td *ngIf="Material.editando">
+                                        <div class="select">
+                                            <select [(ngModel)]="OneProduct.materiales[i_montajes_][x].producto"
+                                                (change)="Material.editando=false">
+                                                <option *ngFor="let prod of MATERIALES" [ngValue]="prod">{{prod.nombre}}
+                                                    ({{prod.marca}})</option>
+                                            </select>
+                                        </div>
                                     </td>
                                     <td *ngIf="Material.producto.marca">{{Material.producto.marca}}</td>
                                     <td *ngIf="Material.marca">{{Material.marca}}</td>
                                     <td>
-                                        <input type="text" class="input" [(ngModel)]="OneProduct.materiales[i_montajes_][x].cantidad">
+                                        <input type="text" class="input"
+                                            [(ngModel)]="OneProduct.materiales[i_montajes_][x].cantidad">
                                     </td>
                                     <td>
-                                        <button class="button is-danger is-outlined is-small" (click)='Delete_Material2(Material.producto.nombre)'>
+                                        <button class="button is-info is-outlined is-small"
+                                            (click)="Material.editando = true">
                                             <span class="icon is-small">
-                                              <i class="fas fa-check"></i>
+                                                <i class="fas fa-edit"></i>
+                                            </span>
+                                            <span>Editar</span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="button is-danger is-outlined is-small"
+                                            (click)='Delete_Material2(Material.producto.nombre)'>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-check"></i>
                                             </span>
                                             <span>Eliminar</span>
-                                          </button>
+                                        </button>
                                     </td>
                                 </tr>
                             </ng-container>
@@ -1119,7 +1218,8 @@
                             <div class="select">
                                 <select name="" id="" (change)='selecciona_producto2($event.target.value)'>
                                     <option value="0">Selecciona Categoria</option>
-                                    <option value="{{seccion.nombre}}" *ngFor='let seccion of SECCIONES'>{{seccion.nombre}}</option>
+                                    <option value="{{seccion.nombre}}" *ngFor='let seccion of SECCIONES'>
+                                        {{seccion.nombre}}</option>
                                 </select>
                             </div>
                         </div>
@@ -1130,13 +1230,15 @@
                         <div class="field">
                             <label class="label">Producto:</label>
                             <div class="select">
-                                <select name="" id="x-{{i}}" (change)='producto_seleccionado($event.target.value)' disabled #producto>
+                                <select name="" id="x-{{i}}" (change)='producto_seleccionado($event.target.value)'
+                                    disabled #producto>
                                     <option value="0"> Selecciona Producto</option>
                                     <ng-container *ngFor='let producto of MATERIALES'>
                                         <ng-container *ngIf='producto.grupo.nombre === product_selected'>
                                             <option value="{{producto._id}}">{{producto.nombre}} ({{producto.marca}})
                                                 <ng-container *ngIf='producto.ancho'>
-                                                    ({{producto.ancho}} x {{producto.largo}}) Gramaje: {{producto.gramaje}}, Calibre: {{producto.calibre}}
+                                                    ({{producto.ancho}} x {{producto.largo}}) Gramaje:
+                                                    {{producto.gramaje}}, Calibre: {{producto.calibre}}
                                                 </ng-container>
                                             </option>
                                         </ng-container>
@@ -1149,22 +1251,23 @@
                         <div class="field" id='cant'>
                             <label class="label">Cantidad:</label>
                             <div class="control">
-                                <input type="text" id='xcantidad{{i}}' class="input" #size [disabled]='!_producto_seleccionado'>
+                                <input type="text" id='xcantidad{{i}}' class="input" #size
+                                    [disabled]='!_producto_seleccionado'>
                             </div>
                         </div>
                     </div>
                 </div>
-                    <div class="field" *ngIf="i == i_montajes_">
-                        <label class="label"></label>
-                        <div class="control">
-                            <button class="button is-success is-outlined" (click)="add_materia3(i, size)">
-                                <span class="icon is-small">
-                                  <i class="fas fa-check"></i>
-                                </span>
-                                <span>Agregar</span>
-                              </button>
-                        </div>
+                <div class="field" *ngIf="i == i_montajes_">
+                    <label class="label"></label>
+                    <div class="control">
+                        <button class="button is-success is-outlined" (click)="add_materia3(i, size)">
+                            <span class="icon is-small">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span>Agregar</span>
+                        </button>
                     </div>
+                </div>
             </div>
             <hr>
             <button class="button is-primary" (click)="editar_producto()">Editar Producto</button>
