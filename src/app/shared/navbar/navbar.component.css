@@ -1,4 +1,83 @@
-.alerta{
+.alerta {
     color: red;
     font-size: smaller;
 }
+
+/* ---------------- Snowfall styles (ajustada para caída real) ---------------- */
+.navbar {
+    position: relative;
+    overflow: visible;
+}
+
+.snowfall {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    /* ajustar si la barra tiene otra altura */
+    overflow: hidden;
+    z-index: 50;
+}
+
+.snowflake {
+    position: absolute;
+    top: -20px;
+    /* inicio arriba de la barra */
+    color: #ffffff;
+    opacity: 0.9;
+    user-select: none;
+    will-change: top, transform, opacity;
+    display: inline-block;
+    /* dos animaciones: caída (top) y oscilación (transform translateX) */
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+}
+
+/* Caída vertical animando "top" (evita animar transform aquí) */
+@keyframes fall {
+    0% {
+        top: -20px;
+        opacity: 0.95;
+    }
+
+    100% {
+        top: 80px;
+        /* por debajo de la barra; ajustar según height */
+        opacity: 0.95;
+    }
+}
+
+/* Oscilación horizontal con transform (no interfiere con 'top') */
+@keyframes sway {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(12px);
+    }
+
+    100% {
+        transform: translateX(-8px);
+    }
+}
+
+.snowflake.small {
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.snowflake.medium {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.snowflake.large {
+    font-size: 18px;
+    opacity: 1;
+}
+
+/* -------------------------------------------------- */

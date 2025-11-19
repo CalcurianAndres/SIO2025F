@@ -166,7 +166,7 @@ export class BarChartComponent implements OnInit {
           showLoaderOnConfirm: true,
           cancelButtonText:'Cancelar',
           preConfirm: (info) => {
-            return fetch(`//192.168.0.23:8080/api/recepcion-porconfirmar/${info}/${id}`)
+            return fetch(`//192.168.0.27:8080/api/recepcion-porconfirmar/${info}/${id}`)
               .then(response => {
                 if (!response.ok) {
                   throw new Error(response.statusText)
@@ -302,7 +302,7 @@ export class BarChartComponent implements OnInit {
           showLoaderOnConfirm: true,
           cancelButtonText:'Cancelar',
           preConfirm: (info) => {
-            return fetch(`//192.168.0.23:8080/api/recepcion-porconfirmar/${info}/${id}`)
+            return fetch(`//192.168.0.27:8080/api/recepcion-porconfirmar/${info}/${id}`)
               .then(response => {
                 if (!response.ok) {
                   throw new Error(response.statusText)

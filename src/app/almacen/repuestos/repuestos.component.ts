@@ -222,15 +222,15 @@ public foto = ''
   // Check if the 'foto' variable is empty or undefined
   if (!foto) {
     // If empty, assign a default 'no-image' value to 'foto'
-    this.foto = 'http://192.168.0.23:8080/api/imagen/repuestos/no-image';
+    this.foto = 'http://192.168.0.27:8080/api/imagen/repuestos/no-image';
   }else{
-    this.foto = `http://192.168.0.23:8080/api/imagen/repuestos/${foto}`
+    this.foto = `http://192.168.0.27:8080/api/imagen/repuestos/${foto}`
   }
 
   // Use SweetAlert2 to display the image
   // Swal.fire({
   //   title: nombre, // Set the title of the dialog
-  //   imageUrl: `http://192.168.0.23:8080/api/imagen/repuestos/${foto}`, // Specify the URL of the image
+  //   imageUrl: `http://192.168.0.27:8080/api/imagen/repuestos/${foto}`, // Specify the URL of the image
   //   imageWidth: 400, // Set the width of the image in pixels
   //   imageAlt: nombre, // Set the alternative text for the image
   //   showConfirmButton: false // Hide the confirmation button

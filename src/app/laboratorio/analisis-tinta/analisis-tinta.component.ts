@@ -512,7 +512,7 @@ export class AnalisisTintaComponent implements OnInit {
 
   verImagen(){
     Swal.fire({
-      imageUrl: `http://192.168.0.23:8080/api/imagen/analisis/${this.img}`,
+      imageUrl: `http://192.168.0.27:8080/api/imagen/analisis/${this.img}`,
       imageAlt: 'Draw down',
       showConfirmButton:false
     })
@@ -883,7 +883,7 @@ export class AnalisisTintaComponent implements OnInit {
             new Cell(new Txt('').bold().end).end,
             new Cell(new Txt('').bold().end).end,
             new Cell(new Txt('').bold().end).end,
-            new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/analisis/${img}`).width(150).margin([8, 0]).build()).rowSpan(34).border([false, false]).fontSize(8).end,
+            new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/analisis/${img}`).width(150).margin([8, 0]).build()).rowSpan(34).border([false, false]).fontSize(8).end,
           ],
           [
             new Cell(new Txt('Transparencia / Opacidad').alignment('center').bold().end).fontSize(8).fillColor('#dedede').colSpan(5).end,

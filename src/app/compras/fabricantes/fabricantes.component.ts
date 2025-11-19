@@ -245,7 +245,7 @@ export class FabricantesComponent implements OnInit {
     this.Edicion.get('nombre').setValue(el_proveedor.nombre);
     this.Origenes = el_proveedor.origenes
     this.Edicion.get('grupo').setValue(el_proveedor.grupo._id)
-    this.imageSrcEdition = `http://192.168.0.23:8080/api/imagen/fabricante/${el_proveedor.logo}`
+    this.imageSrcEdition = `http://192.168.0.27:8080/api/imagen/fabricante/${el_proveedor.logo}`
     if(el_proveedor.origenes.length > 0){
       this.inter = true;
       this.origen_('i')

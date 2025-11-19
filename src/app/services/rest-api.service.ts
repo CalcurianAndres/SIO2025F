@@ -658,6 +658,13 @@ export class RestApiService {
     return this.http.post(url, data)
   }
 
+  postReporteFinal(desde, hasta) {
+    let data = { desde, hasta }
+    const url = `${this.api_url}/movimientos?inicio=${desde}&fin=${hasta}`
+    return this.http.get(url)
+  }
+
+
   postDevoluciones(data) {
     const url = `${this.api_url}/reporte-devoluciones`
     return this.http.post(url, data)
@@ -683,6 +690,7 @@ export class RestApiService {
     return this.http.get(url)
 
   }
+
 
   postBuscarLoteporFecha(ordenes, desde, hasta) {
     let data = {
@@ -981,6 +989,50 @@ export class RestApiService {
     const url = `${this.api_url}/last-gestiones`;
     return this.http.post(url, data)
   }
+
+  RetornarMaterial(data: any) {
+    const url = `${this.api_url}/actualizar-materiales`;
+    return this.http.post(url, data)
+  }
+
+  nuevoRetorno(data) {
+    const url = `${this.api_url}/retorno`;
+    return this.http.post(url, data)
+  }
+
+  getRetornos() {
+    const url = `${this.api_url}/retorno`;
+    return this.http.get(url)
+  }
+
+  putRetornos(id, desicion) {
+    const url = `${this.api_url}/retornos/${id}/${desicion}`;
+    return this.http.get(url)
+  }
+
+
+
+
+
+
+  // putBuscarAlmacen(data: any): Observable<any> {
+  //   return this.http.put(`${this.api_url}/reporte-inventario`, data);
+  // }
+  // postSalidas(data: any): Observable<any> {
+  //   return this.http.post(`${this.api_url}/reporte-salidas`, data);
+  // }
+  // postDevoluciones(data: any): Observable<any> {
+  //   return this.http.post(`${this.api_url}/reporte-devoluciones`, data);
+  // }
+  // postentradashastahoy(data: any): Observable<any> {
+  //   return this.http.post(`${this.api_url}/entradas-hasta-hoy`, data); // ajustar ruta si es otra
+  // }
+  // postsalidashastahoy(data: any): Observable<any> {
+  //   return this.http.post(`${this.api_url}/salidas-hasta-hoy`, data);
+  // }
+  // postdevolucioneshastahoy(data: any): Observable<any> {
+  //   return this.http.post(`${this.api_url}/devoluciones-hasta-hoy`, data);
+  // }
 
 
 }

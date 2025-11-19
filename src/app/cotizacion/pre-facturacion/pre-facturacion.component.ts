@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+// import { Console } from 'console';
 import * as moment from 'moment';
 import { Cell, Img, Line, PdfMakeWrapper, Table, Txt } from 'pdfmake-wrapper';
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
@@ -12,25 +13,25 @@ import Swal from 'sweetalert2';
 })
 export class PreFacturacionComponent implements OnInit {
 
-  constructor(private api:RestApiService) {
+  constructor(private api: RestApiService) {
     this.usuario = api.usuario
-   }
+  }
 
   public usuario
   public Despachos
   public Tasa
   public Observacion = ''
-  public Validacion:boolean = false
-  public Modificacion:boolean = false
-  public ModificaciondeEscala:boolean = false
-  public ModificaciondePrecio:boolean = false
-  public resumido:boolean = false
-  public resumen:boolean = true
+  public Validacion: boolean = false
+  public Modificacion: boolean = false
+  public ModificaciondeEscala: boolean = false
+  public ModificaciondePrecio: boolean = false
+  public resumido: boolean = false
+  public resumen: boolean = true
   public precio_millar_Bs
 
   ngOnInit(): void {
     this.api.getDespachosYOrdenes()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.Despachos = resp.preFacuracion
         // console.log(resp, 'TASAA')
         this.Tasa = resp.MonitorBCV
@@ -45,212 +46,249 @@ export class PreFacturacionComponent implements OnInit {
     return false;
   }
 
-  Editar_Cantidad_en_OC(){
+  Editar_Cantidad_en_OC() {
     (<HTMLInputElement>document.getElementById('Cantidad_en_OC')).disabled = false
   }
 
-  Editar_Cantidad_despachada(){
+  Editar_Cantidad_despachada() {
     (<HTMLInputElement>document.getElementById('Cantidad_Despachada')).disabled = false
   }
 
 
-  calcularSub(x,y,z){
+  calcularSub(x, y, z) {
     let SubtotalBS
-    let precio_millar_Bs:any = ( this.Despachos[this.INDEX].despacho.precio*this.Despachos[this.INDEX].despacho.tasa).toFixed(4)
+    let precio_millar_Bs: any = (this.Despachos[this.INDEX].despacho.precio * this.Despachos[this.INDEX].despacho.tasa).toFixed(4)
     return SubtotalBS = this.puntoYcoma_(this.Despachos[this.INDEX].despacho.cantidad / 1000 * precio_millar_Bs)
-    let sub_bs:any = (y*z).toFixed(4)
+    let sub_bs: any = (y * z).toFixed(4)
     x = x / 1000;
-    return this.puntoYcoma(x*sub_bs)
+    return this.puntoYcoma(x * sub_bs)
   }
 
-  Modificacion_close(){
+  Modificacion_close() {
     this.Modificacion = false;
     this.ModificaciondeEscala = false;
     this.ModificaciondePrecio = false;
   }
 
-  resumir(){
+  resumir() {
     this.resumido = true;
   }
 
-  habilitarBoton(){
+  habilitarBoton() {
     this.resumen = false;
   }
 
-  closeModal(){
+  closeModal() {
     this.Validacion = false;
   }
 
-  buscarEscala_(i){
+  buscarEscala_(i) {
     Swal.fire({
-      text:'Escala modificada',
-      icon:'success',
-      showConfirmButton:false
+      text: 'Escala modificada',
+      icon: 'success',
+      showConfirmButton: false
     })
     this.Modificacion_close();
     this.buscarEscala(i)
   }
 
 
-  public Escala = {cantidad:0, precio:0};
-  buscarEscala(precio,nueva?){
+  public Escala = { cantidad: 0, precio: 0 };
+  buscarEscala(precio, nueva?) {
     // console.log(precio,'PRECIOOOO')
     let escalas = this.Despachos[this.INDEX].escala.escalas
-    for(let i=0;i<escalas.length;i++){
+    for (let i = 0; i < escalas.length; i++) {
       escalas[i].cantidad = Number(escalas[i].cantidad)
     }
     // console.log(escalas,'ESCALAAAAAAAAAAAAAAAAAAAS')
-    let search = escalas.findLast(x=> x.cantidad <= precio)
+    let search = escalas.findLast(x => x.cantidad <= precio)
     // console.log(search,'SEARCH')
-    if(!search && !nueva){
+    if (!search && !nueva) {
       // console.log('fail')
       search = escalas[0]
     }
-    this.Escala = search  
+    this.Escala = search
   }
 
   public INDEX = 0;
-  ValidarDatos(i){
-    if(!this.Validacion){
+  public Cajas = 0;
+  ValidarDatos(i) {
+    if (!this.Validacion) {
       this.Validacion = true;
       this.INDEX = i
       // let busqueda = this.Despachos[this.INDEX].find(x=>x.escala.escalas.cantidad === "100000")
       this.buscarEscala(this.Despachos[this.INDEX].orden.cantidad)
-    }else{
+      let materiales = this.Despachos[this.INDEX].orden.producto.materiales[this.Despachos[this.INDEX].orden.montaje]
+      this.Cajas = materiales.find(x => x.producto.grupo.nombre === "Cajas Corrugadas").cantidad
+    } else {
       this.closeModal();
     }
   }
 
-  modificarModal(i){
+  modificarModal(i) {
     this.Modificacion = true;
-    if(i === 'escala'){
+    if (i === 'escala') {
       this.ModificaciondeEscala = true
     }
-    if(i === 'precio'){
+    if (i === 'precio') {
       this.ModificaciondePrecio = true
     }
   }
 
-  public confirmed:boolean = false;
-  confirmar(){
+  public confirmed: boolean = false;
+  confirmar() {
     this.confirmed = true
   }
 
   public tipo_documento = 'F - '
-  editTipo(e){
+  editTipo(e) {
     this.tipo_documento = e
   }
 
   public n_documento = ''
-  public numero_facturacion:boolean = false;
-  editDocumento(e){
+  public numero_facturacion: boolean = false;
+  editDocumento(e) {
     this.n_documento = e;
-    if(!e){
+    if (!e) {
       this.numero_facturacion = false
     }
-    else{
+    else {
       this.numero_facturacion = true
     }
   }
 
-  public fecha_facturacion:boolean = false
-  fecha_modificacion(e){
-    if(!e){
+  public fecha_facturacion: boolean = false
+  public fecha_de_facturacion = ''
+  fecha_modificacion(e) {
+    if (!e) {
       this.fecha_facturacion = false
-    }else{
+    } else {
       this.fecha_facturacion = true
+      this.fecha_de_facturacion = e
     }
   }
 
-  confirmar_todo(){
+  confirmar_todo() {
     Swal.fire({
-      icon:'warning',
+      icon: 'warning',
       title: 'Verifique bien los datos',
-      text:`Los datos previamente mostrados, así como, la información suministrada por usted son de vital     importancia.
+      text: `Los datos previamente mostrados, así como, la información suministrada por usted son de vital     importancia.
       Es necesario su correcta verificación.   Dichos cambios no podrán ser modificados`,
       showDenyButton: true,
       showCancelButton: false,
       confirmButtonText: 'Continuar',
       denyButtonText: `Ir atrás`,
-      confirmButtonColor:'#48c78e'
+      confirmButtonColor: '#48c78e'
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        this.Despachos[this.INDEX].despacho.documento =`${this.tipo_documento}${this.n_documento}`
+        this.Despachos[this.INDEX].despacho.documento = `${this.tipo_documento}${this.n_documento}`
+        this.Despachos[this.INDEX].despacho.parcial = `${this.fecha_de_facturacion}`
         this.n_documento = ''
         this.tipo_documento = 'F - '
         this.Facturacion = false;
         Swal.fire(
-        {title:'Listo.', 
-        text:'Se realizó el registro de facturación correctamente.', 
-        icon:'info',
-        showConfirmButton:false}
+          {
+            title: 'Listo.',
+            text: 'Se realizó el registro de facturación correctamente.',
+            icon: 'info',
+            showConfirmButton: false
+          }
         )
         this.numero_facturacion = false;
         this.fecha_facturacion = false;
         this.confirmed = false;
         const inputFacturaNumber = document.getElementById('factura_number') as HTMLInputElement;
         if (inputFacturaNumber) {
-            inputFacturaNumber.value = ''; // Establece el valor en blanco
+          inputFacturaNumber.value = ''; // Establece el valor en blanco
         }
         const inputFechaFactura = document.getElementById('fecha_factura') as HTMLInputElement;
-        if(inputFechaFactura) {
+        if (inputFechaFactura) {
           inputFechaFactura.value = ''
         }
         this.api.facturado(this.Despachos[this.INDEX].despacho)
-          .subscribe((resp:any)=>{
+          .subscribe((resp: any) => {
             // console.log('donde')
           })
       } else if (result.isDenied) {
-        Swal.fire({title:'Nada cambió', text:'Ningún cambio fue realizado.', icon:'info',showConfirmButton:false})
+        Swal.fire({ title: 'Nada cambió', text: 'Ningún cambio fue realizado.', icon: 'info', showConfirmButton: false })
       }
     })
   }
 
-  puntoYcoma(n) { 
-    if (!n) { 
-      return 0; 
-    } 
-    return new Intl.NumberFormat('de-DE', { 
+  puntoYcoma(n) {
+    if (!n) {
+      return 0;
+    }
+    return new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 4,
-      maximumFractionDigits: 4 
+      maximumFractionDigits: 4
     }).format(n);
   }
 
-  puntoYcoma_(n) { 
-    if (!n) { 
-      return 0; 
-    } 
-    return n = new Intl.NumberFormat('de-DE', { 
+  puntoYcoma_(n) {
+    if (!n) {
+      return 0;
+    }
+    return n = new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2 
+      maximumFractionDigits: 2
     }).format(n)
   }
 
-  puntoYcoma__(n) { 
-    if (!n) { 
-      return 0; 
-    } 
-    return n = new Intl.NumberFormat('de-DE', { 
+  puntoYcoma__(n) {
+    if (!n) {
+      return 0;
+    }
+    return n = new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2 
+      maximumFractionDigits: 2
     }).format(n)
   }
 
-  public Facturacion:boolean = false
-  openFacturacion(i){
+  public Facturacion: boolean = false
+  openFacturacion(i) {
     this.Facturacion = true
-      this.INDEX = i
-      // let busqueda = this.Despachos[this.INDEX].find(x=>x.escala.escalas.cantidad === "100000")
-      this.buscarEscala(this.Despachos[this.INDEX].orden.cantidad)
+    this.INDEX = i
+    // let busqueda = this.Despachos[this.INDEX].find(x=>x.escala.escalas.cantidad === "100000")
+    this.buscarEscala(this.Despachos[this.INDEX].orden.cantidad)
   }
-  closeFacturacion(){
+  closeFacturacion() {
     this.Facturacion = false
   }
 
-  descargarPDF(){
 
-    
+  public por_cajas: boolean = false;
+  togglePorCajas() {
+    this.por_cajas = !this.por_cajas;
+    if (this.por_cajas) {
+      this.Despachos[this.INDEX].despacho.cantidad = this.Despachos[this.INDEX].despacho.cantidad / this.Cajas;
+    } else {
+      this.Despachos[this.INDEX].despacho.cantidad = this.Despachos[this.INDEX].despacho.cantidad * this.Cajas;
+    }
+  }
+
+  generarSubTotalBS(precio?, tasa?) {
+    let SubtotalBS
+    let precio_millar_Bs: any;
+    if (!precio) {
+      precio_millar_Bs = (this.Despachos[this.INDEX].despacho.precio * this.Despachos[this.INDEX].despacho.tasa).toFixed(2)
+    } else {
+      precio_millar_Bs = (precio * tasa).toFixed(2)
+    }
+    let Bs: any;
+    if (this.por_cajas) {
+      Bs = ((this.Despachos[this.INDEX].despacho.cantidad) * precio_millar_Bs)
+    } else {
+      Bs = ((this.Despachos[this.INDEX].despacho.cantidad / 1000) * precio_millar_Bs)
+    }
+    SubtotalBS = this.puntoYcoma_(Bs)
+    return SubtotalBS
+  }
+
+  descargarPDF() {
+
+
     this.Despachos[this.INDEX].despacho.tasa = this.Tasa
     this.Despachos[this.INDEX].despacho.precio = this.Escala.precio
     this.Despachos[this.INDEX].despacho.escala = this.Escala.cantidad
@@ -269,9 +307,9 @@ export class PreFacturacionComponent implements OnInit {
     let usuario = `${this.usuario.Nombre} ${this.usuario.Apellido}`
     let cargo = this.usuario.Departamento
     let procesos = 'Barnizado'
-    for(let n=1;n<this.Despachos[this.INDEX].orden.producto.post.length;n++){
-        let incluye = procesos.includes(this.Despachos[this.INDEX].orden.producto.post[n]);
-      if(procesos.includes(this.Despachos[this.INDEX].orden.producto.post[n])){
+    for (let n = 1; n < this.Despachos[this.INDEX].orden.producto.post.length; n++) {
+      let incluye = procesos.includes(this.Despachos[this.INDEX].orden.producto.post[n]);
+      if (procesos.includes(this.Despachos[this.INDEX].orden.producto.post[n])) {
         procesos = procesos + `, ${this.Despachos[this.INDEX].orden.producto.post[n]}`;
       }
     }
@@ -279,11 +317,11 @@ export class PreFacturacionComponent implements OnInit {
     let fecha = new Date();
     let hoy = fecha.getDate();
     let dia = fecha.getDate();
-    if(dia < 10){
+    if (dia < 10) {
       dia = Number(`0${dia}`)
     }
-    let mes = fecha.getMonth()+1;
-    if(mes < 10){
+    let mes = fecha.getMonth() + 1;
+    if (mes < 10) {
       mes = Number(`0${mes}`)
     }
     let ano = fecha.getFullYear();
@@ -295,19 +333,35 @@ export class PreFacturacionComponent implements OnInit {
     let precioUSD
     precioUSD = this.puntoYcoma_(this.Escala.precio)
     let precioBS
-    precioBS = this.puntoYcoma_(this.Escala.precio*this.Tasa)
+    precioBS = this.puntoYcoma_(this.Escala.precio * this.Tasa)
+
+    // Etiquetas dinámicas según por_cajas
+    const precioUsdLabel = this.por_cajas ? 'Precio/caja (USD):' : 'Precio/millar (USD):';
+    const precioBsLabel = this.por_cajas ? 'Precio/caja (Bs):' : 'Precio/millar (Bs):';
+
     let SubtotalUSD
-    SubtotalUSD = this.puntoYcoma_(this.Despachos[this.INDEX].despacho.cantidad / 1000 * this.Despachos[this.INDEX].despacho.precio)
+    if (this.por_cajas) {
+      SubtotalUSD = this.puntoYcoma_(this.Despachos[this.INDEX].despacho.cantidad * this.Despachos[this.INDEX].despacho.precio)
+    } else {
+      SubtotalUSD = this.puntoYcoma_(this.Despachos[this.INDEX].despacho.cantidad / 1000 * this.Despachos[this.INDEX].despacho.precio)
+    }
     let SubtotalBS
-    let precio_millar_Bs:any = ( this.Despachos[this.INDEX].despacho.precio*this.Despachos[this.INDEX].despacho.tasa).toFixed(4)
-    let precio_millar_B_s:any = ( this.Despachos[this.INDEX].despacho.precio*this.Despachos[this.INDEX].despacho.tasa).toFixed(2)
-    let Bs:any = ((cantidad / 1000) * precio_millar_B_s)
+    let precio_millar_Bs: any = (this.Despachos[this.INDEX].despacho.precio * this.Despachos[this.INDEX].despacho.tasa).toFixed(4)
+    let precio_millar_B_s: any = (this.Despachos[this.INDEX].despacho.precio * this.Despachos[this.INDEX].despacho.tasa).toFixed(2)
+    let Bs: any;
+    if (this.por_cajas) {
+      Bs = ((cantidad) * precio_millar_B_s)
+
+    } else {
+
+      Bs = ((cantidad / 1000) * precio_millar_B_s)
+    }
     Bs = this.puntoYcoma_(Bs)
     SubtotalBS = this.puntoYcoma_(Bs)
     // console.log(cantidad,'<- -------------------------------------------------- ->', Number((precio_millar_Bs).toFixed(2)))
     cantidad = this.puntoYcoma__(cantidad)
-    
-    
+
+
     // this.Despachos[this.INDEX].fecha_prefacturacion =  moment().format('DD/MM/YYYY')
     let contactos
     let cargos
@@ -315,49 +369,48 @@ export class PreFacturacionComponent implements OnInit {
 
     // SubtotalBS = this.puntoYcoma_(SubtotalBS)
 
-    for(let i=0;i<this.Despachos[this.INDEX].orden.cliente.contactos.length;i++){
-      if(i === 0){
+    for (let i = 0; i < this.Despachos[this.INDEX].orden.cliente.contactos.length; i++) {
+      if (i === 0) {
         // console.log(this.Despachos[this.INDEX].orden.cliente.contactos[i].trato)
         contactos = `${this.Despachos[this.INDEX].orden.cliente.contactos[i].trato} ${this.Despachos[this.INDEX].orden.cliente.contactos[i].nombre}`
         cargos = `${this.Despachos[this.INDEX].orden.cliente.contactos[i].cargo}`
       }
-      if(i === 1){
+      if (i === 1) {
         margin = -35
         contactos = contactos + ` \n\n ${this.Despachos[this.INDEX].orden.cliente.contactos[i].trato} ${this.Despachos[this.INDEX].orden.cliente.contactos[i].nombre}`
         cargos = cargos + ` \n\n\n ${this.Despachos[this.INDEX].orden.cliente.contactos[i].cargo}`
       }
     }
     // console.log(this.Despachos[this.INDEX].orden.cliente)
-    for(let i=0;i<this.Despachos[this.INDEX].orden.producto.post.length;i++){
-      procesos = procesos +', '+this.Despachos[this.INDEX].orden.producto.post[i];
+    for (let i = 0; i < this.Despachos[this.INDEX].orden.producto.post.length; i++) {
+      procesos = procesos + ', ' + this.Despachos[this.INDEX].orden.producto.post[i];
     }
-    for(let i=0;i<this.Despachos[this.INDEX].orden.producto.materiales[this.Despachos[this.INDEX].orden.montaje].length;i++)
-    {
+    for (let i = 0; i < this.Despachos[this.INDEX].orden.producto.materiales[this.Despachos[this.INDEX].orden.montaje].length; i++) {
       let material = this.Despachos[this.INDEX].orden.producto.materiales[this.Despachos[this.INDEX].orden.montaje][i]
       // console.log(material.producto.grupo.nombre)
-      if(material.producto.grupo.nombre === 'Sustrato'){
+      if (material.producto.grupo.nombre === 'Sustrato') {
         sustrato = `${material.producto.nombre} ${material.producto.gramaje}g, calibre:${material.producto.calibre}`
-      }else if(material.producto.grupo.nombre === 'Tinta'){
+      } else if (material.producto.grupo.nombre === 'Tinta') {
         let Numer = Number(colores) + 1;
         colores = Numer.toString()
       }
     }
 
-    
+
     let pre;
     this.Despachos[this.INDEX].parcial = moment().format('DD-MM-yyyy')
     this.api.aumentoPre(this.Despachos[this.INDEX].despacho)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         pre = resp
         this.Validacion = false
         this.resumen = true
         this.resumido = false
         this.api.getDespachosYOrdenes()
-      .subscribe((resp:any)=>{
-        this.Despachos = resp.preFacuracion
-        this.Tasa = resp.MonitorBCV
-        generarPDF();
-      })
+          .subscribe((resp: any) => {
+            this.Despachos = resp.preFacuracion
+            this.Tasa = resp.MonitorBCV
+            generarPDF();
+          })
         // if(pre < 10){
         //   pre = `000${pre}`
         // }
@@ -369,8 +422,8 @@ export class PreFacturacionComponent implements OnInit {
     const pdf = new PdfMakeWrapper();
     PdfMakeWrapper.setFonts(pdfFonts);
 
-    
-    async function generarPDF(){
+
+    async function generarPDF() {
       // pdf.footer();
 
       pdf.add(
@@ -396,7 +449,7 @@ export class PreFacturacionComponent implements OnInit {
             new Cell(new Txt('').end).end,
             new Cell(new Txt('Página: 1 de 1').end).fillColor('#dedede').fontSize(7).alignment('center').end,
           ],
-        ]).widths(['25%','50%','25%']).end
+        ]).widths(['25%', '50%', '25%']).end
       )
 
       pdf.add(
@@ -421,10 +474,10 @@ export class PreFacturacionComponent implements OnInit {
                 new Cell(new Txt('Fecha').alignment('center').end).end,
                 new Cell(new Txt(`${dia}/${mes}/${ano}`).alignment('center').end).end,
               ],
-            ]).widths(['25%','75%']).end).end,
+            ]).widths(['25%', '75%']).end).end,
 
           ],
-        ]).widths(['25%','40%','35%']).layout('noBorders').end
+        ]).widths(['25%', '40%', '35%']).layout('noBorders').end
       )
 
       pdf.add(
@@ -463,7 +516,7 @@ export class PreFacturacionComponent implements OnInit {
                   new Cell(new Txt('').end).end,
                 ]
               ]).widths(["15%", "85%"]).layout('noBorders').end,
-              
+
             ).end,
             new Cell(
               new Table([
@@ -475,16 +528,16 @@ export class PreFacturacionComponent implements OnInit {
 
                 ],
                 [
-                  new Cell(new Txt(cargos).margin([0,margin]).italics().fontSize(9).end).end,
+                  new Cell(new Txt(cargos).margin([0, margin]).italics().fontSize(9).end).end,
 
                 ]
               ]).layout('noBorders').end,
-              
+
             ).end,
-            
+
           ]
 
-        ]).widths(['65%','35%']).layout('noBorders').end
+        ]).widths(['65%', '35%']).layout('noBorders').end
       )
 
       pdf.add(
@@ -525,9 +578,9 @@ export class PreFacturacionComponent implements OnInit {
           [
             // new Cell(new Txt('Cantidad:').bold().margin([5,5]).alignment('center').end).fillColor('#dedede').end,
             new Cell(new Txt('Escala:').bold().alignment('center').end).fillColor('#dedede').end,
-            new Cell(new Txt('Precio/millar (USD):').bold().alignment('center').end).fillColor('#dedede').end,
+            new Cell(new Txt(precioUsdLabel).bold().alignment('center').end).fillColor('#dedede').end,
             new Cell(new Txt('Tasa de cambio (BCV):').bold().alignment('center').end).fillColor('#dedede').end,
-            new Cell(new Txt('Precio/millar (Bs):').bold().alignment('center').end).fillColor('#dedede').end,
+            new Cell(new Txt(precioBsLabel).bold().alignment('center').end).fillColor('#dedede').end,
           ],
           [
             new Cell(new Txt(escale).alignment('center').end).end,
@@ -535,13 +588,13 @@ export class PreFacturacionComponent implements OnInit {
             new Cell(new Txt(tasa).alignment('center').end).end,
             new Cell(new Txt(precioBS).alignment('center').end).end,
           ]
-        ]).widths(['13%','29%','29%','29%',]).end
+        ]).widths(['13%', '29%', '29%', '29%',]).end
       )
 
       pdf.add(
         pdf.ln(1)
       )
-      
+
       pdf.add(
         new Table([
           [
@@ -553,9 +606,9 @@ export class PreFacturacionComponent implements OnInit {
             new Cell(new Txt(cantidad).alignment('center').end).end,
             new Cell(new Txt(SubtotalUSD).alignment('center').end).end,
             new Cell(new Txt(Bs).alignment('center').end).end,
-            
+
           ]
-        ]).widths(['33%','33%','34%',]).end
+        ]).widths(['33%', '33%', '34%',]).end
       )
 
       pdf.add(
@@ -598,7 +651,7 @@ export class PreFacturacionComponent implements OnInit {
       pdf.add(
         pdf.ln(2)
       )
-      
+
       pdf.add(
         new Txt('Calle Pantín,  Local Galpón Nro 29, Urb. Chacao-Caracas, Miranda, Venezuela. ZP: 1060,').italics().fontSize(9).alignment('center').end
       )

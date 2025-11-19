@@ -690,7 +690,7 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt('2.3. diseño del producto').bold().end).margin([-5,0]).border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/producto/${producto.img}`).width(400).build()).alignment('center').end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/producto/${producto.img}`).width(400).build()).alignment('center').end,
                 ],
                 [
                   new Cell(new Txt('Imagen 1: Diseño del producto').end).alignment('center').border([false]).end,
@@ -1444,8 +1444,8 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt('').end).end
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/aereo/${producto.aereo}`).width(200).build()).alignment('center').end,
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/distribucion/${producto.distribucion}`).width(200).build()).alignment('center').end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/aereo/${producto.aereo}`).width(200).build()).alignment('center').end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/distribucion/${producto.distribucion}`).width(200).build()).alignment('center').end,
                 ],
                 [
                   new Cell(new Txt(`Imagen 2: Distribución del producto 
@@ -1471,7 +1471,7 @@ export class EspecificacionComponent implements OnInit {
                   Peso de caja (Kg): ${producto.tipo_paleta[3]}`).end).border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/despacho/${producto.paletizado}`).width(200).build()).margin([300,0,0,0]).alignment('center').end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/despacho/${producto.paletizado}`).width(200).build()).margin([300,0,0,0]).alignment('center').end,
                 ],
                 [
                   new Cell(new Txt(`Imagen 3: Paletizado aprobado 
@@ -1561,7 +1561,7 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt(producto.firmas[1]).italics().end).alignment('center').border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/firmas/${producto.firmas[2]}.png`).width(80).build()).border([false]).end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/firmas/${producto.firmas[2]}.png`).width(80).build()).border([false]).end,
                 ],
                 [
                   new Cell(new Txt(`Fecha: ${producto.firmas[12]}`).alignment('center').italics().end).border([false]).end,
@@ -1577,7 +1577,7 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt(producto.firmas[4]).italics().end).border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/firmas/${producto.firmas[5]}.png`).width(80).build()).border([false]).end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/firmas/${producto.firmas[5]}.png`).width(80).build()).border([false]).end,
                 ],
                 [
                   new Cell(new Txt(`Fecha: ${producto.firmas[13]}`).italics().end).border([false]).end,
@@ -1593,7 +1593,7 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt(producto.firmas[7]).italics().end).border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/firmas/${producto.firmas[8]}.png`).width(80).build()).border([false]).end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/firmas/${producto.firmas[8]}.png`).width(80).build()).border([false]).end,
                 ],
                 [
                   new Cell(new Txt(`Fecha: ${producto.firmas[14]}`).italics().end).border([false]).end,
@@ -1610,7 +1610,7 @@ export class EspecificacionComponent implements OnInit {
                   new Cell(new Txt(producto.firmas[10]).italics().end).border([false]).end,
                 ],
                 [
-                  new Cell(await new Img(`http://192.168.0.23:8080/api/imagen/firmas/${producto.firmas[11]}.png`).width(80).build()).border([false]).end,
+                  new Cell(await new Img(`http://192.168.0.27:8080/api/imagen/firmas/${producto.firmas[11]}.png`).width(80).build()).border([false]).end,
                 ],
                 [
                   new Cell(new Txt(`Fecha: ${producto.firmas[15]}`).italics().end).border([false]).end,

@@ -15,7 +15,8 @@
                         </span>
                         <span class="grupos">
                             <ng-container *ngIf="orden.sort != '#'">
-                                   OP: {{orden.sort}} <ng-container *ngIf="orden.producto.producto">- {{orden.producto.producto}}</ng-container>
+                                   OP: {{orden.sort}} <ng-container *ngIf="orden.producto.producto">-
+                                    {{orden.producto.producto}}</ng-container>
                             </ng-container>
                             <ng-container *ngIf="orden.sort === '#'">
                                    OP: Solicitud de material
@@ -42,48 +43,57 @@
                         <tr *ngFor="let materiales of orden.producto.materiales[orden.montaje];index as n;">
                             <td>{{materiales.producto.nombre}}
                                 <ng-container *ngIf="materiales.producto.ancho">
-                                    {{materiales.producto.gramaje}}g Cal:{{materiales.producto.calibre}} {{materiales.producto.ancho}}x{{materiales.producto.largo}} 
+                                    {{materiales.producto.gramaje}}g Cal:{{materiales.producto.calibre}}
+                                    {{materiales.producto.ancho}}x{{materiales.producto.largo}}
                                 </ng-container>
-                                ({{materiales.producto.marca}})</td>
+                                ({{materiales.producto.marca}})
+                            </td>
                             <td>
                                 <div class="columns">
                                     <div class="column is-5">
-    
+
                                         <ng-container *ngIf="orden.motivo">
                                             {{materiales.cantidad}} {{materiales.producto.unidad}}
                                         </ng-container>
                                         <ng-container *ngIf="!orden.motivo">
                                             <ng-container *ngIf="materiales.producto.grupo.nombre == 'Tinta'">
-                                                {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}} {{materiales.producto.unidad}}
+                                                {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}}
+                                                {{materiales.producto.unidad}}
                                             </ng-container>
                                             <ng-container *ngIf="materiales.producto.grupo.nombre == 'Barniz'">
-                                                {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}} {{materiales.producto.unidad}}
+                                                {{((materiales.cantidad * orden.paginas)/1000).toFixed(2)}}
+                                                {{materiales.producto.unidad}}
                                             </ng-container>
                                             <ng-container *ngIf="materiales.producto.grupo.nombre == 'Sustrato'">
                                                 {{Enterar(orden.paginas)}} {{materiales.producto.unidad}}
                                             </ng-container>
-                                            <ng-container *ngIf="materiales.producto.grupo.nombre == 'Soportes de Embalaje'">
+                                            <ng-container
+                                                *ngIf="materiales.producto.grupo.nombre == 'Soportes de Embalaje'">
                                                 {{cantidad_cajas*materiales.cantidad}} {{materiales.producto.unidad}}
                                             </ng-container>
-                                            <ng-container *ngIf="materiales.producto.grupo.nombre == 'Cajas Corrugadas'">
+                                            <ng-container
+                                                *ngIf="materiales.producto.grupo.nombre == 'Cajas Corrugadas'">
                                                 <ng-container *ngIf="orden.motivo">
                                                     {{materiales.cantidad}} {{materiales.producto.unidad}}
                                                 </ng-container>
                                                 <ng-container *ngIf="!orden.motivo">
-                                                    {{entero(orden.cantidad,materiales.cantidad, i)}} {{materiales.producto.unidad}}
+                                                    {{entero(orden.cantidad,materiales.cantidad, i)}}
+                                                    {{materiales.producto.unidad}}
                                                 </ng-container>
-                                            
+
                                             </ng-container>
                                         </ng-container>
-    
+
                                     </div>
                                     <div class="column">
-                                        <span class="check__" id="{{i}}_{{n}}" style="display: none;"><i class="fas fa-check"></i></span>
+                                        <span class="check__" id="{{i}}_{{n}}" style="display: none;"><i
+                                                class="fas fa-check"></i></span>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <button class="button" (click)="asignar(i,n)" style="background-color: transparent; border: none;">
+                                <button class="button" (click)="asignar(i,n)"
+                                    style="background-color: transparent; border: none;">
                                     <span class="icon">
                                         <i class="fas fa-plus-circle curs"></i>
                                     </span>
@@ -98,7 +108,9 @@
                                         {{cinta()}} Und
                                     </div>
                                     <div class="column">
-                                        <span class="check__" id="{{i}}_{{orden.producto.materiales[orden.montaje].length}}" style="display: none;"><i class="fas fa-check"></i></span>
+                                        <span class="check__"
+                                            id="{{i}}_{{orden.producto.materiales[orden.montaje].length}}"
+                                            style="display: none;"><i class="fas fa-check"></i></span>
                                     </div>
                                 </div>
                             </td>
@@ -108,7 +120,8 @@
                     <hr>
                     <ng-container *ngIf="this.material_cubierto >= orden.producto.materiales[orden.montaje].length">
                         <ng-container *ngIf="!orden.motivo">
-                            <ng-container *ngIf="this.material_cubierto >= (orden.producto.materiales[orden.montaje].length)">
+                            <ng-container
+                                *ngIf="this.material_cubierto > (orden.producto.materiales[orden.montaje].length)">
                                 <button class="button is-success" (click)="Finalizar()">
                                     <span class="icon">
                                         <i class="fas fa-pallet"></i>
@@ -144,8 +157,8 @@
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="modal" [ngClass]="{'is-active':Asignar}">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -158,7 +171,10 @@
                 <br>
                 <ng-container *ngIf="!loading_">
                     <span class="info">
-                        <b>Material asignado: </b> <br><span class="italic_">{{sumando}}{{Lotes_encontrados[0].material.unidad}}/</span><span class="bold-italic">{{Total}}{{Lotes_encontrados[0].material.unidad}}</span>    <span class="check_" *ngIf="sumando>=Total"><i class="fas fa-check"></i></span>
+                        <b>Material asignado: </b> <br><span
+                            class="italic_">{{sumando}}{{Lotes_encontrados[0].material.unidad}}/</span><span
+                            class="bold-italic">{{Total}}{{Lotes_encontrados[0].material.unidad}}</span>    <span
+                            class="check_" *ngIf="sumando>=Total"><i class="fas fa-check"></i></span>
                     </span>
                     <hr>
                     <table class="table is-fullwidth">
@@ -187,7 +203,7 @@
                         </tr>
                     </table>
                     <hr>
-                    <button class="button is-info"  *ngIf="sumando>=Total" (click)="AsignarLotes()">
+                    <button class="button is-info" *ngIf="sumando>=Total" (click)="AsignarLotes()">
                         <span class="icon"><i class="fas fa-plus"></i></span>
                         <span>Asignar lotes</span>
                     </button> 
@@ -212,7 +228,7 @@
                             <i class="fas fa-pallet"></i>
                         </span>
                         <span class="grupos">
-                                   {{repuesto.motivo}}
+                               {{repuesto.motivo}}
                         </span>
                     </div>
                     <hr>

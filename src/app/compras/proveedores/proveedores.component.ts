@@ -204,7 +204,7 @@ export class ProveedoresComponent implements OnInit {
     this.Grupos_ = el_proveedor.grupo
     this.contacto = el_proveedor.contactos
     this.Fabricantes__ = el_proveedor.fabricantes
-    this.imageSrc = `http://192.168.0.23:8080/api/imagen/proveedor/${el_proveedor.logo}`
+    this.imageSrc = `http://192.168.0.27:8080/api/imagen/proveedor/${el_proveedor.logo}`
 
   }
 

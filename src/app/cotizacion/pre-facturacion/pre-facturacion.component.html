@@ -11,7 +11,8 @@
             <hr>
             <ng-container *ngFor="let despacho of Despachos;index as i">
                 <ng-container *ngIf="despacho.despacho.status != 'NE'">
-                    <table class="table is-fullwidth is-bordered" *ngIf="despacho.despacho.documento === '' || despacho.despacho.documento.charAt(0) === 'N'">
+                    <table class="table is-fullwidth is-bordered"
+                        *ngIf="despacho.despacho.documento === '' || despacho.despacho.documento.charAt(0) === 'N'">
                         <thead>
                             <tr>
                                 <td class="is-selected" colspan="2">
@@ -43,22 +44,23 @@
                                 <td>{{despacho.despacho.cantidad}}</td>
                                 <td>
                                     <button class="button is-info is-small" (click)="ValidarDatos(i)">
-                                    <div class="icon">
-                                        <i class="far fa-calendar-check"></i>
-                                    </div>
-                                    <span>
-                                        Validar Datos
-                                    </span>
+                                        <div class="icon">
+                                            <i class="far fa-calendar-check"></i>
+                                        </div>
+                                        <span>
+                                            Validar Datos
+                                        </span>
                                     </button> 
-                                    <button class="button is-success is-small" (click)="openFacturacion(i)" *ngIf="despacho.despacho.precio >= 0">
+                                    <button class="button is-success is-small" (click)="openFacturacion(i)"
+                                        *ngIf="despacho.despacho.precio >= 0">
                                         <div class="icon">
                                             <i class="far fa-calendar-check"></i>
                                         </div>
                                         <span>
                                             Facturado
                                         </span>
-                                        </button>
-                            </td>
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -88,7 +90,7 @@
                 </tr>
                 <tr>
                     <th class="is-selected">
-                       Orden de producción: 
+                        Orden de producción:
                     </th>
                     <td>
                         {{Despachos[INDEX].orden.sort}}
@@ -112,10 +114,19 @@
                 </tr>
                 <tr>
                     <th class="is-selected">
+                        Tasa BCV:
+                    </th>
+                    <td>
+                        {{puntoYcoma_(Despachos[INDEX].despacho.tasa)}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="is-selected">
                         Precio/millar (USD):
                     </th>
                     <td>
-                        {{puntoYcoma_(Despachos[INDEX].despacho.precio)}}
+                        {{puntoYcoma_(Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio :
+                        Escala.precio)}}
                     </td>
                 </tr>
                 <tr>
@@ -123,7 +134,8 @@
                         Precio/millar (Bs):
                     </th>
                     <td>
-                        {{puntoYcoma_(Despachos[INDEX].despacho.precio * Despachos[INDEX].despacho.tasa)}}
+                        {{puntoYcoma_(Despachos[INDEX].despacho.precio *
+                        Despachos[INDEX].despacho.tasa)}}
                     </td>
                 </tr>
                 <tr>
@@ -131,7 +143,8 @@
                         Subtotal (USD):
                     </th>
                     <td>
-                        {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * Despachos[INDEX].despacho.precio)}}
+                        {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * (Despachos[INDEX].despacho.precio !=
+                        null ? Despachos[INDEX].despacho.precio : Escala.precio))}}
                     </td>
                 </tr>
                 <tr>
@@ -139,7 +152,9 @@
                         Subtotal (Bs):
                     </th>
                     <td>
-                        {{calcularSub(Despachos[INDEX].despacho.cantidad, Despachos[INDEX].despacho.precio, Despachos[INDEX].despacho.tasa)}}
+                        {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio
+                        : Escala.precio,
+                        Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}}
                     </td>
                 </tr>
             </table>
@@ -156,24 +171,26 @@
                         <label for="" class="label">N° documento</label>
                         <div class="field has-addons">
                             <p class="control">
-                              <span class="select" id="tipo_documento">
-                                <select (change)="editTipo($event.target.value)">
-                                  <option value ='F - '>F</option>
-                                  <option value ='N - '>N</option>
-                                </select>
-                              </span>
+                                <span class="select" id="tipo_documento">
+                                    <select (change)="editTipo($event.target.value)">
+                                        <option value='F - '>F</option>
+                                        <option value='N - '>N</option>
+                                    </select>
+                                </span>
                             </p>
                             <p class="control">
-                              <input class="input" type="text" placeholder="N° documento" id="factura_number" (change)="editDocumento($event.target.value)">
+                                <input class="input" type="text" placeholder="N° documento" id="factura_number"
+                                    (change)="editDocumento($event.target.value)">
                             </p>
-                          </div>  
+                        </div>
 
                     </div>
                 </div>
                 <div class="column">
                     <div class="field">
                         <label for="" class="label">Fecha</label>
-                        <input type="date" class="input" id="fecha_factura" (change)="fecha_modificacion($event.target.value)" [disabled]="!numero_facturacion">
+                        <input type="date" class="input" id="fecha_factura"
+                            (change)="fecha_modificacion($event.target.value)" [disabled]="!numero_facturacion">
                     </div>
                 </div>
                 <div class="column">
@@ -212,25 +229,36 @@
                         <div class="field has-addons">
                             <div class="control">
                                 <b>Cantidad en OC: </b> 
-                              <input class="input is-small corto" type="text" disabled id="Cantidad_en_OC" (change)="buscarEscala(Despachos[INDEX].orden.cantidad)" [(ngModel)]="Despachos[INDEX].orden.cantidad">
+                                <input class="input is-small corto" type="text" disabled id="Cantidad_en_OC"
+                                    (change)="buscarEscala(Despachos[INDEX].orden.cantidad)"
+                                    [(ngModel)]="Despachos[INDEX].orden.cantidad">
                             </div>
                             <div class="control">
-                              <a class="button is-success is-small" (click)="Editar_Cantidad_en_OC()">
-                                <i class="fas fa-edit"></i>
-                              </a>
+                                <a class="button is-success is-small" (click)="Editar_Cantidad_en_OC()">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                             </div>
                         </div>
                     </span><br>
                     <span>
                         <div class="field has-addons">
                             <div class="control">
-                              <b>Cantidad despachada: </b> 
-                              <input class="input is-small corto" type="text" disabled id="Cantidad_Despachada" [(ngModel)]="Despachos[INDEX].despacho.cantidad">
+                                <b>Cantidad despachada: </b> 
+                                <input class="input is-small corto" type="text" disabled id="Cantidad_Despachada"
+                                    [(ngModel)]="Despachos[INDEX].despacho.cantidad">
                             </div>
                             <div class="control">
-                              <a class="button is-success is-small" (click)="Editar_Cantidad_despachada()">
-                                <i class="fas fa-edit"></i>
-                              </a>
+                                <a class="button is-success is-small" (click)="Editar_Cantidad_despachada()">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </span>
+                    <span>
+                        <div class="field">
+                            <div class="control">
+                                <input type="checkbox" name="" id="" (click)="togglePorCajas()"> Facturar por cajas en
+                                lugar de millares
                             </div>
                         </div>
                     </span>
@@ -256,11 +284,15 @@
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>{{puntoYcoma_(Escala.cantidad)}} <a (click)="modificarModal('escala')"><i class="fas fa-edit" style="color: #48c78e;"></i></a></td>
-                        <td>{{puntoYcoma_(Escala.precio)}} <a (click)="modificarModal('precio')"><i class="fas fa-edit" style="color: #48c78e;"></i></a></td>
+                        <td>{{puntoYcoma_(Escala.cantidad)}} <a (click)="modificarModal('escala')"><i
+                                    class="fas fa-edit" style="color: #48c78e;"></i></a></td>
+                        <td>{{puntoYcoma_(Escala.precio)}} <a (click)="modificarModal('precio')"><i class="fas fa-edit"
+                                    style="color: #48c78e;"></i></a></td>
                         <td>
                             <input type="text" class="input is-small short___" [(ngModel)]="Tasa">
-                            {{Tasa}} <a href="https://www.bcv.org.ve/" target="_blank" (click)="habilitarBoton()"><i class="fas fa-globe"></i></a></td>
+                            {{Tasa}} <a href="https://www.bcv.org.ve/" target="_blank" (click)="habilitarBoton()"><i
+                                    class="fas fa-globe"></i></a>
+                        </td>
                         <td>
                             <button class="button is-small is-info" [disabled]="resumen" (click)="resumir()">
                                 <div class="icon">
@@ -276,9 +308,13 @@
             <div class="resumen" *ngIf="resumido">
                 <b>Resumen:</b><br>
                 {{Despachos[INDEX].despacho.producto}} <br>
-                <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * Escala.precio)}} </b><br>
-                <b>Subtotal (Bs): {{calcularSub(Despachos[INDEX].despacho.cantidad, Despachos[INDEX].despacho.precio, Despachos[INDEX].despacho.tasa)}}                </b><br>
-    
+                <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 *
+                    (Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio :
+                    Escala.precio))}}</b><br>
+                <b>Subtotal (Bs): {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ?
+                    Despachos[INDEX].despacho.precio : Escala.precio,
+                    Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}} </b><br>
+
                 <br>
                 <div class="field">
                     <label for="" class="label">Observaciones</label>
@@ -315,7 +351,9 @@
                     <div class="select is-small">
                         <select #escalanueva placeholder="Seleccionar nueva escala">
                             <option value="">Nueva escala</option>
-                            <option value="{{escala.cantidad}}" *ngFor="let escala of this.Despachos[this.INDEX].escala.escalas">{{puntoYcoma_(escala.cantidad)}}</option>
+                            <option value="{{escala.cantidad}}"
+                                *ngFor="let escala of this.Despachos[this.INDEX].escala.escalas">
+                                {{puntoYcoma_(escala.cantidad)}}</option>
                         </select>
                     </div>
                 </span><br><br>
