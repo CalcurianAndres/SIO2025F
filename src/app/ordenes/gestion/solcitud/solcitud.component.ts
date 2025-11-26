@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import Swal from 'sweetalert2';
 
@@ -27,7 +28,7 @@ export class SolcitudComponent implements OnInit {
   public maquina_selected = "";
   public categoria_selected = "";
   public temporal = []
-
+  public ordenManual = '';
 
 
   @Input() solicitud: any
@@ -337,10 +338,8 @@ export class SolcitudComponent implements OnInit {
     this.RepuestosLista.splice(i, 1);
   }
 
+
   FinalizarSolicitud() {
-
-    let iteration = 0
-
     let requisicion = {
       sort: this.orden_selected.sort,
       motivo: (<HTMLInputElement>document.getElementById('razon')).value,
@@ -349,139 +348,77 @@ export class SolcitudComponent implements OnInit {
         producto: this.orden_selected.producto.producto,
         materiales: [[]]
       }
+    };
+
+    // llenar materiales
+    for (let i = 0; i < this.materiales.length; i++) {
+      const cantidad = Number((<HTMLInputElement>document.getElementById(i.toString())).value);
+      const producto = (<HTMLInputElement>document.getElementById(i.toString())).name;
+      if (cantidad > 0) {
+        requisicion.producto.materiales[0].push({ cantidad, producto });
+      }
     }
 
+    // añadir material 100
+    const cantidad100 = Number((<HTMLInputElement>document.getElementById('100')).value);
+    const producto100 = (<HTMLInputElement>document.getElementById('100')).name;
+    if (cantidad100 > 0) {
+      requisicion.producto.materiales[0].push({ cantidad: cantidad100, producto: producto100 });
+    }
 
-    for (let i = 0; i < this.materiales.length; i++) {
-      let _i = i.toString();
+    const materiales_fr = requisicion.producto.materiales[0].filter(m => Number(m.cantidad) > 0);
 
-      let cantidad = (<HTMLInputElement>document.getElementById(_i)).value;
-      let producto = (<HTMLInputElement>document.getElementById(_i)).name;
+    if (materiales_fr.length === 0) {
+      Swal.fire({
+        showConfirmButton: false,
+        title: 'Error!',
+        text: 'Debe ingresar al menos una cantidad de cualquier producto',
+        icon: 'error'
+      });
+      return;
+    }
 
-      let num = Number(cantidad)
+    // preparar array de observables para validar stock
+    const observables = materiales_fr.map(m =>
+      this.api.getAlmacenadoID2(m.producto)
+    );
 
-      if (num > 0) {
+    forkJoin(observables).subscribe(respuestas => {
+      // verificar stock
+      for (let i = 0; i < respuestas.length; i++) {
+        const resp: any = respuestas[i];
+        const solicitado = Number(materiales_fr[i].cantidad);
+        let disponible = 0;
+        for (let j = 0; j < resp.length; j++) {
+          disponible += Number(resp[j].cantidad);
+        }
 
-        iteration++
-        requisicion.producto.materiales[0].push({
-          cantidad,
-          producto
-        })
+        if (solicitado > disponible) {
+          Swal.fire({
+            title: 'Cantidad excedida',
+            text: `La cantidad solicitada de ${resp[0]?.material?.nombre || materiales_fr[i].producto} es mayor al stock disponible (${disponible.toFixed(2)})`,
+            icon: 'warning',
+            showConfirmButton: true
+          });
+          return; // ⚠️ salir de forkJoin si hay problema
+        }
       }
 
-
-      // // console.log(requisicion)
-
-
-    }
-
-    let cantidad = (<HTMLInputElement>document.getElementById('100')).value;
-    let producto = (<HTMLInputElement>document.getElementById('100')).name;
-
-    let num = Number(cantidad)
-
-    if (num > 0) {
-
-      iteration++
-      requisicion.producto.materiales[0].push({
-        cantidad,
-        producto
-      })
-    }
-
-    if (iteration > 0) {
-
-      // filtrar por cantidades válidas (> 0) antes de cualquier validación o envío
-      requisicion.producto.materiales[0] = requisicion.producto.materiales[0].filter((m: any) => Number(m.cantidad) > 0);
-
-      let materiales_fr = requisicion.producto.materiales[0];
-
-      if (!materiales_fr || materiales_fr.length === 0) {
+      // si pasa todas las validaciones
+      this.api.postReq(requisicion).subscribe(() => {
         Swal.fire({
           showConfirmButton: false,
-          title: 'Error!',
-          text: 'Debe ingresar al menos una cantidad mayor a 0 para los productos',
-          icon: 'error'
-        })
-        return
-      }
-
-      //test
-      for (let i = 0; i < materiales_fr.length; i++) {
-        this.api.getAlmacenadoID2(materiales_fr[i].producto)
-          .subscribe((resp: any) => {
-            let cantidad = 0;
-            for (let i = 0; i < resp.length; i++) {
-              cantidad = cantidad + Number(resp[i].cantidad)
-            }
-
-            if (cantidad < Number(materiales_fr[i].cantidad)) {
-              Swal.fire({
-                title: 'Cantidad excedida',
-                text: `la cantidad solicitada de ${resp[0].material.nombre} es mayor a la cantidad de producto en el almacen,
-              existe en almacen: ${cantidad.toFixed(2)}`,
-                icon: 'warning',
-                showConfirmButton: false
-              })
-              i = 1000
-            } else if (i === materiales_fr.length - 1) {
-              this.api.postReq(requisicion)
-                .subscribe((resp: any) => {
-                  Swal.fire(
-                    {
-                      showConfirmButton: false,
-                      title: 'Hecho!',
-                      text: 'Se realizó la solicitud correctamente',
-                      icon: 'success',
-                      timer: 5000
-                    }
-                  )
-                  materiales_fr = []
-                  this.por_confirmar = []
-                  this.onClose()
-                })
-            }
-          })
-
-        // if(i === this._materiales.length -1){
-        //   if(aprobado){
-        //     this.api.postReq(requisicion)
-        //        .subscribe((resp:any)=>{
-        //         Swal.fire(
-        //         {
-        //           showConfirmButton:false,
-        //            title:'Hecho!',
-        //           text:'Se realizó la solicitud correctamente',
-        //           icon:'success',
-        //           timer:5000
-        //         }
-        //       )
-        //       this._materiales = []
-        //       this.onClose()
-        //     })
-        //   }
-        // }
-      }
-
-      //test
-
-    } else {
-      Swal.fire(
-        {
-          showConfirmButton: false,
-          title: 'Error!',
-          text: 'Debe ingresar al menos una cantidad de cualquier producto',
-          icon: 'error'
-        }
-      )
-
-      return
-    }
-
-
-
-
+          title: 'Hecho!',
+          text: 'Se realizó la solicitud correctamente',
+          icon: 'success',
+          timer: 5000
+        });
+        this.por_confirmar = [];
+        this.onClose();
+      });
+    });
   }
+
 
 
 }
