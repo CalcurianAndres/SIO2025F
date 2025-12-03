@@ -5,7 +5,7 @@
 </app-retorno>
 <div class="card">
     <div class="card-content">
-        <div class="titulo"> <i class="fas fa-boxes"></i> Almacén</div>
+        <div class="titulo"> 📦 Almacén</div>
         <button class="button is-primary edited" (click)='Modal_Almacen()' *ngIf="!_bobina && usuario.Almacen == 2">
             <span class="icon">
                 <i class="fas fa-swatchbook"></i>
@@ -37,19 +37,20 @@
             <span class="icon">
                 <i class="fas fa-hand-holding edited"></i>
             </span>
-            <span>
-
+            <span class="material-label">
                 Material <br>
+
                 <span class="down">
                     necesario (
-                    <ng-container *ngIf="necesario">
-                        {{necesario.length}}
+                    <ng-container *ngIf="necesario; else cero">
+                        {{ necesario.length }}
                     </ng-container>
-                    <ng-container *ngIf="!necesario">
-                        0
-                    </ng-container>
+                    <ng-template #cero>0</ng-template>
                     )
+                    <!-- 🔴 Punto rojo animado SOLO cuando > 0 -->
+                    <span *ngIf="necesario && necesario.length > 0" class="alert-dot"></span>
                 </span>
+
             </span>
 
         </button>
@@ -88,6 +89,7 @@
                         0
                     </ng-container>
                     )
+                    <span *ngIf="Pendiente && (Pendiente?.length + Repuestos?.length) > 0" class="alert-dot"></span>
                 </span>
             </span>
         </button>
@@ -535,7 +537,7 @@
                 </button>
             </div>
             <div class="control">
-                <button class="button is-gray edited" *ngIf="exterior" (click)="retorno = true">
+                <button class="button is-primary edited" *ngIf="exterior" (click)="retorno = true">
                     <span class="icon">
                         <i class="fas fa-hand-holding edited"></i>
                     </span>
@@ -550,7 +552,7 @@
                 </button>
             </div>
             <div class="control">
-                <button class="button is-gray edited" *ngIf="exterior" (click)="retorno2 = true">
+                <button class="button is-primary edited" *ngIf="exterior" (click)="retorno2 = true">
                     <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
                     <span>Traslados <br>
                         <span class="down">
@@ -560,7 +562,7 @@
                 </button>
             </div>
             <div class="control">
-                <button class="button is-gray edited" *ngIf="exterior" (click)="retorno3 = true">
+                <button class="button is-primary edited" *ngIf="exterior" (click)="retorno3 = true">
                     <span class="icon"><i class="fa-solid fa-truck"></i></span>
                     <span>Traspados <br>
                         <span class="down">
@@ -577,7 +579,7 @@
                 </button>
             </div>
             <div class="control">
-                <button class="button is-gray edited" *ngIf="!exterior" (click)="translado = true">
+                <button class="button is-primary edited" *ngIf="!exterior" (click)="translado = true">
                     <span class="icon">
                         <i class="fas fa-hand-holding edited"></i>
                     </span>
@@ -592,7 +594,7 @@
                 </button>
             </div>
             <div class="control" *ngIf="!exterior">
-                <button class="button is-gray edited" (click)="traspasos_pendientes = true">
+                <button class="button is-primary edited" (click)="traspasos_pendientes = true">
                     <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
                     <span>Traslados <br>
                         <span class="down">

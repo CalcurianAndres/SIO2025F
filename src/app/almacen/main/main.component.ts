@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import Swal from 'sweetalert2';
 import { BehaviorSubject, Subject, zip } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { ReloadService } from 'src/app/services/reload.service';
 
 
 
@@ -187,13 +188,40 @@ export class MainComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder,
-    private api: RestApiService) {
+    private api: RestApiService, public reload: ReloadService) {
     this.usuario = api.usuario;
   }
 
 
+
+
   ngOnInit(): void {
     this.inicios()
+    this.reload.socket.on("nueva-requisicion", () => {
+      this.buscarPendientes();
+    });
+
+    this.reload.socket.on("requisicion_aceptada", () => {
+      this.porConfirmar();
+    });
+  }
+
+
+  productosPorSeccion: { [key: string]: any[] } = {};
+
+  procesarProductos() {
+    this.productosPorSeccion = {};
+
+    for (const sec of this.SECCIONES) {
+      this.productosPorSeccion[sec.nombre] = this.listFiltered.filter(p =>
+        p.material?.grupo?.nombre === sec.nombre &&
+        parseFloat(p.cantidad) > 0
+      );
+    }
+  }
+
+  existe(nombre: string) {
+    return this.productosPorSeccion[nombre]?.length > 0;
   }
 
   inicios() {
@@ -1362,7 +1390,6 @@ export class MainComponent implements OnInit {
     this.api.getAlmacenado()
       .subscribe((resp: any) => {
         this.Almacenado = resp;
-        console.warn('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::', resp)
         this.Almacenado = this.Almacenado.sort(function (a, b) {
           if (a.material.nombre.toLowerCase() < b.material.nombre.toLowerCase()) return -1
           if (a.material.nombre.toLowerCase() > b.material.nombre.toLowerCase()) return 1

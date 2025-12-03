@@ -1,34 +1,38 @@
-.subtitulo{
+.subtitulo {
     font-size: 30px;
     font-family: Roboto;
 }
 
-.cintillo{
-    background-color: rgb(253, 253, 253);
+.cintillo {
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
-.cintillo_{
+.cintillo_ {
     padding: 5px;
-    background-color: rgb(28, 40, 49);
+    background-color: var(--primary-color);
     color: white;
 }
-.white{
-    color: black;
-    background-color: white;
+
+.white {
+    background: var(--bg-main);
+    color: var(--text-main);
 }
-.modal-card{
+
+.modal-card {
     width: 65%;
 }
 
-.fechas{
+.fechas {
     position: relative;
     width: 100px;
 }
 
-.icono{
+.icono {
     color: #48c78e;
 }
-.icono:hover{
+
+.icono:hover {
     color: #49a079;
     cursor: pointer;
 }

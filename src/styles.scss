@@ -4,8 +4,8 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
 
 .animate__animated.animate__fadeIn {
-    --animate-duration: 2s;
-  }
+  --animate-duration: 2s;
+}
 
 
 // Set your brand colors
@@ -18,7 +18,8 @@ $beige-lighter: #EFF0EB;
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
 $grey-light: $beige-light;
-$primary: rgb(28, 40, 49);
+$primary: #1c2831;
+// --primary-color: #1c2831;
 $link: $pink;
 
 
@@ -43,4 +44,519 @@ $link: $pink;
 @import "../node_modules/bulma/sass/components/tabs.sass";
 @import "../node_modules/bulma/sass/components/breadcrumb.sass";
 @import "../node_modules/bulma/sass/elements/progress.sass";
-@import "../node_modules/bulma/sass/elements/image.sass"
+@import "../node_modules/bulma/sass/elements/image.sass";
+
+:root {
+  --primary-color: #1c2831;
+}
+
+/* Parche dinámico para Bulma */
+.button.is-primary,
+.tag.is-primary,
+.progress.is-primary,
+.notification.is-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.has-background-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.has-text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* ============================
+   PARCHE PARA NAVBAR IS-PRIMARY
+   ============================ */
+
+.navbar.is-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.navbar.is-primary .navbar-brand a.navbar-item,
+.navbar.is-primary .navbar-brand .navbar-link {
+  color: #fff !important;
+}
+
+.navbar.is-primary .navbar-item,
+.navbar.is-primary .navbar-link {
+  color: #fff !important;
+}
+
+/* Hover en navbar */
+.navbar.is-primary .navbar-item:hover,
+.navbar.is-primary .navbar-link:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 85%, black) !important;
+  color: #fff !important;
+}
+
+/* Dropdown */
+.navbar.is-primary .navbar-dropdown {
+  background-color: var(--primary-color) !important;
+}
+
+.navbar.is-primary .navbar-dropdown .navbar-item {
+  color: #fff !important;
+}
+
+.navbar.is-primary .navbar-dropdown .navbar-item:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 85%, black) !important;
+}
+
+/* Burger icon */
+.navbar-burger span {
+  background-color: #fff !important;
+}
+
+
+:root {
+  /* ===============================
+  🎨 COLORES BASE – LIGHT (Default)
+  =============================== */
+  --primary-color: #1c2831;
+  --text-on-primary: #ffffff;
+
+  --bg-main: #f4f6f8;
+  --bg-card: #ffffff;
+  --bg-table: #ffffff;
+  --bg-striped: #f1f1f1;
+  --bg-input: #ffffff;
+  --bg-modal-header: #f0f2f5;
+
+  --text-main: #2c2c2c;
+  --text-muted: #6b7280;
+
+  --border-color: #dddddd;
+}
+
+[data-theme="dark"] {
+  /* ===============================
+🌙 COLORES BASE – DARK
+=============================== */
+  --primary-color: #1c2831;
+  --text-on-primary: #ffffff;
+
+  --bg-main: #1c2831;
+  --bg-card: #212f3c;
+  --bg-table: #212f3c;
+  --bg-striped: #2e4053;
+  --bg-input: #0f171d;
+  --bg-modal-header: #111b23;
+
+  --text-main: #ecf0f1;
+  --text-muted: #9aa5b1;
+
+  --border-color: #34495e;
+}
+
+/* ===============================
+🌍 BASE GLOBAL
+=============================== */
+
+html,
+body {
+  background: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* ===============================
+📦 CARDS
+=============================== */
+
+.card {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color);
+}
+
+.card-header {
+  background: var(--bg-modal-header);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header-title,
+.card-content,
+.card-footer {
+  color: var(--text-main);
+}
+
+/* ===============================
+📋 TABLAS
+=============================== */
+
+.table {
+  background: var(--bg-table) !important;
+  color: var(--text-main) !important;
+}
+
+.table th {
+  background: var(--bg-modal-header) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+.table td {
+  background: var(--bg-table) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* STRIPED */
+.table.is-striped tbody tr:nth-child(odd) {
+  background: var(--bg-striped) !important;
+}
+
+/* HOVER */
+.table.is-hoverable tbody tr:hover {
+  background: color-mix(in srgb, var(--primary-color) 12%, var(--bg-table)) !important;
+}
+
+/* ===============================
+✍️ TEXTOS GENERALES
+=============================== */
+
+label,
+th,
+td,
+.title,
+.subtitle,
+.content,
+.help,
+strong,
+span,
+p {
+  color: var(--text-main) !important;
+}
+
+/* ===============================
+🧪 INPUTS / SELECTS
+=============================== */
+
+.input,
+.textarea,
+.select select {
+  background: var(--bg-input) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* ===============================
+📌 NAVBAR
+=============================== */
+
+.navbar {
+  background: var(--bg-card) !important;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-item,
+.navbar-link {
+  color: var(--text-main) !important;
+}
+
+.navbar-item:hover {
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-card)) !important;
+}
+
+.navbar.is-primary {
+  background: var(--primary-color) !important;
+}
+
+/* ===============================
+📑 TABS
+=============================== */
+
+.tabs {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.tabs a {
+  color: var(--text-muted) !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.tabs a:hover {
+  color: var(--text-main) !important;
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+.tabs li.is-active a {
+  color: var(--primary-color) !important;
+  border-bottom: 2px solid var(--primary-color) !important;
+  background: transparent !important;
+}
+
+/* ===============================
+🌒 MODAL + MODAL CARD
+=============================== */
+
+.modal-card {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+}
+
+/* HEADER */
+.modal-card-head {
+  background: var(--bg-modal-header) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.modal-card-title {
+  color: var(--text-main) !important;
+}
+
+/* BODY */
+.modal-card-body {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+/* FOOTER */
+.modal-card-foot {
+  background: var(--bg-modal-header) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+/* Inputs dentro del modal */
+.modal-card input,
+.modal-card textarea,
+.modal-card select {
+  background: var(--bg-input) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Textos del modal */
+.modal-card label,
+.modal-card p,
+.modal-card span,
+.modal-card strong,
+.modal-card .title,
+.modal-card .subtitle {
+  color: var(--text-main) !important;
+}
+
+/* Botones */
+.modal-card .button {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.modal-card .button:hover {
+  filter: brightness(1.1);
+}
+
+/* ===============================
+📄 TABLAS DENTRO DEL MODAL
+=============================== */
+
+.modal-card .table {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+.modal-card .table th {
+  background: var(--bg-modal-header) !important;
+}
+
+.modal-card .table.is-striped tbody tr:nth-child(odd) {
+  background: var(--bg-striped) !important;
+}
+
+.modal-card .table tbody tr:hover {
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-card)) !important;
+}
+
+/* ===============================
+📦 COLUMNS / BOX
+=============================== */
+
+.column {
+  color: var(--text-main) !important;
+}
+
+.box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color);
+  color: var(--text-main) !important;
+}
+
+/***********************************
+✅ SWEETALERT2 + LIGHT / DARK THEME
+************************************/
+
+/* Contenedor principal */
+.swal2-popup {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Título */
+.swal2-title {
+  color: var(--text-main) !important;
+}
+
+/* Texto normal */
+.swal2-html-container {
+  color: var(--text-main) !important;
+}
+
+/* Iconos (success, error, warning, info) */
+.swal2-icon {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+/* Botones */
+.swal2-confirm {
+  background: var(--primary-color) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swal2-confirm:hover {
+  filter: brightness(1.1);
+}
+
+.swal2-cancel {
+  background: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+.swal2-cancel:hover {
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-card)) !important;
+}
+
+/* Input dentro del Swal */
+.swal2-input,
+.swal2-textarea,
+.swal2-select {
+  background: var(--bg-input) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Placeholder */
+.swal2-input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Footer */
+.swal2-footer {
+  border-top: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+
+/***********************************
+EFECTO PRO DE ANIMACIÓN
+************************************/
+.swal2-show {
+  animation: swal2-show .25s ease-out;
+}
+
+@keyframes swal2-show {
+  0% {
+    transform: scale(.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+$--bulma-button-text-color: #ffffff;
+
+/* ====================================
+   CORRECCIÓN DEL BOTÓN Y NAVBAR
+   ==================================== */
+button {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+
+  /* Aquí usamos la variable calculada dinámicamente */
+  color: var(--text-on-primary) !important;
+}
+
+.navbar.is-primary {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+
+  /* Aquí usamos la variable calculada dinámicamente */
+  color: var(--text-on-primary) !important;
+
+  transition: all 0.3s ease;
+}
+
+/* Hover suave */
+.button.is-primary:hover,
+.navbar.is-primary:hover {
+  filter: brightness(1.1);
+  /* O brightness(0.9) según gusto */
+}
+
+/* =======================================================
+   FORZAR COLOR EN ELEMENTOS INTERNOS DEL BOTÓN PRIMARIO
+   ======================================================= */
+
+/* 1. Asegura que el botón (incluso con la clase .edited) tenga el color correcto */
+.button.is-primary.edited,
+.button.is-primary {
+  color: var(--text-on-primary) !important;
+}
+
+/* 2. Forza a los hijos (iconos, etiquetas, spans) a usar el color del padre */
+.button.is-primary .icon,
+.button.is-primary i,
+.button.is-primary .material-label,
+.button.is-primary .down,
+.button.is-primary strong,
+.button.is-primary span:not(.alert-dot) {
+  /* Excluimos el punto rojo */
+  color: inherit !important;
+}
+
+/* =======================================================
+   NAVEGACIÓN PRINCIPAL
+   ======================================================= */
+
+/* 1. Asegura que los enlaces y textos directos del Navbar usen el color de contraste */
+.navbar.is-primary .navbar-link,
+.navbar.is-primary .navbar-item,
+.navbar.is-primary .navbar-item a,
+.navbar.is-primary i,
+.navbar.is-primary span {
+  /* Usamos 'inherit' para tomar el color del padre (.navbar.is-primary) */
+  color: inherit !important;
+}
+
+/* 2. Corrige el hover dentro del dropdown (cuando el navbar ya no es primary) */
+/* Los elementos del dropdown usan el fondo del card/bg-card, no el primary */
+.navbar-dropdown .navbar-item {
+  color: var(--text-main) !important;
+  /* Vuelve al color principal del tema (Light/Dark) */
+}
+
+/* 3. Asegura que el punto 'ping' no cambie de color (debe seguir siendo rojo/alerta) */
+.navbar.is-primary .ping {
+  background-color: #ff3860 !important;
+  /* Asegura el color de alerta */
+}

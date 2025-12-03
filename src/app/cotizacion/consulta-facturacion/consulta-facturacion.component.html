@@ -171,11 +171,14 @@
                             <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.cantidad)}}</td>
                             <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.precio)}}</td>
                             <td style="text-align: center;" class="data__">{{despacho.documento}}</td>
-                            <td style="text-align: right;" class="data__">{{puntoYcoma((despacho.cantidad /
-                                1000)*despacho.precio)}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma(
+                                ((despacho.cantidad / 1000) * despacho.precio) < 100 ? (despacho.cantidad *
+                                    despacho.precio) : (despacho.cantidad / 1000) * despacho.precio )}}</td>
                             <td style="text-align: right;" class="data__">
-                                {{puntoYcoma(generarSubTotalBS(despacho.cantidad, despacho.precio, despacho.tasa ))}}
-                            </td>
+                                {{puntoYcoma(((
+                                ((despacho.cantidad / 1000) * despacho.precio) < 100 ? (despacho.cantidad *
+                                    despacho.precio) : (despacho.cantidad / 1000) * despacho.precio )) * despacho.tasa
+                                    )}} </td>
 
                         </tr>
                         <tr>
@@ -223,11 +226,14 @@
                             <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.cantidad)}}</td>
                             <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.precio)}}</td>
                             <td style="text-align: center;" class="data__">{{despacho.documento}}</td>
-                            <td style="text-align: right;" class="data__">{{puntoYcoma((despacho.cantidad /
-                                1000)*despacho.precio)}}</td>
+                            <td style="text-align: right;" class="data__">{{puntoYcoma(
+                                ((despacho.cantidad / 1000) * despacho.precio) < 100 ? (despacho.cantidad *
+                                    despacho.precio) : (despacho.cantidad / 1000) * despacho.precio )}}</td>
                             <td style="text-align: right;" class="data__">
-                                {{puntoYcoma(generarSubTotalBS(despacho.cantidad, despacho.precio, despacho.tasa ))}}
-                            </td>
+                                {{puntoYcoma((
+                                ((despacho.cantidad / 1000) * despacho.precio) < 100 ? (despacho.cantidad *
+                                    despacho.precio) : (despacho.cantidad / 1000) * despacho.precio) * despacho.tasa )}}
+                                    </td>
 
                         </tr>
                         <tr>

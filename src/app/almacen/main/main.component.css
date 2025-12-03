@@ -73,6 +73,7 @@
 
 .edited {
     text-align: left;
+    color: var(--text-on-primary);
 }
 
 
@@ -138,5 +139,97 @@
 
 .is-gray {
     background-color: rgb(56, 67, 83);
-    color: white;
+    color: var(--text-on-primary);
 }
+
+.material-label {
+    position: relative;
+    display: inline-block;
+}
+
+.alert-dot {
+    position: absolute;
+    top: -6px;
+    right: 0px;
+    width: 12px;
+    height: 12px;
+    background: red;
+    border-radius: 50%;
+    animation: blink 1s infinite ease-in-out;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.3;
+        transform: scale(1.3);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.icon svg {
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+    margin-right: 6px;
+    color: #1e88e5;
+}
+
+/* Movimiento suave tipo cajas trabajando */
+.icon-wobble svg {
+    animation: wobble 2s infinite ease-in-out;
+    transform-origin: center bottom;
+}
+
+@keyframes wobble {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(3deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(-3deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* button .is-primarys span {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.button.is-primary .icon,
+.button.is-primary i,
+.button.is-primary .material-label,
+.button.is-primary .down,
+.button.is-primary strong,
+.button.is-primary span:not(.alert-dot) {
+    color: inherit !important;
+} */
+/* Excluimos el punto rojo */

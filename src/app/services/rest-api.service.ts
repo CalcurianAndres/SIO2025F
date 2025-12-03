@@ -233,9 +233,10 @@ export class RestApiService {
     }).pipe(
       tap((resp: any) => {
 
-        const { estado, _id, Nombre, Apellido, Correo, Departamento, Role, Nueva_orden, Consulta, Almacen, Maquinaria, Planificacion, Gestiones, Despacho, Estadisticas, Precios, pin, laboratorio } = resp.usuario;
+        const { estado, _id, Nombre, Apellido, Correo, Departamento, Role, Nueva_orden, Consulta, Almacen, Maquinaria, Planificacion, Gestiones, Despacho, Estadisticas, Precios, pin, laboratorio, acepta, asigna } = resp.usuario;
 
-        this.usuario = new Usuario(estado, _id, Nombre, Apellido, Correo, Departamento, Role, Nueva_orden, Consulta, Almacen, Maquinaria, Planificacion, Gestiones, Despacho, Estadisticas, Precios, pin, laboratorio);
+        this.usuario = new Usuario(estado, _id, Nombre, Apellido, Correo, Departamento, Role, Nueva_orden, Consulta, Almacen, Maquinaria, Planificacion, Gestiones, Despacho, Estadisticas, Precios, pin, laboratorio, acepta, asigna);
+        console.log(this.usuario);
         localStorage.setItem('token', resp.token);
         localStorage.setItem('menu', JSON.stringify(resp.menu));
       }),

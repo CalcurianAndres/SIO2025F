@@ -115,14 +115,20 @@ export class ConsultaFacturacionComponent implements OnInit {
                 if (resp[i].despacho[x].op === op) {
                   resp[i].despacho[x].fecha = resp[i].fecha
                   this.ORDENES.push(resp[i].despacho[x])
-                  this.Total_USD = this.Total_USD + ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
-                  this.Total_Bs = this.Total_Bs + (((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio) * resp[i].despacho[x].tasa);
+                  this.Total_USD = this.Total_USD +=
+                    (resp[i].despacho[x].cantidad / 1000 * resp[i].despacho[x].precio) < 100
+                      ? (resp[i].despacho[x].cantidad * resp[i].despacho[x].precio)
+                      : ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
+                  this.Total_Bs = this.Total_Bs + (this.Total_USD * resp[i].despacho[x].tasa);
                 }
               } else {
                 resp[i].despacho[x].fecha = resp[i].fecha
                 this.NOTAS.push(resp[i].despacho[x])
-                this.Total_USD_N = this.Total_USD_N + ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
-                this.Total_Bs_N = this.Total_Bs_N + (((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio) * resp[i].despacho[x].tasa);
+                this.Total_USD_N = this.Total_USD_N +=
+                  (resp[i].despacho[x].cantidad / 1000 * resp[i].despacho[x].precio) < 100
+                    ? (resp[i].despacho[x].cantidad * resp[i].despacho[x].precio)
+                    : ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
+                this.Total_Bs_N = this.Total_Bs_N + (this.Total_USD_N * resp[i].despacho[x].tasa);
               }
             }
           }
@@ -170,13 +176,19 @@ export class ConsultaFacturacionComponent implements OnInit {
               if (resp[i].despacho[x].documento.charAt(0) === 'F') {
                 resp[i].despacho[x].fecha = resp[i].fecha
                 this.ORDENES.push(resp[i].despacho[x])
-                this.Total_USD = this.Total_USD + ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
-                this.Total_Bs = this.Total_Bs + (((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio) * resp[i].despacho[x].tasa);
+                this.Total_USD = this.Total_USD +=
+                  (resp[i].despacho[x].cantidad / 1000 * resp[i].despacho[x].precio) < 100
+                    ? (resp[i].despacho[x].cantidad * resp[i].despacho[x].precio)
+                    : ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
+                this.Total_Bs = this.Total_Bs + (this.Total_USD * resp[i].despacho[x].tasa);
               } else {
                 resp[i].despacho[x].fecha = resp[i].fecha
                 this.NOTAS.push(resp[i].despacho[x])
-                this.Total_USD_N = this.Total_USD_N + ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
-                this.Total_Bs_N = this.Total_Bs_N + (((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio) * resp[i].despacho[x].tasa);
+                this.Total_USD_N = this.Total_USD_N +=
+                  (resp[i].despacho[x].cantidad / 1000 * resp[i].despacho[x].precio) < 100
+                    ? (resp[i].despacho[x].cantidad * resp[i].despacho[x].precio)
+                    : ((resp[i].despacho[x].cantidad / 1000) * resp[i].despacho[x].precio);
+                this.Total_Bs_N = this.Total_Bs_N + (this.Total_USD_N * resp[i].despacho[x].tasa);
               }
             }
           }
@@ -234,13 +246,18 @@ export class ConsultaFacturacionComponent implements OnInit {
             if (resp[i].documento.charAt(0) === 'F') {
               resp[i].fecha = resp[i].fecha
               this.ORDENES.push(resp[i])
-              this.Total_USD = this.Total_USD + ((resp[i].cantidad / 1000) * resp[i].precio);
-              this.Total_Bs = this.Total_Bs + this.generarSubTotalBS(resp[i].cantidad, resp[i].precio, resp[i].tasa);
+              this.Total_USD = this.Total_USD += (resp[i].cantidad / 1000 * resp[i].precio) < 100
+                ? (resp[i].cantidad * resp[i].precio)
+                : ((resp[i].cantidad / 1000) * resp[i].precio);
+              this.Total_Bs = this.Total_Bs + this.Total_USD * resp[i].tasa;
             } else {
               resp[i].fecha = resp[i].fecha
               this.NOTAS.push(resp[i])
-              this.Total_USD_N = this.Total_USD_N + ((resp[i].cantidad / 1000) * resp[i].precio);
-              this.Total_Bs_N = this.Total_Bs_N + this.generarSubTotalBS(resp[i].cantidad, resp[i].precio, resp[i].tasa);
+              // this.Total_USD_N = this.Total_USD_N + ((resp[i].cantidad / 1000) * resp[i].precio);
+              this.Total_USD_N = this.Total_USD_N += (resp[i].cantidad / 1000 * resp[i].precio) < 100
+                ? (resp[i].cantidad * resp[i].precio)
+                : ((resp[i].cantidad / 1000) * resp[i].precio);
+              this.Total_Bs_N = this.Total_Bs_N + this.Total_USD_N * resp[i].tasa;
             }
           }
         }

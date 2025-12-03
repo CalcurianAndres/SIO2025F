@@ -3,23 +3,36 @@
     src: url(../../../assets/Roboto/Roboto-Black.ttf);
 }
 
-.titulo{
+.titulo {
     font-size: 50px;
     font-family: Roboto;
 }
-.subtitulo{
+
+.subtitulo {
     font-size: 18px;
     font-family: Roboto;
 }
-.mt-5{
+
+.mt-5 {
     margin-top: 5px;
 }
 
 
-.edited{
+.edited {
     text-align: left;
+    color: var(--text-on-primary);
+
 }
-.down{
+
+.down {
     display: block;
     margin-top: -7px;
+    color: var(--text-on-primary);
+
+}
+
+button.is-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-on-primary);
 }

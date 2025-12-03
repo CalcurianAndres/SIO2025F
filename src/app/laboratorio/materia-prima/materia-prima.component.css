@@ -3,36 +3,47 @@
     src: url(../../../assets/Roboto/Roboto-Black.ttf);
 }
 
-.subtitulo{
+.subtitulo {
     font-size: 50px;
     font-family: Roboto;
 }
-.sized{
+
+.sized {
     width: 150px;
     text-align: center;
     padding-top: 25px;
 }
-.down{
+
+.down {
     display: block;
     margin-top: -7px;
 }
-.edited{
+
+.edited {
     text-align: left;
 }
-.sized_{
+
+.sized_ {
     width: 200px;
     text-align: center;
-    padding-top: 25px; 
+    padding-top: 25px;
 }
-.sized__{
+
+.sized__ {
     width: 150px;
 }
 
-.subtitulo__{
+.subtitulo__ {
     font-size: 30px;
     font-family: Roboto;
 }
 
-.fa-eye{
+.fa-eye {
     cursor: pointer;
+}
+
+button.is-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-on-primary);
 }

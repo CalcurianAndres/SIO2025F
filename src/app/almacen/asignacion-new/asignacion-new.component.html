@@ -122,7 +122,8 @@
                         <ng-container *ngIf="!orden.motivo">
                             <ng-container
                                 *ngIf="this.material_cubierto > (orden.producto.materiales[orden.montaje].length)">
-                                <button class="button is-success" (click)="Finalizar()">
+                                <button class="button is-success" [ngClass]="{'is-loading':loading_button}"
+                                    (click)="Finalizar()">
                                     <span class="icon">
                                         <i class="fas fa-pallet"></i>
                                     </span>
@@ -133,7 +134,8 @@
                             </ng-container>
                         </ng-container>
                         <ng-container *ngIf="orden.motivo">
-                            <button class="button is-success" (click)="Finalizar()">
+                            <button class="button is-success" [ngClass]="{'is-loading':loading_button}"
+                                (click)="Finalizar()">
                                 <span class="icon">
                                     <i class="fas fa-pallet"></i>
                                 </span>

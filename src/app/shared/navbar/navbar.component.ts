@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { ThemeService } from 'src/app/services/theme.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import Swal from 'sweetalert2';
@@ -10,7 +11,7 @@ import Swal from 'sweetalert2';
 })
 export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private usuarioService: RestApiService, private renderer: Renderer2) {
+  constructor(private usuarioService: RestApiService, private renderer: Renderer2, private theme: ThemeService) {
     this.usuario = usuarioService.usuario;
   }
 
@@ -24,7 +25,18 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   private _snowflakes: HTMLElement[] = [];
   private _snowCount = 20; // cantidad inicial de copos (ajusta si quieres más/menos)
 
+
+  mostrarNuevoTema = false;
+
   ngOnInit(): void {
+    const visto = localStorage.getItem('temaVisto');
+    this.mostrarNuevoTema = !visto;
+    this.theme.initTheme();
+    const theme_ = localStorage.getItem('theme');
+
+    if (theme_ === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
   }
 
   ngAfterViewInit(): void {
@@ -87,6 +99,69 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (err) { /* silencioso */ }
   }
 
+  toggleTheme() {
+    const current = localStorage.getItem('theme');
+    localStorage.setItem('temaVisto', 'true');
+    this.mostrarNuevoTema = false;
+
+    if (current === 'dark') {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  abrirSelectorTema() {
+    // Lo marca como visto
+    localStorage.setItem('temaVisto', 'true');
+    this.mostrarNuevoTema = false;
+
+    const currentColor = this.theme.getPrimary() || '#1c2831';
+
+    Swal.fire({
+      title: '🎨 Cambiar color principal',
+      html: `
+      <p style="margin-bottom:10px;">Selecciona un nuevo color</p>
+      <input id="colorPicker" type="color" value="${currentColor}"
+        style="width:100%; height:50px; border:none; cursor:pointer;">
+    `,
+      confirmButtonText: 'Guardar',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      didOpen: () => {
+        const picker = document.getElementById('colorPicker') as HTMLInputElement;
+        const preview = document.getElementById('preview') as HTMLElement;
+
+        picker.addEventListener('input', () => {
+          preview.style.background = picker.value;
+          document.documentElement.style.setProperty('--primary-color', picker.value);
+        });
+      },
+      preConfirm: () => {
+        const picker = document.getElementById('colorPicker') as HTMLInputElement;
+        return picker.value;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        this.theme.setPrimary(result.value);
+        this.setPrimaryTheme(result.value);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Color guardado ✅',
+          text: 'El nuevo color principal fue guardado',
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
+      }
+    });
+  }
+
   logout() {
     this.usuarioService.logout();
   }
@@ -117,6 +192,46 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.pass2 = ''
         this.cambiar()
       })
+  }
+
+  /**
+* Actualiza el color primario y calcula automáticamente 
+* si el texto debe ser blanco o negro.
+* @param {string} hexColor - El color en formato HEX (ej: #00d1b2)
+*/
+  setPrimaryTheme(hexColor) {
+    const root = document.documentElement;
+
+    // 1. Establecer el color primario
+    root.style.setProperty('--primary-color', hexColor);
+
+    // 2. Calcular contraste para el texto
+    const contrastColor = this.getContrastColor(hexColor);
+    root.style.setProperty('--text-on-primary', contrastColor);
+  }
+
+  /**
+   * Ayudante: Recibe un HEX y devuelve '#000000' o '#ffffff'
+   * basado en la luminancia (fórmula YIQ).
+   */
+  getContrastColor(hex) {
+    console.log(hex)
+    // Eliminar el hash si existe
+    hex = hex.replace('#', '');
+
+    // Convertir a RGB
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    // Calcular luminancia (Fórmula YIQ estándar)
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+    console.log(yiq)
+
+    // Si yiq >= 128 es un color claro -> devolver texto negro
+    // Si yiq < 128 es un color oscuro -> devolver texto blanco
+    return (yiq >= 128) ? '#000000' : '#ffffff';
   }
 
 }

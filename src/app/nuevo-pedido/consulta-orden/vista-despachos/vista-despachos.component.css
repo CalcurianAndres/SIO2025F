@@ -1,15 +1,15 @@
-.subtitulos{
+.subtitulos {
     font-size: 30px;
     font-family: Roboto;
 }
 
-.cintillo_{
+.cintillo_ {
     padding: 5px;
-    background-color: rgb(28, 40, 49);
+    background-color: var(--primary-color);
     color: white;
 }
 
-.fecha_mostrada{
+.fecha_mostrada {
     display: block;
     position: relative;
     margin-top: -150px;
