@@ -45,6 +45,7 @@ $link: $pink;
 @import "../node_modules/bulma/sass/components/breadcrumb.sass";
 @import "../node_modules/bulma/sass/elements/progress.sass";
 @import "../node_modules/bulma/sass/elements/image.sass";
+@import "../node_modules/bulma/sass/components/pagination.sass";
 
 :root {
   --primary-color: #1c2831;
@@ -65,6 +66,11 @@ $link: $pink;
 
 .has-text-primary {
   color: var(--primary-color) !important;
+}
+
+.accion-btn {
+  color: var(--primary-color) !important;
+
 }
 
 /* ============================
@@ -129,6 +135,9 @@ $link: $pink;
   --text-muted: #6b7280;
 
   --border-color: #dddddd;
+  --Green-color: #eafff1;
+  --Green-color-border: #affcc9;
+
 }
 
 [data-theme="dark"] {
@@ -149,6 +158,8 @@ $link: $pink;
   --text-muted: #9aa5b1;
 
   --border-color: #34495e;
+  --Green-color: rgb(0, 48, 0);
+  --Green-color-border: rgb(1, 30, 1);
 }
 
 /* ===============================
@@ -488,13 +499,6 @@ $--bulma-button-text-color: #ffffff;
 /* ====================================
    CORRECCIÓN DEL BOTÓN Y NAVBAR
    ==================================== */
-button {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-
-  /* Aquí usamos la variable calculada dinámicamente */
-  color: var(--text-on-primary) !important;
-}
 
 .navbar.is-primary {
   background: var(--primary-color) !important;
@@ -513,9 +517,9 @@ button {
   /* O brightness(0.9) según gusto */
 }
 
-/* =======================================================
-   FORZAR COLOR EN ELEMENTOS INTERNOS DEL BOTÓN PRIMARIO
-   ======================================================= */
+// /* =======================================================
+//    FORZAR COLOR EN ELEMENTOS INTERNOS DEL BOTÓN PRIMARIO
+//    ======================================================= */
 
 /* 1. Asegura que el botón (incluso con la clase .edited) tenga el color correcto */
 .button.is-primary.edited,
@@ -559,4 +563,237 @@ button {
 .navbar.is-primary .ping {
   background-color: #ff3860 !important;
   /* Asegura el color de alerta */
+}
+
+:root {
+  /* Variables de Color (Valores por defecto de SASS) */
+  --info-color: #3E8ED4;
+  --success-color: #48C78E;
+  --warning-color: #FFDD57;
+  --danger-color: #F14668;
+}
+
+/* ==================================
+    PARCHE DINÁMICO PARA BULMA (EXTENDIDO)
+    ================================== */
+
+.button.is-primary,
+.tag.is-primary,
+.progress.is-primary,
+.notification.is-primary,
+.message.is-primary,
+.hero.is-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.has-background-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.has-text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* --- Info --- */
+.button.is-info,
+.tag.is-info,
+.progress.is-info,
+.notification.is-info,
+.message.is-info,
+.hero.is-info {
+  background-color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
+}
+
+.has-background-info {
+  background-color: var(--info-color) !important;
+}
+
+.has-text-info {
+  color: var(--info-color) !important;
+}
+
+/* --- Success --- */
+.button.is-success,
+.tag.is-success,
+.progress.is-success,
+.notification.is-success,
+.message.is-success,
+.hero.is-success {
+  background-color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+}
+
+.has-background-success {
+  background-color: var(--success-color) !important;
+}
+
+.has-text-success {
+  color: var(--success-color) !important;
+}
+
+/* --- Warning --- */
+.button.is-warning,
+.tag.is-warning,
+.progress.is-warning,
+.notification.is-warning,
+.message.is-warning,
+.hero.is-warning {
+  background-color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+}
+
+.has-background-warning {
+  background-color: var(--warning-color) !important;
+}
+
+.has-text-warning {
+  color: var(--warning-color) !important;
+}
+
+/* --- Danger --- */
+.button.is-danger,
+.tag.is-danger,
+.progress.is-danger,
+.notification.is-danger,
+.message.is-danger,
+.hero.is-danger {
+  background-color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
+}
+
+.has-background-danger {
+  background-color: var(--danger-color) !important;
+}
+
+.has-text-danger {
+  color: var(--danger-color) !important;
+}
+
+
+/* ============================
+    PARCHE PARA NAVBAR IS-PRIMARY
+    (Sin cambios en esta sección)
+    ============================ */
+
+.navbar.is-primary {
+  background-color: var(--primary-color) !important;
+}
+
+// ... [El resto del código de navbar.is-primary sigue aquí] ...
+// El resto de tu código para el navbar is-primary se mantiene igual, ya que usa --primary-color.
+
+/* =======================================================
+    FORZAR COLOR EN ELEMENTOS INTERNOS DEL BOTÓN PRIMARIO
+    (Extendido a otros colores)
+    ======================================================= */
+
+/* Se agrega el parche para los botones de estado (success, info, warning, danger) */
+
+$button-states: (
+  primary: var(--primary-color),
+  info: var(--info-color),
+  success: var(--success-color),
+  warning: var(--warning-color),
+  danger: var(--danger-color)
+);
+
+@each $name, $color in $button-states {
+
+  .button.is-#{$name},
+  .button.is-#{$name}.edited {
+    color: white !important;
+    /* El texto de los botones de color sólido casi siempre es blanco */
+  }
+
+  .button.is-#{$name} .icon,
+  .button.is-#{$name} i,
+  .button.is-#{$name} .material-label,
+  .button.is-#{$name} .down,
+  .button.is-#{$name} strong,
+  .button.is-#{$name} span:not(.alert-dot) {
+    color: inherit !important;
+  }
+}
+
+
+/* --- PARCHE PARA ELEMENTOS LIGHT Y MESSAGE-HEADER --- */
+
+/* Notificaciones Light: Necesitan un borde y color de texto */
+.notification.is-light {
+  background-color: color-mix(in srgb, var(--bg-main) 90%, #000000) !important;
+  /* Fondo ligeramente más oscuro que el main */
+  border: 1px solid var(--border-color);
+  color: var(--text-main) !important;
+}
+
+/* Message Header: Usa el color de estado como fondo */
+.message-header.is-info {
+  background-color: var(--info-color) !important;
+  color: white !important;
+}
+
+.message-header.is-success {
+  background-color: var(--success-color) !important;
+  color: white !important;
+}
+
+.message-header.is-warning {
+  background-color: var(--warning-color) !important;
+  color: var(--text-main) !important;
+  /* Usualmente el texto en warning es negro/oscuro */
+}
+
+.message-header.is-danger {
+  background-color: var(--danger-color) !important;
+  color: white !important;
+}
+
+.message-header.is-primary {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Message Body: Necesita un fondo que respete el tema (card) y un borde */
+.message-body {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* ====================================
+    CORRECCIÓN DE BOTÓN ICONO TRANSPARENTE
+    ==================================== */
+
+.button.is-ghost-icon {
+  /* 1. Elimina el fondo y borde */
+  background-color: transparent !important;
+  border: none !important;
+
+  /* 2. Quita el padding por defecto de Bulma para que sea solo el icono */
+  padding: 0 !important;
+
+  /* 3. Asegura que el icono use el color principal del tema */
+  .icon,
+  i {
+    color: var(--text-main) !important;
+  }
+}
+
+/* 4. Define el hover para que no tenga fondo gris, solo un ligero cambio */
+.button.is-ghost-icon:hover {
+  background-color: transparent !important;
+
+  /* Efecto de color al pasar el ratón (un poco más oscuro/claro) */
+  .icon,
+  i {
+    color: var(--primary-color) !important;
+    /* Usa el color primario para destacar al hacer hover */
+  }
+}
+
+/* Opcional: Si quieres que el icono se vea como un cursor de puntero */
+.fas.fa-plus-circle {
+  cursor: pointer;
 }

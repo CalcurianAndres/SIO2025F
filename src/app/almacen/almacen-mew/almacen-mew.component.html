@@ -1,0 +1,492 @@
+<app-asignacion-new *ngIf="asignacion_" [asignacion_]="asignacion_" [necesario]="requisicions"
+    (onCloseModal)="asignacion_ = !asignacion_">
+</app-asignacion-new>
+
+<app-nuevo-material [newMaterial]="nuevo_material" [grupos]="grupos" (onCloseModal)="nuevoMaterial()">
+</app-nuevo-material>
+
+<app-nuevo-inventario-new [Inventario]="Nuevo_inventario" [grupos]="grupos" [Materiales]="Materiales_registrados"
+    (onCargarMateriales)="CargarMaterialesRegistrados('sin_cambiar_pantalla')"
+    (onCloseModal)="Nuevo_inventario = !Nuevo_inventario">
+
+</app-nuevo-inventario-new>
+
+<app-confirmacion *ngIf="confirmar_solicitud" [confirmacion]="confirmar_solicitud"
+    (onCloseModal)="confirmar_solicitud = !confirmar_solicitud" (onReset)="cargarAlmacer()">
+</app-confirmacion>
+
+<app-devoluciones-new *ngIf="confirmacion_devoluciones" [Dev_]="confirmacion_devoluciones"
+    (onCloseModal)="confirmacion_devoluciones = !confirmacion_devoluciones"
+    (onReset)="cargarAlmacer()"></app-devoluciones-new>
+
+<app-traspasos-new [traslados]="nuevo_traslado" [materiales]="almacen" (onReset)="cargarAlmacer()"
+    (onCloseModal)="nuevo_traslado = !nuevo_traslado"></app-traspasos-new>
+
+<app-aprovacion-traslados-new *ngIf="traspasos_pendientes" [traspasos_pendientes]="traspasos_pendientes"
+    (onCloseModal)="traspasos_pendientes = !traspasos_pendientes" (onReset)="cargarAlmacer()">
+</app-aprovacion-traslados-new>
+
+<app-retorno-material-new *ngIf="Solicitud_retorno" [Solicitud_retorno]="Solicitud_retorno"
+    (CargarAlmExterno)="CargarAlmacenExterno()" (onCloseModal)="Solicitud_retorno = !Solicitud_retorno"
+    [AlmacenExterno]="AlmacenExterior" (onRestart)="cargarAlmacer()">
+</app-retorno-material-new>
+
+<app-retorno-material-por-aprobar *ngIf="Retorno_pendiente" [Retorno_pendiente]="Retorno_pendiente"
+    (onCloseModal)="Retorno_pendiente = !Retorno_pendiente" (onReset)="cargarAlmacer()">
+
+</app-retorno-material-por-aprobar>
+
+<div class="container">
+    <br>
+    <div class="titulo"> 📦 Almacén</div>
+    <br>
+    <div class="field is-grouped">
+        <div class="control">
+            <label for="" class="label">Tipo de almacén</label>
+            <div class="select">
+                <select (change)="MaterialesBusqueda($event.target.value)">
+                    <option value="almacen">Mat. en almacén</option>
+                    <option value="materiales">Materiales Registrados</option>
+                    <option value="">Almacén de bobinas</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!loading">
+        <div *ngIf="Almacenado">
+            <div class="tabs">
+                <ul>
+                    <li [ngClass]="{'is-active':!exterior}"><a (click)="exterior = false">Poligrafica</a></li>
+                    <li [ngClass]="{'is-active':exterior}"><a
+                            (click)="exterior = true; CargarAlmacenExterno()">Terceros</a></li>
+                </ul>
+            </div>
+            <br>
+        </div>
+        <div *ngIf="!exterior">
+            <div *ngIf="Almacenado">
+
+                <div class="acciones-grid">
+
+                    <!-- Botón Resumido/Detallado -->
+                    <button class="accion-btn" (click)="resumido = !resumido">
+                        <img src="../../../assets/write-letter_5716249.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>{{resumido ? 'Detallado' : 'Resumido'}}</span>
+                        </div>
+                        <span class="estado neutro"></span>
+                    </button>
+
+                    <!-- Agregar inventario -->
+                    <button class="accion-btn" (click)="Nuevo_inventario = !Nuevo_inventario">
+                        <img src="../../../assets/boxes_1832645.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Agregar</span>
+                            <span>Inventario</span>
+                        </div>
+                        <span class="estado neutro"></span>
+                    </button>
+
+                    <!-- Material Necesario -->
+                    <button class="accion-btn" (click)="asignacion_ = !asignacion_"
+                        [ngClass]="{ 'activo': (ordenes + requisicions) > 0 }">
+                        <img src="../../../assets/box_15052282.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Material</span>
+                            <span>Necesario</span>
+                        </div>
+
+                        <span class="contador" [ngClass]="{
+                        'cero': (ordenes + requisicions) == 0,
+                        'positivo': (ordenes + requisicions) > 0
+                      }">
+                            {{ordenes + requisicions}}
+                        </span>
+                    </button>
+
+                    <!-- Solicitudes pendientes -->
+                    <button class="accion-btn" [ngClass]="{ 'activo': por_aprobar > 0 }"
+                        (click)="confirmar_solicitud = !confirmar_solicitud">
+                        <img src="../../../assets/exclamation_16464143.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Solicitudes</span>
+                            <span>Pendientes</span>
+                        </div>
+
+                        <span class="contador" [ngClass]="{
+                        'cero': por_aprobar == 0,
+                        'positivo': por_aprobar > 0
+                      }">
+                            {{por_aprobar}}
+                        </span>
+                    </button>
+
+                    <!-- Devoluciones -->
+                    <button class="accion-btn" [ngClass]="{ 'activo': devoluciones > 0 }"
+                        (click)="confirmacion_devoluciones = !confirmacion_devoluciones">
+                        <img src="../../../assets/archive_980349.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Devoluciones</span>
+                            <span>Pendientes</span>
+                        </div>
+
+                        <span class="contador" [ngClass]="{
+                        'cero': devoluciones == 0,
+                        'positivo': devoluciones > 0
+                      }">
+                            {{devoluciones}}
+                        </span>
+                    </button>
+
+                    <!-- Reporte inventario -->
+                    <button class="accion-btn" routerLink="/almacen/reportes">
+                        <img src="../../../assets/list_1187525.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Reporte</span>
+                            <span>Inventario</span>
+                        </div>
+                        <span class="estado neutro"></span>
+                    </button>
+
+                </div>
+                <div class="field is-grouped" *ngIf="!exterior">
+                    <div class="control">
+                        <button class="button is-primary" (click)="nuevo_traslado = !nuevo_traslado">
+                            <span class="icon"></span>
+                            <span>Solicitud traslado</span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-primary" (click)="traspasos_pendientes = !traspasos_pendientes">
+                            <span class="icon"></span>
+                            <span>Traslado pendiente ({{traslados}})</span>
+                        </button>
+                    </div>
+                </div>
+                <hr>
+            </div>
+
+            <div *ngIf="Materiales">
+                <div class="acciones-grid">
+
+                    <!-- Agregar inventario -->
+                    <button class="accion-btn" (click)="nuevoMaterial()">
+                        <img src="../../../assets/boxes_1832645.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Agregar</span>
+                            <span>Material</span>
+                        </div>
+                        <span class="estado neutro"></span>
+                    </button>
+
+                </div>
+            </div>
+
+            <span *ngFor="let grupo of grupos">
+                <div class="card">
+                    <header class="card-header" (click)="toggleGrupo(grupo._id)" style="cursor: pointer;">
+                        <p class="card-header-title">
+                            {{grupo.nombre}}
+                        </p>
+                        <span class="card-header-icon">
+                            <i class="fas"
+                                [ngClass]="expandido[grupo._id] ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
+                    </header>
+                    <div class="p-3" *ngIf="expandido[grupo._id]">
+                        <input class="input is-small" type="text" placeholder="Buscar en este grupo..."
+                            [(ngModel)]="filtros[grupo._id]">
+                    </div>
+                    <div class="card-contet" *ngIf="expandido[grupo._id]">
+                        <table class="table is-fullwidth is-striped" *ngIf="!resumido && Almacenado">
+                            <thead>
+                                <tr>
+                                    <th (click)="ordenarGrupo(grupo._id, 'fecha')" style="cursor:pointer">
+                                        Ingreso <i class="fas" [ngClass]="{
+                                            'fa-sort': !orden[grupo._id] || orden[grupo._id].campo !== 'fecha',
+                                            'fa-sort-up': orden[grupo._id]?.campo == 'fecha' && orden[grupo._id]?.asc,
+                                            'fa-sort-down': orden[grupo._id]?.campo == 'fecha' && !orden[grupo._id]?.asc
+                                            }"></i>
+                                    </th>
+                                    <th (click)="ordenarGrupo(grupo._id, 'material')" style="cursor:pointer">
+                                        Material <i class="fas" [ngClass]="{
+                                            'fa-sort': !orden[grupo._id] || orden[grupo._id].campo !== 'fecha',
+                                            'fa-sort-up': orden[grupo._id]?.campo == 'fecha' && orden[grupo._id]?.asc,
+                                            'fa-sort-down': orden[grupo._id]?.campo == 'fecha' && !orden[grupo._id]?.asc
+                                            }"></i>
+                                    </th>
+                                    <th (click)="ordenarGrupo(grupo._id, 'marca')" style="cursor:pointer">
+                                        Marca <i class="fas" [ngClass]="{
+                                        'fa-sort': !orden[grupo._id] || orden[grupo._id].campo !== 'fecha',
+                                        'fa-sort-up': orden[grupo._id]?.campo == 'fecha' && orden[grupo._id]?.asc,
+                                        'fa-sort-down': orden[grupo._id]?.campo == 'fecha' && !orden[grupo._id]?.asc
+                                        }"></i>
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Lote</th>
+                                    <th (click)="ordenarGrupo(grupo._id, 'cantidad')" style="cursor:pointer">
+                                        Cantidad <i class="fas" [ngClass]="{
+                                            'fa-sort': !orden[grupo._id] || orden[grupo._id].campo !== 'fecha',
+                                            'fa-sort-up': orden[grupo._id]?.campo == 'fecha' && orden[grupo._id]?.asc,
+                                            'fa-sort-down': orden[grupo._id]?.campo == 'fecha' && !orden[grupo._id]?.asc
+                                            }"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let material of filtrarDetallado(almacen[grupo._id], grupo._id)">
+                                    <td>{{material.fecha | date: 'dd-MM-yyyy'}}</td>
+                                    <td>{{material.material.nombre}} <ng-container *ngIf="material.material.ancho">
+                                            ({{material.material.ancho}}x{{material.material.largo}})
+                                            {{material.material.gramaje}}g/m² {{material.material.calibre}}pt
+                                        </ng-container>
+                                    </td>
+                                    <td>{{material.material.marca}}</td>
+                                    <td>{{material.lote}}</td>
+                                    <td>{{material.codigo}}</td>
+                                    <td>{{material.cantidad | number:'1.2-2'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table is-fullwidth is-striped" *ngIf="resumido && Almacenado">
+                            <thead class="sticky">
+                                <tr>
+                                    <th style="cursor:pointer" (click)="ordenarResumido('nombre')">
+                                        Material
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'nombre' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th style="cursor:pointer" (click)="ordenarResumido('marca')">
+                                        Marca
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'marca' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th style="cursor:pointer" (click)="ordenarResumido('cantidad')">
+                                        Total
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'cantidad' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let material of resumirMateriales(almacen[grupo._id], grupo._id)">
+                                    <td>{{material.nombre}} <ng-container *ngIf="material.ancho">
+                                            ({{material.ancho}} x {{material.largo}}) {{material.gramaje}}g/m²
+                                            {{material.calibre}}pt
+                                        </ng-container></td>
+                                    <td>{{material.marca}}</td>
+                                    <td>{{material.cantidad | number:'1.2-2'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table is-fullwidth is-striped" *ngIf="Materiales">
+                            <thead class="sticky">
+                                <tr>
+                                    <th style="cursor:pointer" (click)="ordenarMaterialesRegistrados('nombre')">
+                                        Material
+                                        <i class="fas" [ngClass]="ordenCampoMateriales === 'nombre' ?
+                                            (ordenDireccionMateriales === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th style="cursor:pointer" (click)="ordenarMaterialesRegistrados('marca')">
+                                        Marca
+                                        <i class="fas" [ngClass]="ordenCampoMateriales === 'marca' ?
+                                            (ordenDireccionMateriales === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th>
+                                        Presentación
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    *ngFor="let material of filtrarMaterialesRegistrados(Materiales_registrados[grupo._id], grupo._id)">
+                                    <td>{{material.nombre}} <ng-container *ngIf="material.ancho">
+                                            ({{material.ancho}}x{{material.largo}})
+                                            {{material.gramaje}}g/m² {{material.calibre}}pt
+                                        </ng-container>
+                                    </td>
+                                    <td>{{material.marca}}</td>
+                                    <td>{{material.presentacion}}{{material.neto}}{{material.unidad}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+            </span>
+        </div>
+        <div *ngIf="exterior">
+            <!-- INICIO EXTERIOR -->
+
+            <div class="acciones-grid">
+
+                <!-- Botón Resumido/Detallado -->
+                <button class="accion-btn" (click)="resumido = !resumido">
+                    <img src="../../../assets/write-letter_5716249.png" class="accion-icon">
+                    <div class="accion-texto">
+                        <span>{{resumido ? 'Detallado' : 'Resumido'}}</span>
+                    </div>
+                    <span class="estado neutro"></span>
+                </button>
+
+
+            </div>
+            <br>
+            <div class="field is-grouped" *ngIf="exterior">
+                <div class="control">
+                    <button class="button is-primary edited" *ngIf="exterior"
+                        (click)="Solicitud_retorno = !Solicitud_retorno">
+                        <span class="icon">
+                            <i class="fas fa-hand-holding edited"></i>
+                        </span>
+                        <span>
+
+                            Solicitud <br>
+                            <span class="down">
+                                Traslados
+                            </span>
+                        </span>
+
+                    </button>
+                </div>
+                <div class="control">
+                    <button class="button is-primary edited" *ngIf="exterior">
+                        <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        <span>Traslados <br>
+                            <span class="down">
+                                Pendientes ({{buscarRetornosPendientes().length}})
+                            </span>
+                        </span>
+                    </button>
+                </div>
+                <div class="control">
+                    <button class="button is-primary edited" *ngIf="exterior">
+                        <span class="icon"><i class="fa-solid fa-truck"></i></span>
+                        <span>Traspados <br>
+                            <span class="down">
+                                Aprobados ({{buscarRetornosAprobados().length}})
+                            </span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <br>
+            <span *ngFor="let almacen of AlmacenExterior | keyvalue">
+                <div class="card">
+                    <header class="card-header" (click)="toggleGrupo(almacen.key)" style="cursor: pointer;">
+                        <p class="card-header-title">
+                            {{almacen.key}}
+                        </p>
+                        <span class="card-header-icon">
+                            <i class="fas"
+                                [ngClass]="expandido[almacen.key] ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
+                    </header>
+                    <div class="p-3" *ngIf="expandido[almacen.key]">
+                        <input class="input is-small" type="text" placeholder="Buscar en este grupo..."
+                            [(ngModel)]="filtros[almacen.key]">
+                    </div>
+                    <div class="card-contet" *ngIf="expandido[almacen.key]">
+                        <table class="table is-fullwidth is-striped" *ngIf="!resumido">
+                            <thead>
+                                <tr>
+                                    <th (click)="ordenarGrupo(almacen.key, 'material')" style="cursor:pointer">
+                                        Material <i class="fas" [ngClass]="{
+                                            'fa-sort': !orden[almacen.key] || orden[almacen.key].campo !== 'fecha',
+                                            'fa-sort-up': orden[almacen.key]?.campo == 'fecha' && orden[almacen.key]?.asc,
+                                            'fa-sort-down': orden[almacen.key]?.campo == 'fecha' && !orden[almacen.key]?.asc
+                                            }"></i>
+                                    </th>
+                                    <th (click)="ordenarGrupo(almacen.key, 'marca')" style="cursor:pointer">
+                                        Marca <i class="fas" [ngClass]="{
+                                        'fa-sort': !orden[almacen.key] || orden[almacen.key].campo !== 'fecha',
+                                        'fa-sort-up': orden[almacen.key]?.campo == 'fecha' && orden[almacen.key]?.asc,
+                                        'fa-sort-down': orden[almacen.key]?.campo == 'fecha' && !orden[almacen.key]?.asc
+                                        }"></i>
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Lote</th>
+                                    <th (click)="ordenarGrupo(almacen.key, 'cantidad')" style="cursor:pointer">
+                                        Cantidad <i class="fas" [ngClass]="{
+                                            'fa-sort': !orden[almacen.key] || orden[almacen.key].campo !== 'fecha',
+                                            'fa-sort-up': orden[almacen.key]?.campo == 'fecha' && orden[almacen.key]?.asc,
+                                            'fa-sort-down': orden[almacen.key]?.campo == 'fecha' && !orden[almacen.key]?.asc
+                                            }"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    *ngFor="let material of filtrarDetalladoExterior(AlmacenExterior[almacen.key], almacen.key)">
+                                    <td>{{material.material.nombre}} <ng-container *ngIf="material.material.ancho">
+                                            ({{material.material.ancho}}x{{material.material.largo}})
+                                            {{material.material.gramaje}}g/m² {{material.material.calibre}}pt
+                                        </ng-container>
+                                    </td>
+                                    <td>{{material.material.marca}}</td>
+                                    <td>{{material.lote}}</td>
+                                    <td>{{material.codigo}}</td>
+                                    <td>{{material.cantidad | number:'1.2-2'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table is-fullwidth is-striped" *ngIf="resumido">
+                            <thead class="sticky">
+                                <tr>
+                                    <th style="cursor:pointer" (click)="ordenarResumido('nombre')">
+                                        Material
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'nombre' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th style="cursor:pointer" (click)="ordenarResumido('marca')">
+                                        Marca
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'marca' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+
+                                    <th style="cursor:pointer" (click)="ordenarResumido('cantidad')">
+                                        Total
+                                        <i class="fas" [ngClass]="ordenCampoResumido === 'cantidad' ?
+                                            (ordenDireccionResumido === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : ''">
+                                        </i>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr
+                                    *ngFor="let material of resumirMaterialesExteriorires(AlmacenExterior[almacen.key], almacen.key)">
+                                    <td>{{material.nombre}} <ng-container *ngIf="material.ancho">
+                                            ({{material.ancho}} x {{material.largo}}) {{material.gramaje}}g/m²
+                                            {{material.calibre}}pt
+                                        </ng-container></td>
+                                    <td>{{material.marca}}</td>
+                                    <td>{{material.cantidad | number:'1.2-2'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <hr>
+            </span>
+
+            <!-- FIN EXTERIOR  -->
+        </div>
+    </div>
+</div>

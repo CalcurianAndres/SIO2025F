@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 })
 export class ConsultaOrdenComponent implements OnInit {
 
-  constructor(private api:RestApiService) { }
+  constructor(private api: RestApiService) { }
 
   ngOnInit(): void {
     this.GetOrdens()
@@ -24,26 +24,35 @@ export class ConsultaOrdenComponent implements OnInit {
   public CLIENTES = []
   public loading = false;
   public Despachos = false;
-  public despacho:any = []
+  public despacho: any = []
+
+  page = 1;
+  limit = 20;
+  totalPages = 1;
+  total = 0;
 
 
-  obtenerClientes(){
+  obtenerClientes() {
     this.api.GetClientes()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.CLIENTES = resp.clientes
       })
   }
 
-  GetOrdens(){
-    this.api.getOrdenesDeCompra()
-      .subscribe((resp:any)=>{
-        this.Ordenes = resp
-        this.Ordenes.reverse();
-        // console.log(this.Ordenes)
-      })
+  GetOrdens(page = 1) {
+    this.loading = true;
+    this.page = page;
+
+    this.api.getOrdenesDeCompra(page, this.limit)
+      .subscribe((resp: any) => {
+        this.Ordenes = resp.data || [];
+        this.total = resp.total;
+        this.totalPages = resp.totalPages;
+        this.loading = false;
+      });
   }
 
-  BuscarDespacho(orden_detalle){
+  BuscarDespacho(orden_detalle) {
     console.log(orden_detalle)
     // Expresión regular para buscar números de orden que siguen el formato 'Nº Orden'
     const regex = /(\d+)\s+por/g;
@@ -62,57 +71,65 @@ export class ConsultaOrdenComponent implements OnInit {
     console.log("Números de orden encontrados:", numerosOrden);
 
     this.despacho = []
-    for(let x=0;x<numerosOrden.length;x++){
+    for (let x = 0; x < numerosOrden.length; x++) {
       this.api.GetDespachoByOrden(numerosOrden[x])
-      .subscribe((resp:any)=>{
-        console.log(resp)
-        for(let i=0; i<resp.length; i++){
-          for(let y=0; y<resp[i].despacho.length; y++){
-  
-            if(resp[i].despacho[y].op === numerosOrden[x])
-            {
-              console.log(resp[i].despacho[y].op,'/',numerosOrden[x])
-              this.despacho.push(resp[i].despacho[y])
-              console.log(this.despacho)
-              if(resp[i].despacho[y].parcial){
-                this.despacho.push({fecha:resp[i].despacho[y].parcial})
-              }else{
-                this.despacho.push({fecha:resp[i].fecha})
+        .subscribe((resp: any) => {
+          console.log(resp)
+          for (let i = 0; i < resp.length; i++) {
+            for (let y = 0; y < resp[i].despacho.length; y++) {
+
+              if (resp[i].despacho[y].op === numerosOrden[x]) {
+                console.log(resp[i].despacho[y].op, '/', numerosOrden[x])
+                this.despacho.push(resp[i].despacho[y])
+                console.log(this.despacho)
+                if (resp[i].despacho[y].parcial) {
+                  this.despacho.push({ fecha: resp[i].despacho[y].parcial })
+                } else {
+                  this.despacho.push({ fecha: resp[i].fecha })
+                }
+                // this.despacho = this.despacho + resp[i].despacho[y].cantidad
               }
-              // this.despacho = this.despacho + resp[i].despacho[y].cantidad
             }
           }
-        }
-      })
-      if(x == numerosOrden.length -1){
+        })
+      if (x == numerosOrden.length - 1) {
       }
     }
 
   }
 
   public CLIENTES_ACTUAL = ''
-  filtrarCliente(cliente_id){
-    if(cliente_id === '#'){
+  public PorCliente
+  filtrarCliente(cliente_id) {
+    this.page = 1;
+    if (cliente_id === '#') {
       this.GetOrdens();
-      this.PRODUCTOS = []
+      // this.PRODUCTOS = []
       this.all_ = true;
       this.selected = false;
-    }else{
-      this.GetOrdens();
-      this.loading = true;
-      setTimeout(() => {
-        this.BuscarProductos(cliente_id)
-        let filtered = this.Ordenes.filter((x:any)=> x.cliente._id === cliente_id)
-        this.Ordenes = filtered;
-        this.CLIENTES_ACTUAL = cliente_id;
-        this.PRODUCTOS = []
-        this.loading = false;
-      }, 1000);
+      this.PorCliente = false;
+    } else {
+      this.page = 1;
+      this.CLIENTES_ACTUAL = cliente_id
+      this.PorCliente = true;
+      this.getPorCliente(this.page, this.limit, cliente_id);
     }
   }
 
-  FiltrarPorProducto(e){
-    if(e != '#'){
+  getPorCliente(page = 1, limit, cliente_id) {
+    this.loading = true;
+    this.page = page;
+    this.api.getOrdenesDeCompraPorCliente(page, limit, cliente_id)
+      .subscribe((resp: any) => {
+        this.Ordenes = resp.data || [];
+        this.total = resp.total;
+        this.totalPages = resp.totalPages;
+        this.loading = false;
+      });
+  }
+
+  FiltrarPorProducto(e) {
+    if (e != '#') {
       this.loading = true;
       setTimeout(() => {
         console.log(this.Ordenes)
@@ -124,61 +141,61 @@ export class ConsultaOrdenComponent implements OnInit {
         this.Ordenes = filtered;
         this.loading = false;
       }, 1000);
-    }else{
+    } else {
       this.filtrarCliente(this.CLIENTES_ACTUAL)
     }
   }
 
-  MostarOrden(e){
-    if(e != 'all'){
+  MostarOrden(e) {
+    if (e != 'all') {
       // console.log(e)
       this.all_ = false;
       this.Orden = this.Ordenes[e]
       this.selected = true;
-    }else if(e === 'all'){
+    } else if (e === 'all') {
       this.all_ = true;
     }
   }
-  puntoYcoma(n){
-    if(!n){
+  puntoYcoma(n) {
+    if (!n) {
       return 0
     }
     n = Number(n)
     return n = new Intl.NumberFormat('de-DE').format(n)
   }
 
-  BuscarProductos(id){
+  BuscarProductos(id) {
     this.api.getById(id)
-        .subscribe((resp:any)=>{
-          this.PRODUCTOS = resp.productos;
-          // // // console.log(this.PRODUCTOS)
+      .subscribe((resp: any) => {
+        this.PRODUCTOS = resp.productos;
+        // // // console.log(this.PRODUCTOS)
       })
   }
 
   public producto__;
-  producto_selected(e){
-    if(e != '#'){
+  producto_selected(e) {
+    if (e != '#') {
       this.PRODUCTO = e
-      let produc = this.PRODUCTOS.find(x=> x._id == e)
+      let produc = this.PRODUCTOS.find(x => x._id == e)
       this.producto__ = produc.producto
       // console.log(produc.producto)
-    }else{
+    } else {
       this.PRODUCTO = []
     }
   }
 
   public _CANTIDAD = ''
-  NuevaCantidad(e){
+  NuevaCantidad(e) {
     this._CANTIDAD = e
   }
 
   public __Fecha = ''
-  Fecha__(e){
+  Fecha__(e) {
     this.__Fecha = e
   }
 
   public PRODUCTOS = [];
-  Edicion(i){
+  Edicion(i) {
     document.getElementById(`status_${i}`).style.width = '1px';
     document.getElementById(`cantidad_${i}`).style.display = 'none';
     document.getElementById(`fecha_${i}`).style.display = 'none';
@@ -190,77 +207,77 @@ export class ConsultaOrdenComponent implements OnInit {
     document.getElementById(`producto__${i}`).style.display = 'block';
     document.getElementById(`listo_${i}`).style.display = 'block';
     this.api.getById(this.Orden.cliente._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.PRODUCTOS = resp.productos
         // console.log(this.PRODUCTOS)
       })
   }
 
-  Terminar( i){
+  Terminar(i) {
     this.api.putOrdenesDeCompra(this.Orden, this.Orden._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         document.getElementById(`status_${i}`).style.width = '150px';
-    document.getElementById(`cantidad_${i}`).style.display = 'block';
-    document.getElementById(`fecha_${i}`).style.display = 'block';
-    document.getElementById(`edit_${i}`).style.display = 'block';
-    // document.getElementById(`dele_${i}`).style.display = 'block';
-    document.getElementById(`producto_${i}`).style.display = 'block'
-    document.getElementById(`cantidad__${i}`).style.display = 'none';
-    document.getElementById(`fecha__${i}`).style.display = 'none';
-    document.getElementById(`producto__${i}`).style.display = 'none';
-    document.getElementById(`listo_${i}`).style.display = 'none';
+        document.getElementById(`cantidad_${i}`).style.display = 'block';
+        document.getElementById(`fecha_${i}`).style.display = 'block';
+        document.getElementById(`edit_${i}`).style.display = 'block';
+        // document.getElementById(`dele_${i}`).style.display = 'block';
+        document.getElementById(`producto_${i}`).style.display = 'block'
+        document.getElementById(`cantidad__${i}`).style.display = 'none';
+        document.getElementById(`fecha__${i}`).style.display = 'none';
+        document.getElementById(`producto__${i}`).style.display = 'none';
+        document.getElementById(`listo_${i}`).style.display = 'none';
 
-    Swal.fire({
-      title:'Orden editada con exito!',
-      icon:'success',
-      showConfirmButton:false,
-      timerProgressBar:true,
-      toast:true,
-      timer:2000,
-      position:'top-end'
-    })
+        Swal.fire({
+          title: 'Orden editada con exito!',
+          icon: 'success',
+          showConfirmButton: false,
+          timerProgressBar: true,
+          toast: true,
+          timer: 2000,
+          position: 'top-end'
+        })
       })
   }
-  
-  AgregarNuevo(){
+
+  AgregarNuevo() {
     let id = this.Orden._id
     // console.log(this.Orden)
     this.Orden.productos.push(
       {
-        producto:this.PRODUCTO,
-        nombre:this.producto__,
-        cantidad:this._CANTIDAD,
-        fecha:this.__Fecha
+        producto: this.PRODUCTO,
+        nombre: this.producto__,
+        cantidad: this._CANTIDAD,
+        fecha: this.__Fecha
       })
-      
-      this.__Fecha = ''
-      this._CANTIDAD = ''
-      this.PRODUCTO = []
-      this.listoOCEDIT()
-      this.GetOrdens()
-      setTimeout(()=> {
-        let index = this.Ordenes.findIndex(x=> x._id === id)
-        this.MostarOrden(index)
-      },1000)
+
+    this.__Fecha = ''
+    this._CANTIDAD = ''
+    this.PRODUCTO = []
+    this.listoOCEDIT()
+    this.GetOrdens()
+    setTimeout(() => {
+      let index = this.Ordenes.findIndex(x => x._id === id)
+      this.MostarOrden(index)
+    }, 1000)
 
   }
 
-  edicionOC(){
+  edicionOC() {
     document.getElementById(`EditionForm`).style.display = 'block';
     document.getElementById('addprod').style.display = 'block';
     document.getElementById(`okbutton`).style.display = 'block';
     document.getElementById(`editionButton`).style.display = 'none';
     document.getElementById(`Info__`).style.display = 'none';
     this.api.getById(this.Orden.cliente._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.PRODUCTOS = resp.productos
         // console.log(this.PRODUCTOS)
       })
   }
 
-  listoOCEDIT(){
+  listoOCEDIT() {
     this.api.putOrdenesDeCompra(this.Orden, this.Orden._id)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         document.getElementById(`EditionForm`).style.display = 'none';
         document.getElementById('addprod').style.display = 'none';
         document.getElementById(`okbutton`).style.display = 'none';

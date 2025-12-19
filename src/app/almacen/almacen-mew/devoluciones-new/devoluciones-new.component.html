@@ -1,0 +1,37 @@
+<div class="modal" [ngClass]="{'is-active':Dev_}">
+    <div class="modal-background" (click)="Modal_Devolucion()"></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <p class="subtitulo">Devoluciones pendientes</p>
+            <hr>
+            <ng-container *ngFor="let devolucion of Devoluciones">
+                <p class="subtitulo">Orden: {{devolucion.orden}}</p>
+                <b>Motivo: </b> {{devolucion.motivo}}
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <th>Material</th>
+                        <th>Lote / codigo</th>
+                        <th>Cantidad</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let material of devolucion.filtrado">
+                            <td>{{material.material.nombre}}
+                                <ng-container *ngIf="material.material.ancho">
+                                    {{material.material.ancho}}x{{material.material.largo}}
+                                </ng-container>
+                                 ({{material.material.marca}})
+                            </td>
+                            <td>{{material.lote}} / {{material.codigo}}</td>
+                            <td>{{material.cantidad}} {{material.material.unidad}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <button class="button is-primary"
+                    (click)="confirmarDevolucion(devolucion.filtrado, devolucion._id)">Confirmar</button>
+                 <button class="button is-danger" (click)="CancelarDevolucion(devolucion._id)">Cancelar</button>
+                <hr>
+            </ng-container>
+        </div>
+    </div>
+</div>

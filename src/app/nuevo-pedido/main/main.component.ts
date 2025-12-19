@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { iif } from 'rxjs';
+import { forkJoin, iif } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -96,9 +96,9 @@ export class MainComponent implements OnInit {
 
   public OrdenesDeCompra = []
   OrdenesdeCompra() {
-    this.api.getOrdenesDeCompra()
+    this.api.getOrdenesDeCompraPorCliente(1, 1000, this.cliente_selected)
       .subscribe((resp: any) => {
-        this.OrdenesDeCompra = resp
+        this.OrdenesDeCompra = resp.data
         // console.log(this.OrdenesDeCompra)
       })
   }
@@ -146,20 +146,23 @@ export class MainComponent implements OnInit {
   }
 
   public OrdenSelected
-  OrdenDeCompraSeleccionada(e) {
+  OrdenDeCompraSeleccionada = async (e) => {
+    // await this.cliente_selected(this.ordenesFiltered[e].cliente._id)
     this.cs = true;
     this.OrdenSelected = this.ordenesFiltered[e];
     (<HTMLInputElement>document.getElementById('cliente')).value = this.ordenesFiltered[e].cliente._id;
-    this.cliente_selected(this.ordenesFiltered[e].cliente._id)
   }
 
   public ordenesFiltered
   cliente_selected(e) {
 
-    this.ordenesFiltered = this.OrdenesDeCompra.filter(x => x.cliente._id === e)
-    this.ps = false
-    this.oc_ = ''
-    this.fo_ = ''
+    this.api.getOrdenesDeCompraPorCliente(1, 1000, e)
+      .subscribe((resp: any) => {
+        this.ordenesFiltered = resp.data
+        this.ps = false
+        this.oc_ = ''
+        this.fo_ = ''
+      })
     if (e === '0') {
       this.cs = false
     } else {
@@ -186,7 +189,7 @@ export class MainComponent implements OnInit {
   cambios() {
 
     this.Ejemplares_montados = this.PRODUCTO.ejemplares[this.i_montajes]
-    // this.paginas = Math.ceil(this.Cantidad_ejemplares / this.Ejemplares_montados)
+    // this.paginas = Math.ceil(=this.Cantidad_ejemplares / this.Ejemplares_montados)
     this.Ejemplares(this.Ejemplares_montados)
     // this.Cantidad(this.Cantidad_ejemplares)
 
@@ -525,9 +528,9 @@ export class MainComponent implements OnInit {
   // }
 
 
-  finalizar(cantidad) {
-
-    let data = {
+  finalizar = async (cantidad) => {
+    // --- 1. Construcción del payload ---
+    const data = {
       usuario: `${this.usuario.Nombre} ${this.usuario.Apellido}`,
       fecha_o: this.fo_,
       montaje: this.i_montajes,
@@ -539,41 +542,49 @@ export class MainComponent implements OnInit {
       demasia: this.demasia_,
       fecha_s: this.Fecha_S,
       almacen: this.ae_,
-      e_c: (<HTMLInputElement>document.getElementById(`e_c`)).checked,
-      i_ancho: (<HTMLInputElement>document.getElementById(`ancho_imprimir`)).value,
-      i_largo: (<HTMLInputElement>document.getElementById(`largo_imprimir`)).value,
+      e_c: (document.getElementById('e_c') as HTMLInputElement)?.checked,
+      i_ancho: (document.getElementById('ancho_imprimir') as HTMLInputElement)?.value,
+      i_largo: (document.getElementById('largo_imprimir') as HTMLInputElement)?.value,
       observacion: this.observacion_,
       ordencompra: this.OrdenSelected,
       ProductodeProductos: this.ProductodeProductos
-    }
+    };
 
-    this.api.postOrden(data)
-      .subscribe((resp: any) => {
-        let fases = this.PRODUCTO.grupo.tipos.length
-        for (let x = 0; x < fases; x++) {
+    // --- 2. Primero creamos la orden ---
+    this.api.postOrden(data).subscribe({
+      next: (resp: any) => {
 
-          let fase = this.PRODUCTO.grupo.tipos[x]
-          // // // console.log(this.PRODUCTO.grupo.tipos[x])
-          let maquina = (<HTMLInputElement>document.getElementById(`${fase}-maquina`)).value
-          let fechaI = (<HTMLInputElement>document.getElementById(`${fase}`)).value
-          let fecha = (<HTMLInputElement>document.getElementById(`${fase}-C`)).value
+        const tipos = this.PRODUCTO.grupo?.tipos ?? [];
+        const fases = tipos.length;
 
-          let Data = {
-            maquina,
-            fechaI,
-            fecha,
-            orden: resp,
-            pos: x
+        // --- 3. Preparamos todas las llamadas de postOrden2 ---
+        const requests = tipos.map((fase: string, index: number) => {
+          const maquina = (document.getElementById(`${fase}-maquina`) as HTMLInputElement)?.value;
+          const fechaI = (document.getElementById(`${fase}`) as HTMLInputElement)?.value;
+          const fecha = (document.getElementById(`${fase}-C`) as HTMLInputElement)?.value;
+
+          const Data = { maquina, fechaI, fecha, orden: resp, pos: index };
+          return this.api.postOrden2(Data);
+        });
+
+        // --- 4. Ejecutamos todas las fases en paralelo y esperamos ---
+        forkJoin(requests).subscribe({
+          next: () => {
+            // Cuando TODAS las fases terminan correctamente:
+            this.router.navigate([`/orden-produccion/${resp}`]);
+          },
+          error: (err) => {
+            console.error(`Error en postOrden2:`, err);
+            // Igual dejamos navegar o puedes poner un alert si quieres
+            this.router.navigate([`/orden-produccion/${resp}`]);
           }
-
-          this.api.postOrden2(Data)
-            .subscribe((respuesta: any) => {
-              // // // console.log(respuesta)
-            })
-
-        }
-        this.router.navigate([`/orden-produccion/${resp}`]);
-      })
+        });
+      },
+      error: (err) => {
+        console.error('Error en postOrden:', err);
+      }
+    });
   }
+
 
 }

@@ -92,10 +92,9 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="button" (click)="asignar(i,n)"
-                                    style="background-color: transparent; border: none;">
+                                <button class="button is-ghost-icon" (click)="asignar(i,n)">
                                     <span class="icon">
-                                        <i class="fas fa-plus-circle curs"></i>
+                                        <i class="fas fa-plus-circle"></i>
                                     </span>
                                 </button>
                             </td>
@@ -120,18 +119,23 @@
                     <hr>
                     <ng-container *ngIf="this.material_cubierto >= orden.producto.materiales[orden.montaje].length">
                         <ng-container *ngIf="!orden.motivo">
-                            <ng-container
-                                *ngIf="this.material_cubierto > (orden.producto.materiales[orden.montaje].length)">
-                                <button class="button is-success" [ngClass]="{'is-loading':loading_button}"
+                            <ng-container *ngIf="cantidad_cinta ? 
+         (material_cubierto > orden.producto.materiales[orden.montaje].length) : 
+         (material_cubierto >= orden.producto.materiales[orden.montaje].length)">
+
+                                <button class="button is-success" [ngClass]="{'is-loading': loading_button}"
                                     (click)="Finalizar()">
+
                                     <span class="icon">
                                         <i class="fas fa-pallet"></i>
                                     </span>
                                     <span>
                                         Asignar material
                                     </span>
+
                                 </button>
                             </ng-container>
+
                         </ng-container>
                         <ng-container *ngIf="orden.motivo">
                             <button class="button is-success" [ngClass]="{'is-loading':loading_button}"

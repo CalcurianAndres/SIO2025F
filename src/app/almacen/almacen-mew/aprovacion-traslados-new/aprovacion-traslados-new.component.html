@@ -1,0 +1,100 @@
+<div class="modal" [ngClass]="{'is-active':traspasos_pendientes}">
+    <div class="modal-background"></div>
+    <div class="modal-card" style="width: 60%;">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Traspasos Pendientes</p>
+            <button class="delete" aria-label="close" (click)="cerrar()"
+                style="border: none; background-color: transparent; color: red; cursor: pointer;"><i
+                    class="fas fa-times-circle"></i></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="card" *ngFor="let traslados of pendientes">
+                <div class="card-content">
+                    <b>Destino: </b>{{traslados.destino}}<br>
+                    <b>Motivo: </b>{{traslados.observacion}}
+                    <hr>
+
+                    <span class="subtitle"><b>Envio total</b></span>
+                    <table class="table is-fullwidth is-striped" *ngIf="exterior_sencillo">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Marca</th>
+                                <th>Calibre (pt)</th>
+                                <th>Gramaje (g/m²)</th>
+                                <th>Cantidad total (und)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of getProductosAgrupados_(traslados.materiales)">
+                                <td>{{item.nombre}} ({{item.ancho}}x{{item.largo}})</td>
+                                <td>{{item.marca}}</td>
+                                <td>{{item.calibre}}</td>
+                                <td>{{item.gramaje}}</td>
+                                <td>{{item.total | number:'2.0-0'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <span class="subtitle"><b>Detallado</b></span>
+                    <!-- Tabla con scroll y th fijo  -->
+                    <div style="max-height: 300px; overflow: auto; display: block;">
+                        <table class="table is-fullwidth is-striped" style="border-collapse: collapse; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Material</th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Marca
+                                    </th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Calibre
+                                        (pt)</th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Gramaje
+                                        (g/m²)</th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Lote
+                                    </th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Código
+                                    </th>
+                                    <th style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        Cantidad (und)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let producto of traslados.materiales; index as i">
+                                    <td>{{producto.material.nombre}}
+                                        ({{producto.material.ancho}}x{{producto.material.largo}})</td>
+                                    <td>{{producto.material.marca}}</td>
+                                    <td>{{producto.material.calibre}}</td>
+                                    <td>{{producto.material.gramaje}}</td>
+                                    <td>{{producto.lote}}</td>
+                                    <td>{{producto.codigo}}</td>
+                                    <td>{{producto.cantidad | number:'2.0-0'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-success" (click)="aceptar_traslado(traslados._id)">
+                                <span class="icon"><i class="fas fa-check"></i></span>
+                                <span>Aceptar solicitud</span>
+                            </button>
+                        </div>
+                        <div class="control">
+                            <button class="button is-danger" (click)="cancelar_tralado(traslados._id)">
+                                <span class="icon"><i class="fas fa-ban"></i></span>
+                                <span>Rechazar solicitud</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+</div>

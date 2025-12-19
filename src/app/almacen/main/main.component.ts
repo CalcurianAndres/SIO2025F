@@ -627,205 +627,282 @@ export class MainComponent implements OnInit {
   }
 
   generarPdf_() {
-    let grupos = this.SECCIONES;
+
     let grupo = this.grupo_to_download;
     let productos = this.listFiltered;
-    let hoy = moment().format('DD/MM/YYYY')
+    let hoy = moment().format('DD/MM/YYYY');
 
-    function generar_pdf() {
+    const generar_pdf = () => {
+
       const pdf = new PdfMakeWrapper();
       PdfMakeWrapper.setFonts(pdfFonts);
+
       pdf.pageOrientation('landscape');
+      pdf.pageMargins([25, 20, 25, 20]);
 
+      const headerColor = '#1e293b';  // Azul oscuro elegante
+      const tableHeader = '#334155';  // Gris oscuro moderno
+      const zebra = '#f1f5f9';
+
+      /* ================== HEADER ===================== */
       pdf.add(
         new Table([
           [
-            new Cell(new Txt(hoy).end).border([false, false]).end,
+            new Cell(new Txt('REPORTE DE INVENTARIO').bold().fontSize(18).color('#ffffff').end)
+              .fillColor(headerColor)
+              .border([false, false, false, false])
+              .alignment('center')
+              .end
+          ],
+          [
+            new Cell(
+              new Txt(`Grupo: ${grupo}      |      Fecha: ${hoy}`)
+                .fontSize(11)
+                .color('#ffffff')
+                .end
+            )
+              .fillColor(headerColor)
+              .border([false, false, false, false])
+              .alignment('center')
+              .end
           ]
         ]).widths(['100%']).end
-      )
+      );
 
-      pdf.add(
-        new Table([
-          [
-            new Cell(new Txt('').end).border([false, false]).end,
-          ]
-        ]).widths(['100%']).end
-      )
+      pdf.add(new Txt('\n').end);
 
-      pdf.add(
-        new Table([
-          [
-            new Cell(new Txt(grupo).end).fillColor('#000000').color('#ffffff').end,
-          ]
-        ]).widths(['100%']).end
-      )
+      /* ================== TABLA HEADER ===================== */
 
-      pdf.add(
-        new Table([
-          [
-            new Cell(new Txt('Material').end).fillColor('#696969').end,
-            new Cell(new Txt('Marca').end).fillColor('#696969').end,
-            new Cell(new Txt('Presentación').end).fillColor('#696969').end,
-            new Cell(new Txt('Código').end).fillColor('#696969').end,
-            new Cell(new Txt('Lote').end).fillColor('#696969').end,
-            new Cell(new Txt('Gramaje').end).fillColor('#696969').end,
-            new Cell(new Txt('Calibre').end).fillColor('#696969').end,
-            new Cell(new Txt('Total').end).fillColor('#696969').end,
-          ]
-        ]).widths(['24%', '16%', '17%', '9%', '9%', '8%', '7%', '10%']).end
-      )
+      const header = [
+        new Cell(new Txt('Material').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Marca').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Presentación').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Código').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Lote').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Gramaje').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Calibre').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        new Cell(new Txt('Total').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+      ];
+
+      const body: any[] = [header];
+
+      let totalGeneral = 0;
+      let fila = 0;
+
+      /* ================== FILAS ===================== */
+
       for (let n = 0; n < productos.length; n++) {
-        if (productos[n].material.grupo.nombre === grupo && productos[n].cantidad > 0) {
-          let producto = (productos[n].material.neto * productos[n].cantidad).toFixed(2);
-          if (grupo === 'Sustrato') {
-            pdf.add(
-              new Table([
-                [
-                  new Cell(new Txt(`${productos[n].material.nombre} (${productos[n].material.ancho} x ${productos[n].material.largo})`).end).end,
-                  new Cell(new Txt(productos[n].material.marca).end).end,
-                  new Cell(new Txt(`${productos[n].material.presentacion} ${productos[n].material.neto} ${productos[n].material.unidad}`).end).end,
-                  new Cell(new Txt(productos[n].codigo).end).end,
-                  new Cell(new Txt(productos[n].lote).end).end,
-                  new Cell(new Txt(productos[n].material.gramaje).end).end,
-                  new Cell(new Txt(productos[n].material.calibre).end).end,
-                  new Cell(new Txt(`${producto} ${productos[n].material.unidad}`).end).end,
-                ]
-              ]).widths(['24%', '16%', '17%', '9%', '9%', '8%', '7%', '10%']).end
-            )
-          } else {
-            pdf.add(
-              new Table([
-                [
-                  new Cell(new Txt(`${productos[n].material.nombre}`).end).end,
-                  new Cell(new Txt(productos[n].material.marca).end).end,
-                  new Cell(new Txt(`${productos[n].material.presentacion} ${productos[n].material.neto} ${productos[n].material.unidad}`).end).end,
-                  new Cell(new Txt(productos[n].codigo).end).end,
-                  new Cell(new Txt(productos[n].lote).end).end,
-                  new Cell(new Txt('N/A').end).end,
-                  new Cell(new Txt('N/A').end).end,
-                  new Cell(new Txt(`${producto} ${productos[n].material.unidad}`).end).end,
-                ]
-              ]).widths(['24%', '16%', '17%', '9%', '9%', '8%', '7%', '10%']).end
-            )
-          }
-        }
 
+        if (productos[n].material.grupo.nombre === grupo && productos[n].cantidad > 0) {
+
+          let producto = (productos[n].material.neto * productos[n].cantidad);
+          totalGeneral += producto;
+
+          let bg = fila % 2 === 0 ? '#ffffff' : zebra;
+
+          if (grupo === 'Sustrato') {
+            body.push([
+              new Cell(new Txt(`${productos[n].material.nombre} (${productos[n].material.ancho} x ${productos[n].material.largo})`).end).fillColor(bg).end,
+              new Cell(new Txt(productos[n].material.marca).end).fillColor(bg).end,
+              new Cell(new Txt(`${productos[n].material.presentacion} ${productos[n].material.neto} ${productos[n].material.unidad}`).end).fillColor(bg).end,
+              new Cell(new Txt(productos[n].codigo).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(productos[n].lote).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(productos[n].material.gramaje).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(productos[n].material.calibre).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(`${producto.toFixed(2)} ${productos[n].material.unidad}`).bold().end).fillColor(bg).alignment('center').end,
+            ]);
+          } else {
+            body.push([
+              new Cell(new Txt(productos[n].material.nombre).end).fillColor(bg).end,
+              new Cell(new Txt(productos[n].material.marca).end).fillColor(bg).end,
+              new Cell(new Txt(`${productos[n].material.presentacion} ${productos[n].material.neto} ${productos[n].material.unidad}`).end).fillColor(bg).end,
+              new Cell(new Txt(productos[n].codigo).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(productos[n].lote).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt('N/A').end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt('N/A').end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(`${producto.toFixed(2)} ${productos[n].material.unidad}`).bold().end).fillColor(bg).alignment('center').end,
+            ]);
+          }
+
+          fila++;
+        }
       }
 
-      pdf.create().download()
+      /* ================== TABLA ===================== */
+
+      pdf.add(
+        new Table(body)
+          .widths(['25%', '15%', '18%', '8%', '8%', '8%', '8%', '10%'])
+          .layout('lightHorizontalLines')
+          .end
+      );
+
+      pdf.add(new Txt('\n').end);
+
+      /* ================== TOTAL ===================== */
+
+      pdf.add(
+        new Table([
+          [
+            new Cell(new Txt('TOTAL GENERAL').bold().fontSize(13).end)
+              .fillColor('#0f172a')
+              .color('#ffffff')
+              .alignment('right')
+              .colSpan(7)
+              .end,
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            new Cell(new Txt(`${totalGeneral.toFixed(2)}`).bold().fontSize(13).end)
+              .fillColor('#0f172a')
+              .color('#ffffff')
+              .alignment('center')
+              .end,
+          ]
+        ]).widths(['25%', '15%', '18%', '8%', '8%', '8%', '8%', '10%']).end
+      );
+
+      // Footer
+      pdf.footer(() => {
+        return {
+          text: `Poligrafica • ${hoy}`,
+          fontSize: 8,
+          alignment: 'center',
+          margin: [0, 10, 0, 0],
+          color: '#334155'
+        };
+      });
+
+      pdf.create().download(`Inventario_${grupo}_${moment().format('YYYYMMDD')}.pdf`);
     }
+
     generar_pdf();
   }
 
 
-  _generarPdf_() {
-    let grupo = this.grupo_to_download;
-    let material = this.TOTALES
-    let hoy = moment().format('DD/MM/YYYY')
 
+  _generarPdf_() {
+    const grupo = this.grupo_to_download;
+    const material = this.TOTALES;
+    const hoy = moment().format('DD/MM/YYYY');
 
     function generarResumen() {
+
       const pdf = new PdfMakeWrapper();
       PdfMakeWrapper.setFonts(pdfFonts);
 
+      const headerColor = '#1f2937';
+      const tableHeader = '#374151';
+      const zebra = '#f1f5f9';
 
+      /* ===== TITULO ===== */
       pdf.add(
         new Table([
           [
-            new Cell(new Txt(hoy).end).border([false, false]).end,
-          ]
-        ]).widths(['100%']).end
-      )
-
-      pdf.add(
-        new Table([
+            new Cell(
+              new Txt('REPORTE RESUMIDO DE INVENTARIO')
+                .bold()
+                .fontSize(16)
+                .color('#fff')
+                .end
+            )
+              .fillColor(headerColor)
+              .alignment('center')
+              .border([false, false, false, false])
+              .end
+          ],
           [
-            new Cell(new Txt('').end).border([false, false]).end,
-          ]
+            new Cell(
+              new Txt(`Grupo: ${grupo}   |   Fecha: ${hoy}`)
+                .fontSize(10)
+                .color('#fff')
+                .end
+            )
+              .fillColor(headerColor)
+              .alignment('center')
+              .border([false, false, false, false])
+              .end
+          ],
         ]).widths(['100%']).end
-      )
+      );
 
-      pdf.add(
-        new Table([
-          [
-            new Cell(new Txt(grupo).end).fillColor('#000000').color('#ffffff').end
-          ]
-        ]).widths(['100%']).end
-      )
+      pdf.add(new Txt('\n').end);
 
-      pdf.add(
-        new Table([
-          [
-            new Cell(new Txt('').fontSize(2).end).border([false, false]).end
-          ]
-        ]).widths(['100%']).end
-      )
+      /* ===== CABECERA TABLA ===== */
+
+      let encabezado: any[] = [];
 
       if (grupo === 'Sustrato') {
-        pdf.add(
-          new Table([
-            [
-              new Cell(new Txt('Material').end).fillColor('#ededed').end,
-              new Cell(new Txt('Marca').end).fillColor('#ededed').end,
-              new Cell(new Txt('Calibre').end).fillColor('#ededed').end,
-              new Cell(new Txt('Gramaje').end).fillColor('#ededed').end,
-              new Cell(new Txt('Total').end).fillColor('#ededed').end,
-            ]
-          ]).widths(['35%', '25%', '10%', '10%', '20%']).end
-        )
+        encabezado = [
+          new Cell(new Txt('Material').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+          new Cell(new Txt('Marca').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+          new Cell(new Txt('Calibre').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+          new Cell(new Txt('Gramaje').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+          new Cell(new Txt('Total').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        ];
       } else {
-        pdf.add(
-          new Table([
-            [
-              new Cell(new Txt('Material').end).fillColor('#ededed').end,
-              new Cell(new Txt('Marca').end).fillColor('#ededed').end,
-              new Cell(new Txt('Total').end).fillColor('#ededed').end,
-            ]
-          ]).widths(['60%', '30%', '10%']).end
-        )
+        encabezado = [
+          new Cell(new Txt('Material').bold().color('#fff').end).fillColor(tableHeader).end,
+          new Cell(new Txt('Marca').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+          new Cell(new Txt('Total').bold().color('#fff').end).fillColor(tableHeader).alignment('center').end,
+        ];
       }
 
-      if (grupo === 'Sustrato') {
-        for (let i = 0; i < material.length; i++) {
-          if (material[i].grupo === grupo) {
-            let total = (material[i].neto * material[i].total).toFixed(2);
-            total = `${total} ${material[i].unidad}`
-            pdf.add(
-              new Table([
-                [
-                  new Cell(new Txt(`${material[i].material} (${material[i].ancho} x ${material[i].largo})`).end).end,
-                  new Cell(new Txt(material[i].marca).end).end,
-                  new Cell(new Txt(material[i].calibre).end).end,
-                  new Cell(new Txt(material[i].gramaje).end).end,
-                  new Cell(new Txt(total).end).end,
-                ]
-              ]).widths(['35%', '25%', '10%', '10%', '20%']).end
-            )
+      const body: any[] = [encabezado];
+
+      let fila = 0;
+
+      for (let i = 0; i < material.length; i++) {
+
+        if (material[i].grupo === grupo) {
+
+          let total = (material[i].neto * material[i].total).toFixed(2);
+          const bg = fila % 2 === 0 ? '#ffffff' : zebra;
+
+          if (grupo === 'Sustrato') {
+            body.push([
+              new Cell(new Txt(`${material[i].material} (${material[i].ancho} x ${material[i].largo})`).end).fillColor(bg).end,
+              new Cell(new Txt(material[i].marca).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(material[i].calibre).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(material[i].gramaje).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(`${total} ${material[i].unidad}`).bold().end).fillColor(bg).alignment('center').end,
+            ]);
+          } else {
+            body.push([
+              new Cell(new Txt(`${material[i].material} (${material[i].presentacion} ${material[i].neto}${material[i].unidad})`).end).fillColor(bg).end,
+              new Cell(new Txt(material[i].marca).end).fillColor(bg).alignment('center').end,
+              new Cell(new Txt(`${total} ${material[i].unidad}`).bold().end).fillColor(bg).alignment('center').end,
+            ]);
           }
-        }
-      } else {
-        for (let i = 0; i < material.length; i++) {
-          if (material[i].grupo === grupo) {
-            let total = (material[i].neto * material[i].total).toFixed(2);
-            total = `${total} ${material[i].unidad}`
-            pdf.add(
-              new Table([
-                [
-                  new Cell(new Txt(`${material[i].material} (${material[i].presentacion} ${material[i].neto}${material[i].unidad})`).end).end,
-                  new Cell(new Txt(material[i].marca).end).end,
-                  new Cell(new Txt(total).end).end,
-                ]
-              ]).widths(['60%', '30%', '10%']).end
-            )
-          }
+
+          fila++;
         }
       }
 
-      pdf.create().download()
+      if (grupo === 'Sustrato') {
+        pdf.add(new Table(body).widths(['35%', '20%', '15%', '15%', '15%']).layout('lightHorizontalLines').end);
+      } else {
+        pdf.add(new Table(body).widths(['65%', '20%', '15%']).layout('lightHorizontalLines').end);
+      }
+
+      /* ===== PIE ===== */
+      pdf.footer(() => ({
+        text: `Poligrafica • ${hoy}`,
+        alignment: 'center',
+        fontSize: 8,
+        color: '#6b7280',
+        margin: [0, 10, 0, 0]
+      }));
+
+      pdf.create().download(`Resumen_${grupo}_${moment().format('YYYYMMDD')}.pdf`);
     }
+
     generarResumen();
   }
+
 
   generarPdf() {
     let bobinas = this.BOBINAS_

@@ -1,0 +1,64 @@
+<div class="modal" [ngClass]="{'is-active':Solicitud_retorno}">
+    <div class="modal-background" (click)="cerrar()"></div>
+    <div class="modal-card" style="width: 1200px;">
+        <div class="modal-card-body">
+
+            <span class="title">
+                Selecciona material
+            </span>
+            <hr>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">Desde:</label>
+                    <div class="select">
+                        <select [(ngModel)]="almacen">
+                            <option value="Wil Projects, C.A.">Wil Projects, C.A.</option>
+                            <option value="Redispaca Distribuidora de Papel, C.A.">Redispaca Distribuidora de Papel,
+                                C.A.</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control" *ngIf="almacen">
+                    <label for="" class="label">Material</label>
+                    <div class="select">
+                        <select [(ngModel)]="selected_" (change)="add_matrial($event.target.value)">
+                            <option value="{{i}}"
+                                *ngFor="let material of resumirMaterialesExteriorires(AlmacenExterno[almacen], almacen);index as i">
+                                {{material.nombre}} {{material.marca}} ({{material.ancho}}x{{material.largo}})
+                                {{material.gramaje}}g/m² / {{material.calibre}}pt</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <br>
+            <span class="title">
+                Cantidad de traslado
+            </span>
+            <hr>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">Cantidad de hojas</label>
+                    <input type="number" class="input" placeholder="Hojas a trasladar" [(ngModel)]="cantidad">
+                </div>
+            </div>
+
+
+            <br>
+            <span class="title">
+                Observación
+            </span>
+            <hr>
+            <textarea name="" id="" rows="3" class="textarea" [(ngModel)]="observacion"></textarea>
+            <hr>
+            <button class="button is-success" [disabled]="!observacion && selected" (click)="devolverMaterial()">
+                <div>Generar traslado</div>
+            </button>
+
+        </div>
+    </div>
+</div>

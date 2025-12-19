@@ -1,0 +1,38 @@
+<div class="modal" [ngClass]="{'is-active':Retorno_pendiente}">
+    <div class="modal-background" (click)="cerrar()"></div>
+    <div class="modal-card" *ngIf="Retorno_pendiente">
+        <div class="modal-card-body">
+
+            <span class="title">
+                Por aprobar
+            </span>
+            <hr>
+            <div *ngFor="let pendiente of Pendientes">
+
+                <b>Origen:</b> {{pendiente.origen}}<br>
+                <b>observación:</b> {{pendiente.observacion}} <br>
+                <b>Material:</b> {{pendiente.material.nombre}} {{pendiente.material.marca}}
+                ({{pendiente.material.ancho}}x{{pendiente.material.largo}}) {{pendiente.material.gramaje}}g/m²
+                {{pendiente.material.calibre}}pt<br>
+                <b>Cantidad:</b> {{pendiente.cantidad}} <br>
+                <b>Solicitado por:</b> {{pendiente.solicitado}} <br>
+                <br>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-success" (click)="updateRetorno(pendiente._id, 'Aprobado')">
+                            <span>Aceptar</span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-danger" (click)="updateRetorno(pendiente._id, 'Rechazado')">
+                            <span>Rechazar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
+            </div>
+        </div>
+    </div>
+</div>

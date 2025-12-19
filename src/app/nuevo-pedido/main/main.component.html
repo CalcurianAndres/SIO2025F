@@ -6,9 +6,9 @@
 <br>
 <nav class="breadcrumb ml-5" aria-label="breadcrumbs">
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="/orden">órdenes</a></li>
-      <li class="is-active"><a>Orden de producción</a></li>
+        <li><a href="#">Home</a></li>
+        <li><a href="/orden">órdenes</a></li>
+        <li class="is-active"><a>Orden de producción</a></li>
     </ul>
 </nav>
 <div class="columns mt-5 ml-5">
@@ -22,7 +22,8 @@
                         <div class="select">
                             <select id='cliente' (change)='cliente_selected($event.target.value)'>
                                 <option value='0'>Selecciona Cliente</option>
-                                <option *ngFor='let cliente of CLIENTES' value="{{cliente._id}}">{{cliente.nombre}}</option>
+                                <option *ngFor='let cliente of CLIENTES' value="{{cliente._id}}">{{cliente.nombre}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -34,7 +35,8 @@
                         <div class="select">
                             <select (change)="OrdenDeCompraSeleccionada($event.target.value)">
                                 <option value="">Selecciona orden de compra</option>
-                                <option value="{{i}}" *ngFor="let orden of ordenesFiltered;index as i">{{orden.orden}}</option>
+                                <option value="{{i}}" *ngFor="let orden of ordenesFiltered;index as i">{{orden.orden}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -47,7 +49,10 @@
                         <div class="select">
                             <select id='producto' (change)='producto_selected($event)'>
                                 <option value='0'>Selecciona Producto</option>
-                                <option *ngFor='let producto of OrdenSelected.productos' value='{{producto.producto._id}}*{{producto.fecha}}'>E-{{producto.producto.codigo}}-{{producto.producto.version}}-{{producto.producto.edicion}} {{producto.producto.producto}} {{producto.fecha | date:'dd/MM/yyyy'}}</option>
+                                <option *ngFor='let producto of OrdenSelected.productos'
+                                    value='{{producto.producto._id}}*{{producto.fecha}}'>
+                                    E-{{producto.producto.codigo}}-{{producto.producto.version}}-{{producto.producto.edicion}}
+                                    {{producto.producto.producto}} {{producto.fecha | date:'dd/MM/yyyy'}}</option>
                             </select>
                         </div>
                     </div>
@@ -62,10 +67,10 @@
                 </div>
 
                 <div class="field" *ngIf='oc_'>
-                <label class="label">Fecha orden de compra:</label>
-                <div class="control">
-                    <input type="date" name="f_oc" class="input" max="{{hoy}}" [(ngModel)]="fo_" disabled>
-                </div>
+                    <label class="label">Fecha orden de compra:</label>
+                    <div class="control">
+                        <input type="date" name="f_oc" class="input" max="{{hoy}}" [(ngModel)]="fo_" disabled>
+                    </div>
                 </div>
 
                 <div class="field" *ngIf='fo_'>
@@ -97,30 +102,34 @@
                 <div class="titulo">Fases de la Producción</div>
                 <div class="card" *ngFor='let fase of PRODUCTO.grupo.tipos;index as i'>
                     <div class="card-content">
-                            <div class="subtitulo_">
-                                {{fase}}
-                            </div>
+                        <div class="subtitulo_">
+                            {{fase}}
+                        </div>
                         <div class="columns">
-                            <div class="column"><div class="field">
-                                <label class="label">Maquina</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select (change)='colocarFecha($event, fase,i)' id='{{fase}}-maquina'>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Maquina</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select (change)='colocarFecha($event, fase,i)' id='{{fase}}-maquina'>
                                                 <option value="">Selecciona Maquina</option>
-                                            <ng-container *ngFor='let maquina of MAQUINAS'>
-                                                <option value="{{maquina._id}}" *ngIf='maquina.tipo === fase'>{{maquina.nombre}}</option>
-                                            </ng-container>
-                                        </select>
+                                                <ng-container *ngFor='let maquina of MAQUINAS'>
+                                                    <option value="{{maquina._id}}" *ngIf='maquina.tipo === fase'>
+                                                        {{maquina.nombre}}</option>
+                                                </ng-container>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div></div>
+                            </div>
                             <div class="column">
                                 <div class="field">
                                     <label class="label">
                                         Fecha de Inicio
                                     </label>
                                     <div class="control">
-                                        <input type="date" min="{{hoy}}" class="input" id='{{fase}}' (change)='reprogramar($event, fase)'>
+                                        <input type="date" min="{{hoy}}" class="input" id='{{fase}}'
+                                            (change)='reprogramar($event, fase)'>
                                     </div>
                                 </div>
                             </div>
@@ -141,7 +150,7 @@
                     Generar Orden de Produccion
                 </button>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -157,7 +166,8 @@
                     <div class="field">
                         <label class="label">Cantidad</label>
                         <div class="control">
-                            <input type="number" class="input" [value]='Cantidad_de_orden' (change)='Cantidad($event)' #cantidad>
+                            <input type="number" class="input" [value]='Cantidad_de_orden' (change)='Cantidad($event)'
+                                #cantidad>
                         </div>
                     </div>
                 </div>
@@ -165,7 +175,8 @@
                     <div class="field">
                         <label class="label">Demasía (%)</label>
                         <div class="control">
-                            <input type="number" class="input" value='0' id='demasia_input' (change)='Demasia($event.target.value)'>
+                            <input type="number" class="input" value='0' id='demasia_input'
+                                (change)='Demasia($event.target.value)'>
                         </div>
                     </div>
                 </div>
@@ -173,7 +184,8 @@
                     <div class="field">
                         <label class="label">Fecha Solic.</label>
                         <div class="control">
-                            <input type="date" class="input" [value]='Fecha_solicitada' [min]="hoy" (change)='Fecha_s($event.target.value)'>
+                            <input type="date" class="input" [value]='Fecha_solicitada' [min]="hoy"
+                                (change)='Fecha_s($event.target.value)'>
                         </div>
                     </div>
                 </div>
@@ -184,18 +196,18 @@
                     <div class="columns">
                         <div class="column">
                             <div class="columns">
-                                <ng-container >
+                                <ng-container>
                                     <!-- <ng-container *ngFor='let materiales of PRODUCTO.materiales[i_montajes]'> -->
                                     <!-- <ng-container *ngIf='materiales.producto.grupo.nombre === "Sustrato"'> -->
-                                        <ng-container>
-                                <div class="column">
-                                    <label class="label">ancho:</label>
-                                    <input type="number" min="10" class="input" value="0" id="ancho_imprimir">
-                                </div>
-                                <div class="column">
-                                    <label class="label">largo:</label>
-                                    <input type="number"  min="10" class="input" value="0" id="largo_imprimir">
-                                </div>
+                                    <ng-container>
+                                        <div class="column">
+                                            <label class="label">ancho:</label>
+                                            <input type="number" min="10" class="input" value="0" id="ancho_imprimir">
+                                        </div>
+                                        <div class="column">
+                                            <label class="label">largo:</label>
+                                            <input type="number" min="10" class="input" value="0" id="largo_imprimir">
+                                        </div>
                                     </ng-container>
                                 </ng-container>
                             </div>
@@ -235,32 +247,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                        <ng-container *ngFor='let materiales of PRODUCTO.materiales[i_montajes]'>
-                            <tr *ngIf='materiales.producto.grupo.nombre === "Sustrato"'>
-                                <td>
-                                    {{materiales.producto.nombre}} {{materiales.producto.marca}} ({{materiales.producto.ancho}} x {{materiales.producto.largo}})
-                                </td>
-                                <td>
-                                    {{paginas}}
-                                </td>
-                                <td>
-                                    {{buscar_tintas(materiales.producto.nombre,materiales.producto.marca,'NA',materiales.producto.ancho,materiales.producto.largo,materiales.producto.calibre)}}
-                                </td>
-                                <td>
-                                    {{buscar_tintas(materiales.producto.nombre,materiales.producto.marca,'NA',materiales.producto.ancho,materiales.producto.largo,materiales.producto.calibre) - paginas}}
-                                </td>
-                            </tr>
-                        </ng-container>
-                        </tbody>
-                    </table>
-                    <hr>
+                    <ng-container *ngFor='let materiales of PRODUCTO.materiales[i_montajes]'>
+                        <tr *ngIf='materiales.producto.grupo.nombre === "Sustrato"'>
+                            <td>
+                                {{materiales.producto.nombre}} {{materiales.producto.marca}}
+                                ({{materiales.producto.ancho}} x {{materiales.producto.largo}})
+                            </td>
+                            <td>
+                                {{paginas}}
+                            </td>
+                            <td>
+                                {{buscar_tintas(materiales.producto.nombre,materiales.producto.marca,'NA',materiales.producto.ancho,materiales.producto.largo,materiales.producto.calibre)}}
+                            </td>
+                            <td>
+                                {{buscar_tintas(materiales.producto.nombre,materiales.producto.marca,'NA',materiales.producto.ancho,materiales.producto.largo,materiales.producto.calibre)
+                                - paginas}}
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            <hr>
             <b>Materia Prima</b>
             <div *ngIf="SinMaterial">
                 <article class="message is-danger">
                     <div class="message-body">
-                      Actualmente en su inventario no hay registrada la materia prima solicitada para realizar este producto, ingrese nueva materia e intentelo de nuevo
+                        Actualmente en su inventario no hay registrada la materia prima solicitada para realizar este
+                        producto, ingrese nueva materia e intentelo de nuevo
                     </div>
-                  </article>
+                </article>
             </div><br>
             <b>Tintas</b>
             <table class="table is-fullwidth">
@@ -323,7 +338,8 @@
                             <td>{{((material.cantidad * Cantidad_ejemplares) / 1000).toFixed(2)}}</td>
                             <td>{{buscar_tintas(material.producto.nombre,material.producto.marca)}}</td>
                             <!-- <td>{{restantes_(material.producto.nombre,material.producto.marca,i)}}</td> -->
-                            <td>{{(buscar_tintas(material.producto.nombre,material.producto.marca)-((material.cantidad * Cantidad_ejemplares) / 1000).toFixed(2))}}</td>
+                            <td>{{(buscar_tintas(material.producto.nombre,material.producto.marca)-((material.cantidad *
+                                Cantidad_ejemplares) / 1000).toFixed(2))}}</td>
                         </tr>
                     </ng-container>
                 </tbody>
@@ -349,7 +365,7 @@
                         </tr>
                     </ng-container>
                 </tbody>
-            </table> 
+            </table>
             <button class="button is-primary" (click)='TimesTime()' *ngIf="!SinMaterial">
                 <span class="icon">
                     <i class="far fa-clock"></i>

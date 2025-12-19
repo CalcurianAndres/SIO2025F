@@ -10,46 +10,56 @@ import { InventarioComponent } from './inventario/inventario.component';
 import { AsignacionNewComponent } from './asignacion-new/asignacion-new.component';
 import { RepuestosComponent } from './repuestos/repuestos.component';
 import { MovimientoMaterialComponent } from './movimiento-material/movimiento-material.component';
+import { AlmacenMewComponent } from './almacen-mew/almacen-mew.component';
+import { ConsultaEstadisticasComponent } from './almacen-mew/consulta-estadisticas/consulta-estadisticas.component';
 
-const routes: Routes =[
+const routes: Routes = [
   {
-    path:'',
-    component:AlmacenComponent,
-    children:[
+    path: '',
+    component: AlmacenComponent,
+    children: [
       {
-        path:'',
-        component:IndexComponent
+        path: '',
+        component: IndexComponent
       },
       {
-        path:'reportes',
-        component:ReportesComponent
+        path: 'reportes',
+        component: ReportesComponent
       },
       {
-        path:'recepcion',
-        component:RecepcionComponent
+        path: 'recepcion',
+        component: RecepcionComponent
       },
       {
-        path:'almacen',
-        component:MainComponent
+        path: 'almacen',
+        component: MainComponent
       },
       {
-        path:'inventario',
-        component:InventarioComponent
+        path: 'inventario',
+        component: InventarioComponent
       },
       {
-        path:'asignacion',
-        component:AsignacionNewComponent
+        path: 'asignacion',
+        component: AsignacionNewComponent
       },
       {
-        path:'repuestos',
-        component:RepuestosComponent
+        path: 'repuestos',
+        component: RepuestosComponent
       },
       {
-        path:'movimiento-material',
-        component:MovimientoMaterialComponent
+        path: 'movimiento-material',
+        component: MovimientoMaterialComponent
+      },
+      {
+        path: 'almacen-new',
+        component: AlmacenMewComponent
+      },
+      {
+        path: 'consulta',
+        component: ConsultaEstadisticasComponent
       }
     ]
-}]
+  }]
 
 @NgModule({
   declarations: [],

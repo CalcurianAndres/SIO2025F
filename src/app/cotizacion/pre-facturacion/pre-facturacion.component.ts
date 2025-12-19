@@ -187,6 +187,7 @@ export class PreFacturacionComponent implements OnInit {
         this.n_documento = ''
         this.tipo_documento = 'F - '
         this.Facturacion = false;
+        this.por_cajas = false;
         Swal.fire(
           {
             title: 'Listo.',

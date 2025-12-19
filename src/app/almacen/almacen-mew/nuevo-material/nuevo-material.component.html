@@ -1,0 +1,166 @@
+<div class="modal" [ngClass]="{'is-active':newMaterial}">
+    <div class="modal-background" (click)='cerrar()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">Nuevo Material</div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">
+                            Grupo de Material
+                        </label>
+                        <div class="select">
+                            <select (change)='Cambio_opciones($event.target.value)' id='selected' value='otros'>
+                                <option value="{{seccion._id}}" *ngFor='let seccion of grupos'>
+                                    {{seccion.nombre}}
+                                </option>
+                                <option value="otros">Nuevo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" *ngIf='OTRO'>
+                    <div class="field">
+                        <label class="label">Nombre del Nuevo Grupo</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="data.grupo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns" *ngIf="GrupoNombre() ===  'Cajas Corrugadas'">
+                <div class="column">
+                    <div class="control">
+                        <label class="label">Metros de cinta por caja</label>
+                        <div class="control">
+                            <input type="number" class="input" placeholder="Metros de cinta por caja"
+                                [(ngModel)]='data.cinta'>
+                        </div>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
+            <div class="Tinta" *ngIf="GrupoNombre() === 'Tinta'">
+                <div class="columns">
+                    <div class="column is-4">
+                        <div class="columns">
+                            <div class="column">
+                                <input type="radio" name="color" id="Negro" value="Negro"
+                                    (click)="define_color($event.target.value)" checked>
+                                <label> Negro</label> <br>
+                                <input type="radio" name="color" id="Cyan" value="Cyan"
+                                    (click)="define_color($event.target.value)">
+                                <label> Cyan</label> <br>
+                                <input type="radio" name="color" id="Magenta" value="Magenta"
+                                    (click)="define_color($event.target.value)">
+                                <label> Magenta</label> <br>
+                            </div>
+                            <div class="column">
+                                <input type="radio" name="color" id="Amarillo" value="Amarillo"
+                                    (click)="define_color($event.target.value)">
+                                <label> Amarillo</label> <br>
+                                <input type="radio" name="color" id="Pantone" value="Pantone"
+                                    (click)="define_color($event.target.value)">
+                                <label> Pantone</label> <br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-5">
+                        <div class="columns">
+                            <div class="column is-3">
+                                <label class="label">Color:</label>
+                            </div>
+                            <div class="column">
+                                <input type="text" class="input" value="Negro" id="color" [(ngModel)]="data.color"
+                                    [disabled]="!pantone_selected">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sustrato" *ngIf='GrupoNombre() === "Sustrato"'>
+                <hr>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Ancho</label>
+                            <div class="control">
+                                <input type="number" class="input" id="ancho_____" [(ngModel)]='data.ancho'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Largo</label>
+                            <div class="control">
+                                <input type="number" class="input" [(ngModel)]='data.largo'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Gramaje</label>
+                            <div class="control">
+                                <input type="number" class="input" id="x" [(ngModel)]='data.gramaje'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Calibre</label>
+                            <div class="control">
+                                <input type="number" class="input" id="y" [(ngModel)]='data.calibre'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Material</label>
+                        <div class="control">
+                            <input type="text" class="input" id="z" [(ngModel)]="data.producto">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Marca</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="data.marca">
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="field">
+                        <label class="label">Presentación</label>
+                        <div class="control">
+                            <input type="text" class="input" [(ngModel)]="data.presentacion">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column ">
+                    <div class="field has-addons">
+                        <p class="control">
+                            <span class="select">
+                                <select [(ngModel)]="data.unidad">
+                                    <option value="Kg">Kg.</option>
+                                    <option value="Und">Und.</option>
+                                    <option value="L">L.</option>
+                                </select>
+                            </span>
+                        </p>
+                        <p class="control">
+                            <input class="input" type="text" placeholder="Neto por unidad" [(ngModel)]="data.neto">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <button class="button is-primary" (click)="Almacenar()">Finalizar</button>
+        </div>
+    </div>
+</div>

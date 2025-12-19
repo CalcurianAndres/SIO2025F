@@ -582,8 +582,13 @@ export class RestApiService {
     return this.http.post(url, data)
   }
 
-  getOrdenesDeCompra() {
-    const url = `${this.api_url}/orden-compra`
+  getOrdenesDeCompra(page = 1, limit = 20) {
+    const url = `${this.api_url}/orden-compra?page=${page}&limit=${limit}`
+    return this.http.get(url)
+  }
+
+  getOrdenesDeCompraPorCliente(page = 1, limit = 20, cliente_id) {
+    const url = `${this.api_url}/orden-compras/${cliente_id}?page=${page}&limit=1000`
     return this.http.get(url)
   }
 
@@ -1008,6 +1013,21 @@ export class RestApiService {
 
   putRetornos(id, desicion) {
     const url = `${this.api_url}/retornos/${id}/${desicion}`;
+    return this.http.get(url)
+  }
+
+  getAlmacenPoligrafica() {
+    const url = `${this.api_url}/almacen-poligrafica`;
+    return this.http.get(url)
+  }
+
+  getMaterialesRegistradosNew() {
+    const url = `${this.api_url}/materiales-registrados`;
+    return this.http.get(url)
+  }
+
+  getAlmacenExteriorNuevo() {
+    const url = `${this.api_url}/Almacen-exterior-nuevo`;
     return this.http.get(url)
   }
 

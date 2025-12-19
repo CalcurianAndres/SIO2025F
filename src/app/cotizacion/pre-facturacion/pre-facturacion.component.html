@@ -307,13 +307,24 @@
             <hr>
             <div class="resumen" *ngIf="resumido">
                 <b>Resumen:</b><br>
-                {{Despachos[INDEX].despacho.producto}} <br>
-                <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 *
-                    (Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio :
-                    Escala.precio))}}</b><br>
-                <b>Subtotal (Bs): {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ?
-                    Despachos[INDEX].despacho.precio : Escala.precio,
-                    Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}} </b><br>
+                <ng-container *ngIf="por_cajas">
+                    {{Despachos[INDEX].despacho.producto}} <br>
+                    <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad *
+                        (Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio :
+                        Escala.precio))}}</b><br>
+                    <b>Subtotal (Bs): {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ?
+                        Despachos[INDEX].despacho.precio : Escala.precio,
+                        Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}} </b><br>
+                </ng-container>
+                <ng-container *ngIf="!por_cajas">
+                    {{Despachos[INDEX].despacho.producto}} <br>
+                    <b>Subtotal (USD): {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 *
+                        (Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio :
+                        Escala.precio))}}</b><br>
+                    <b>Subtotal (Bs): {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ?
+                        Despachos[INDEX].despacho.precio : Escala.precio,
+                        Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}} </b><br>
+                </ng-container>
 
                 <br>
                 <div class="field">

@@ -38,6 +38,9 @@ import { DesarrolloComponent } from './desarrollo/desarrollo.component';
 import { ComprasComponent } from './compras/compras.component';
 import { NumberFormatDirective } from './directives/number-format.directive';
 
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+
 
 
 @NgModule({
@@ -75,8 +78,8 @@ import { NumberFormatDirective } from './directives/number-format.directive';
     FormsModule,
     NgxQRCodeModule
   ],
-  exports:[NumberFormatDirective],
-  providers: [{provide: LOCALE_ID, useValue: 'es'}],
+  exports: [NumberFormatDirective],
+  providers: [{ provide: LOCALE_ID, useValue: 'es' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

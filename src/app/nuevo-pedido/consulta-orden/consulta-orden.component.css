@@ -3,53 +3,62 @@
     src: url(../../../assets/Roboto/Roboto-Black.ttf);
 }
 
-.mt-5{
+.mt-5 {
     margin-top: 15px;
 }
-.mt-3{
+
+.mt-3 {
     margin-top: 3px;
 }
-.titulo{
+
+.titulo {
     font-size: 50px;
     font-family: Roboto;
 }
-.cargando{
+
+.cargando {
     display: block;
     padding: 5px;
     background-color: rgb(78, 243, 78);
     color: white;
 }
-.modal-card{
+
+.modal-card {
     width: 70%;
 }
 
-.nueva_escala{
+.nueva_escala {
     display: none;
 }
 
-.close{
+.close {
     color: red;
     cursor: pointer;
 }
-.subtitulos{
+
+.subtitulos {
     font-size: 40px;
     font-family: Roboto;
 }
-.subtitulos-p{
+
+.subtitulos-p {
     font-size: 30px;
     font-family: Roboto;
 }
-.ml-5{
+
+.ml-5 {
     margin-left: 30px;
 }
 
-.cantidad{
+.cantidad {
     width: 200px;
 }
-.producto____{
+
+.producto____ {
     width: 150px;
 }
-.edicion_{
+
+.edicion_ {
     width: 150px;
 }
 
@@ -58,14 +67,24 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-  }
-  
-  .loader i {
+}
+
+.loader i {
     font-size: 50px;
     animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.is-info {
+    /* background-color: #209cee; */
+    color: var(--text-main) !important;
+}

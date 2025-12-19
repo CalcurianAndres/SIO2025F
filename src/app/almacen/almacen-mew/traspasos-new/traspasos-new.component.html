@@ -1,0 +1,86 @@
+<div class="modal" [ngClass]="{'is-active':traslados}">
+    <div class="modal-background"></div>
+    <div class="modal-card" style="width: 60%;">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Traspaso de material</p>
+            <button class="delete" aria-label="close" (click)="cerrar()"
+                style="border: none; background-color: transparent; color: red; cursor: pointer;"><i
+                    class="fas fa-times-circle"></i></button>
+        </header>
+        <section class="modal-card-body" *ngIf="traslados">
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">Almacen de destino</label>
+                    <div class="select">
+                        <select [(ngModel)]="almacen_selected">
+                            <option value="Wil Projects, C.A.">Wil Projects, C.A.</option>
+                            <option value="Redispaca Distribuidora de Papel, C.A.">Redispaca Distribuidora
+                                de
+                                Papel, C.A.</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control">
+                    <label class="label">Material</label>
+                    <div class="select">
+                        <select (change)="BuscarMaterialSelected($event.target)" [(ngModel)]="m_selected">
+                            <option [value]="sustrato | json"
+                                *ngFor="let sustrato of resumirMateriales(materiales[ID_GRUPO_SUSTRATO], ID_GRUPO_SUSTRATO)">
+                                {{sustrato.nombre}} ({{sustrato.ancho}} x {{sustrato.largo}})
+                                {{sustrato.gramaje}}g/m² - {{sustrato.calibre}}pt / {{sustrato.marca}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="" class="label">Observaciones</label>
+                    <textarea name="" id="" cols="45" rows="2" class="textarea" [(ngModel)]="observacion"></textarea>
+                </div>
+                <div class="control">
+                    <label for="" class="label">&nbsp;</label>
+                    <button class="button is-success" (click)="Transferir()">
+                        <span>Enviar material</span>
+                    </button>
+                    <!-- <button class="button is-success" [disabled]="productos_seleccionados.length === 0"
+                        (click)="Transferir()">
+                        <span>Enviar material</span>
+                    </button> -->
+                </div>
+            </div>
+            <ng-container *ngIf="almacenado_para_transferir.length > 0">
+                <hr>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Código</th>
+                            <th>Lote</th>
+                            <th>Cantidad</th>
+                            <th>Seleccionar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let producto_almacenado of almacenado_para_transferir; index as is">
+                            <tr>
+                                <td>{{producto_almacenado.material.nombre}}
+                                    ({{producto_almacenado.material.ancho}} x
+                                    {{producto_almacenado.material.largo}})
+                                    {{producto_almacenado.material.gramaje}}g/m² -
+                                    {{producto_almacenado.material.calibre}}pt /
+                                    {{producto_almacenado.material.marca}}</td>
+                                <td>{{producto_almacenado.codigo}}</td>
+                                <td>{{producto_almacenado.lote}}</td>
+                                <td>{{producto_almacenado.cantidad}}</td>
+                                <td><input type="checkbox" name="" id=""
+                                        (change)="toggleSeleccionProducto(producto_almacenado, $event)">
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </ng-container>
+        </section>
+    </div>
+</div>

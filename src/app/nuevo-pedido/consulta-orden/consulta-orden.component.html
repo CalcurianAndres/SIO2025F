@@ -1,7 +1,4 @@
-<app-vista-despachos
-[Despachos]="Despachos"
-[despachos]="despacho"
-(onCloseModal)="Despachos = false;">
+<app-vista-despachos [Despachos]="Despachos" [despachos]="despacho" (onCloseModal)="Despachos = false;">
 
 </app-vista-despachos>
 <div class="ml-5 mt-5">
@@ -12,9 +9,9 @@
 <br>
 <nav class="breadcrumb ml-5" aria-label="breadcrumbs">
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="/orden">Órdenes</a></li>
-      <li class="is-active"><a>Órdenes de compra</a></li>
+        <li><a href="#">Home</a></li>
+        <li><a href="/orden">Órdenes</a></li>
+        <li class="is-active"><a>Órdenes de compra</a></li>
     </ul>
 </nav>
 <div class="mt-5 ml-5">
@@ -22,10 +19,10 @@
         <div class="column  is-one-quarter">
             <div class="tabs">
                 <ul>
-                  <li><a routerLink="/orden/orden-compra">Crear</a></li>
-                  <li class="is-active"><a>Consultar</a></li>
+                    <li><a routerLink="/orden/orden-compra">Crear</a></li>
+                    <li class="is-active"><a>Consultar</a></li>
                 </ul>
-              </div>
+            </div>
             <div class="card">
                 <div class="card-content">
                     <div class="field">
@@ -34,7 +31,8 @@
                             <div class="select">
                                 <select (change)="filtrarCliente($event.target.value)">
                                     <option value="#">Todos los clientes</option>
-                                    <option value="{{cliente._id}}" *ngFor="let cliente of CLIENTES">{{cliente.nombre}}</option>
+                                    <option value="{{cliente._id}}" *ngFor="let cliente of CLIENTES">{{cliente.nombre}}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -45,7 +43,8 @@
                                 <select (change)="MostarOrden($event.target.value)">
                                     <option value="#">Seleccionar orden de compra</option>
                                     <!-- <option value="all">Todas las órdenes</option> -->
-                                    <option value="{{i}}" *ngFor="let orden of Ordenes;index as i">OC: {{orden.orden}} - {{orden.cliente.nombre}}</option>
+                                    <option value="{{i}}" *ngFor="let orden of Ordenes;index as i">OC: {{orden.orden}} -
+                                        {{orden.cliente.nombre}}</option>
                                 </select>
                             </div>
                         </div>
@@ -79,10 +78,12 @@
                                 <div class="field" id="addprod" style="display:none">
                                     <label class="label">Producto</label>
                                     <div class="control">
-                                        <div class="select" >
+                                        <div class="select">
                                             <select id='producto' (change)='producto_selected($event.target.value)'>
                                                 <option value='#'>Selecciona Producto</option>
-                                                <option *ngFor='let producto of PRODUCTOS' value='{{producto._id}}'>E-{{producto.cliente.codigo}}-{{producto.codigo}}-{{producto.version}}-{{producto.edicion}} {{producto.producto}}</option>
+                                                <option *ngFor='let producto of PRODUCTOS' value='{{producto._id}}'>
+                                                    E-{{producto.cliente.codigo}}-{{producto.codigo}}-{{producto.version}}-{{producto.edicion}}
+                                                    {{producto.producto}}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -93,7 +94,9 @@
                                             <label class="label">Cantidad</label>
                                             <div class="control">
                                                 <!-- <input type="number" class="input" [(ngModel)]="_CANTIDAD"> -->
-                                                <input type="number" class="input" (keydown)="NuevaCantidad($event.target.value)" (change)="NuevaCantidad($event.target.value)">
+                                                <input type="number" class="input"
+                                                    (keydown)="NuevaCantidad($event.target.value)"
+                                                    (change)="NuevaCantidad($event.target.value)">
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +104,8 @@
                                         <div class="field" *ngIf="_CANTIDAD.length > 0">
                                             <label class="label">Fecha solicitada</label>
                                             <div class="control">
-                                                <input type="date" class="input" (change)="Fecha__($event.target.value)">
+                                                <input type="date" class="input"
+                                                    (change)="Fecha__($event.target.value)">
                                             </div>
                                         </div>
                                     </div>
@@ -123,7 +127,8 @@
                                 </div>
                                 <!-- FIN AGREGAR NUEVO PRODUCTO -->
                                 <br> <br>
-                                <button class="button is-small is-success is-outlined" style="display:none" id="okbutton" (click)="listoOCEDIT()">
+                                <button class="button is-small is-success is-outlined" style="display:none"
+                                    id="okbutton" (click)="listoOCEDIT()">
                                     <span class="icon">
                                         <i class="fas fa-check"></i>
                                     </span>
@@ -131,7 +136,8 @@
                                         Listo
                                     </span>
                                 </button>
-                                <button class="button is-small is-success is-outlined" id="editionButton" (click)="edicionOC()">
+                                <button class="button is-small is-success is-outlined" id="editionButton"
+                                    (click)="edicionOC()">
                                     <span class="icon">
                                         <i class="fas fa-edit"></i>
                                     </span>
@@ -159,7 +165,8 @@
                                             </span>
                                             <div class="select producto____" id="producto__{{i}}" style="display:none">
                                                 <select [(ngModel)]="producto.producto._id">
-                                                    <option value="{{producto._id}}" *ngFor="let producto of PRODUCTOS">{{producto.producto}}</option>
+                                                    <option value="{{producto._id}}" *ngFor="let producto of PRODUCTOS">
+                                                        {{producto.producto}}</option>
                                                     <!-- <option value="{{producto.producto._id}}">{{producto.producto.producto}}</option> -->
                                                 </select>
                                             </div>
@@ -168,13 +175,15 @@
                                             <span id="cantidad_{{i}}">
                                                 {{puntoYcoma(producto.cantidad)}}
                                             </span>
-                                            <input type="number" class="input cantidad" [(ngModel)]="producto.cantidad" id="cantidad__{{i}}" width="550px" style="display:none">
+                                            <input type="number" class="input cantidad" [(ngModel)]="producto.cantidad"
+                                                id="cantidad__{{i}}" width="550px" style="display:none">
                                         </td>
                                         <td>
                                             <span id="fecha_{{i}}">
                                                 {{producto.fecha | date: 'dd/MM/yyyy': 'UTC'}}
                                             </span>
-                                            <input type="date" class="input" [(ngModel)]="producto.fecha" id="fecha__{{i}}" width="550px" style="display:none">
+                                            <input type="date" class="input" [(ngModel)]="producto.fecha"
+                                                id="fecha__{{i}}" width="550px" style="display:none">
                                         </td>
                                         <td id="status_{{i}}">
                                             {{producto.status}}
@@ -183,7 +192,8 @@
                                             </ng-container>
                                         </td>
                                         <td>
-                                            <button class="button is-small is-success is-outlined" id="listo_{{i}}" style="display:none" (click)="Terminar(i,Orden._id)">
+                                            <button class="button is-small is-success is-outlined" id="listo_{{i}}"
+                                                style="display:none" (click)="Terminar(i,Orden._id)">
                                                 <span class="icon">
                                                     <i class="fas fa-check"></i>
                                                 </span>
@@ -191,7 +201,8 @@
                                                     Listo
                                                 </span>
                                             </button>
-                                            <button class="button is-small is-success is-outlined" id='edit_{{i}}' (click)="Edicion(i)">
+                                            <button class="button is-small is-success is-outlined" id='edit_{{i}}'
+                                                (click)="Edicion(i)">
                                                 <span class="icon">
                                                     <i class="fas fa-edit"></i>
                                                 </span>
@@ -217,117 +228,161 @@
             </div>
 
             <ng-container *ngIf="all_">
-            <div class="field is-grouped">
-                <div class="control" *ngIf="PRODUCTOS.length > 0">
-                    <label for="" class="label">Producto:</label>
-                    <div class="select">
-                        <select (change)="FiltrarPorProducto($event.target.value)">
-                            <option value="#">Todos los productos</option>
-                            <option value="{{producto._id}}" *ngFor="let producto of PRODUCTOS">{{producto.producto}}</option>
-                        </select>
+                <div class="field is-grouped">
+                    <div class="control" *ngIf="PRODUCTOS.length > 0">
+                        <label for="" class="label">Producto:</label>
+                        <div class="select">
+                            <select (change)="FiltrarPorProducto($event.target.value)">
+                                <option value="#">Todos los productos</option>
+                                <option value="{{producto._id}}" *ngFor="let producto of PRODUCTOS">
+                                    {{producto.producto}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="loader" *ngIf="loading">
-                <i class="fas fa-circle-notch"></i> Buscando ordenes...
-            </div>
-            <div class="card" *ngFor="let Orden of Ordenes;index as i">
-                <div class="card-content">
-                    <table class="table is-fullwidth">
-                        <tr>
-                            <td>
-                                <span id="Info___{{i}}">
-                                    <span class="subtitulos">
-                                        OC: {{Orden.orden}}
-                                    </span><br>
-                                    <b>Fecha de OC:</b> {{Orden.fecha_entrega | date: 'dd/MM/yyyy': 'UTC'}} <br>
-                                    <b>Fecha de recepción: </b>{{Orden.fecha_recepcion | date: 'dd/MM/yyyy': 'UTC'}} 
-                                </span>
-                                <span style="display:none" id="EditionForm_{{i}}">
-                                    <label class="label">OC:</label>
-                                    <input type="text" class="input edicion_" [(ngModel)]="Orden.orden"> <br>
-                                    <label class="label">Fecha de OC:</label>
-                                    <input type="date" class="input edicion_" [(ngModel)]="Orden.fecha_entrega"> <br>
-                                    <label class="label">Fecha de recepción:</label>
-                                    <input type="date" class="input edicion_" [(ngModel)]="Orden.fecha_recepcion">
-                                </span>
-                                <br> <br>
-                                <button class="button is-small is-success is-outlined" style="display:none" id="okbutton_{{i}}" (click)="listoOCEDIT(i,Orden)">
-                                    <span class="icon">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                    <span>
-                                        Listo
-                                    </span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <table class="table is-fullwidth">
-                                    <tr>
-                                        <td class="is-selected">Producto</td>
-                                        <td class="is-selected">Cantidad</td>
-                                        <td class="is-selected">Fecha solicitada</td>
-                                        <td class="is-selected" width="250px" id="status_">Orden de producción</td>
-                                        <td class="is-selected">Despachos</td>
-                                        <!-- <td class="is-selected">Editar</td> -->
-                                    </tr>
-                                    <tr *ngFor="let producto of Orden.productos;index as n">
-                                        <td id="producto___{{i}}">
-                                            <span id="producto_{{i}}">
-                                                {{producto.producto.producto}}
-                                            </span>
-                                            <div class="select producto____" id="producto__{{i}}" style="display:none">
-                                                <select [(ngModel)]="producto.producto._id">
-                                                    <option value="{{producto._id}}" *ngFor="let producto of PRODUCTOS">{{producto.producto}}</option>
-                                                    <!-- <option value="{{producto.producto._id}}">{{producto.producto.producto}}</option> -->
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span id="cantidad_{{i}}">
-                                                {{puntoYcoma(producto.cantidad)}}
-                                            </span>
-                                            <input type="number" class="input cantidad" [(ngModel)]="producto.cantidad" id="cantidad__{{i}}" width="550px" style="display:none">
-                                        </td>
-                                        <td>
-                                            <span id="fecha_{{i}}">
-                                                {{producto.fecha | date: 'dd/MM/yyyy': 'UTC'}}
-                                            </span>
-                                            <input type="date" class="input" [(ngModel)]="producto.fecha" id="fecha__{{i}}" width="550px" style="display:none">
-                                        </td>
-                                        <td id="status_{{i}}">
-                                            {{producto.status}}
-                                            <ng-container *ngIf="!producto.status">
-                                                Sin asignar
-                                            </ng-container>
-                                        </td>
-                                        <td>
-                                            <ng-container *ngIf="producto.status">
-                                                <button class="button" style="border: none; background-color: transparent;" (click)="Despachos = true;BuscarDespacho(producto.status)">
-                                                    <span class="icon"><i class="fas fa-eye"></i></span>
-                                                </button>
-                                            </ng-container>
-                                        </td>
-                                        <td>
-                                            <button class="button is-small is-success is-outlined" id="listo_{{i}}" style="display:none" (click)="Terminar(i,Orden._id)">
-                                                <span class="icon">
-                                                    <i class="fas fa-check"></i>
-                                                </span>
-                                                <span>
-                                                    Listo
-                                                </span>
-                                            </button>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="loader" *ngIf="loading">
+                    <i class="fas fa-circle-notch"></i> Buscando ordenes...
                 </div>
-            </div>
+                <div class="card" *ngFor="let Orden of Ordenes;index as i">
+                    <div class="card-content">
+                        <table class="table is-fullwidth">
+                            <tr>
+                                <td>
+                                    <span id="Info___{{i}}">
+                                        <span class="subtitulos">
+                                            OC: {{Orden.orden}}
+                                        </span><br>
+                                        <b>Fecha de OC:</b> {{Orden.fecha_entrega | date: 'dd/MM/yyyy': 'UTC'}} <br>
+                                        <b>Fecha de recepción: </b>{{Orden.fecha_recepcion | date: 'dd/MM/yyyy':
+                                        'UTC'}} 
+                                    </span>
+                                    <span style="display:none" id="EditionForm_{{i}}">
+                                        <label class="label">OC:</label>
+                                        <input type="text" class="input edicion_" [(ngModel)]="Orden.orden"> <br>
+                                        <label class="label">Fecha de OC:</label>
+                                        <input type="date" class="input edicion_" [(ngModel)]="Orden.fecha_entrega">
+                                        <br>
+                                        <label class="label">Fecha de recepción:</label>
+                                        <input type="date" class="input edicion_" [(ngModel)]="Orden.fecha_recepcion">
+                                    </span>
+                                    <br> <br>
+                                    <button class="button is-small is-success is-outlined" style="display:none"
+                                        id="okbutton_{{i}}" (click)="listoOCEDIT(i,Orden)">
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span>
+                                            Listo
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <table class="table is-fullwidth">
+                                        <tr>
+                                            <td class="is-selected">Producto</td>
+                                            <td class="is-selected">Cantidad</td>
+                                            <td class="is-selected">Fecha solicitada</td>
+                                            <td class="is-selected" width="250px" id="status_">Orden de producción</td>
+                                            <td class="is-selected">Despachos</td>
+                                            <!-- <td class="is-selected">Editar</td> -->
+                                        </tr>
+                                        <tr *ngFor="let producto of Orden.productos;index as n">
+                                            <td id="producto___{{i}}">
+                                                <span id="producto_{{i}}">
+                                                    {{producto.producto.producto}}
+                                                </span>
+                                                <div class="select producto____" id="producto__{{i}}"
+                                                    style="display:none">
+                                                    <select [(ngModel)]="producto.producto._id">
+                                                        <option value="{{producto._id}}"
+                                                            *ngFor="let producto of PRODUCTOS">{{producto.producto}}
+                                                        </option>
+                                                        <!-- <option value="{{producto.producto._id}}">{{producto.producto.producto}}</option> -->
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span id="cantidad_{{i}}">
+                                                    {{puntoYcoma(producto.cantidad)}}
+                                                </span>
+                                                <input type="number" class="input cantidad"
+                                                    [(ngModel)]="producto.cantidad" id="cantidad__{{i}}" width="550px"
+                                                    style="display:none">
+                                            </td>
+                                            <td>
+                                                <span id="fecha_{{i}}">
+                                                    {{producto.fecha | date: 'dd/MM/yyyy': 'UTC'}}
+                                                </span>
+                                                <input type="date" class="input" [(ngModel)]="producto.fecha"
+                                                    id="fecha__{{i}}" width="550px" style="display:none">
+                                            </td>
+                                            <td id="status_{{i}}">
+                                                {{producto.status}}
+                                                <ng-container *ngIf="!producto.status">
+                                                    Sin asignar
+                                                </ng-container>
+                                            </td>
+                                            <td>
+                                                <ng-container *ngIf="producto.status">
+                                                    <button class="button"
+                                                        style="border: none; background-color: transparent;"
+                                                        (click)="Despachos = true;BuscarDespacho(producto.status)">
+                                                        <span class="icon"><i class="fas fa-eye"></i></span>
+                                                    </button>
+                                                </ng-container>
+                                            </td>
+                                            <td>
+                                                <button class="button is-small is-success is-outlined" id="listo_{{i}}"
+                                                    style="display:none" (click)="Terminar(i,Orden._id)">
+                                                    <span class="icon">
+                                                        <i class="fas fa-check"></i>
+                                                    </span>
+                                                    <span>
+                                                        Listo
+                                                    </span>
+                                                </button>
+                                                <br>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </ng-container>
+            <br>
+            <ng-container *ngIf="!loading">
+                <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination"
+                    *ngIf="totalPages > 1 && !PorCliente">
+
+                    <!-- Botón anterior -->
+                    <a class="pagination-previous is-info" [class.is-disabled]="page <= 1"
+                        (click)="page > 1 && GetOrdens(page - 1)">
+                        Anterior
+                    </a>
+
+                    <!-- Botón siguiente -->
+                    <a class="pagination-next is-info" [class.is-disabled]="page >= totalPages"
+                        (click)="page < totalPages && GetOrdens(page + 1)">
+                        Siguiente
+                    </a>
+
+                    <!-- Numeración -->
+                    <ul class="pagination-list">
+
+                        <li *ngFor="let p of [].constructor(totalPages); let i = index">
+                            <a class="pagination-link is-info" [class.is-current]="(i+1) === page"
+                                (click)="GetOrdens(i+1)">
+                                {{ i + 1 }}
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
             </ng-container>
         </div>
     </div>

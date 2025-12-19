@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
+import { RestApiService } from './rest-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { io } from 'socket.io-client';
 export class ReloadService {
   socket: any;
 
-  constructor() {
+  constructor(public usuario: RestApiService) {
     this.socket = io('http://192.168.0.27:8080');
 
     this.socket.on("reload", () => {

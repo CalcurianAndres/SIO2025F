@@ -1,0 +1,182 @@
+<div class="container" style="width: 90%;">
+
+    <!-- FILTROS -->
+    <div class="box">
+        <div class="columns is-vcentered is-multiline">
+            <div class="column is-3">
+                <label class="label">Desde</label>
+                <input class="input" type="date" [(ngModel)]="from">
+            </div>
+
+            <div class="column is-3">
+                <label class="label">Hasta</label>
+                <input class="input" type="date" [(ngModel)]="to">
+            </div>
+
+            <div class="column is-2">
+                <button class="button is-danger is-fullwidth" (click)="consultar()">
+                    Consultar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="cargando" class="has-text-centered has-text-grey">
+        Cargando información...
+    </div>
+
+    <!-- GRUPOS -->
+    <div *ngFor="let grupo of data" class="mb-4">
+        <br>
+        <div class="card">
+
+            <!-- HEADER -->
+            <header class="card-header" style="cursor:pointer" (click)="grupo.abierto = !grupo.abierto">
+                <p class="card-header-title">
+                    {{ grupo.grupo }}
+                </p>
+                <span class="card-header-icon">
+                    <i class="fas" [ngClass]="grupo.abierto ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                </span>
+            </header>
+
+            <!-- CONTENIDO -->
+            <div *ngIf="grupo.abierto">
+                <div class="card-content">
+
+                    <!-- RESUMEN -->
+                    <div class="columns is-multiline is-mobile">
+
+                        <!-- ASIGNADO -->
+                        <div class="column is-6">
+                            <article class="message is-danger">
+                                <div class="message-header">
+                                    <p>Asignado</p>
+                                </div>
+                                <div class="message-body">
+                                    <div class="level">
+                                        <div class="level-left">
+                                            <span class="has-text-grey">Total</span>
+                                        </div>
+                                        <div class="level-right has-text-weight-bold">
+                                            {{ grupo.totalAsignado | number:'2.2-2' }}
+                                        </div>
+                                    </div>
+                                    <div class="level">
+                                        <div class="level-left">
+                                            <span class="has-text-grey">OP</span>
+                                        </div>
+                                        <div class="level-right has-text-weight-bold">
+                                            {{ grupo.totalAsignadoNormal | number:'2.2-2' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- DEVUELTO -->
+                        <div class="column is-6">
+                            <article class="message is-warning">
+                                <div class="message-header">
+                                    <p>Devuelto</p>
+                                </div>
+                                <div class="message-body">
+                                    <div class="level">
+                                        <div class="level-left">
+                                            <span class="has-text-grey">Total</span>
+                                        </div>
+                                        <div class="level-right has-text-weight-bold">
+                                            {{ grupo.totalDevuelto | number:'2.2-2' }}
+                                        </div>
+                                    </div>
+                                    <div class="level">
+                                        <div class="level-left">
+                                            <span class="has-text-grey">OP</span>
+                                        </div>
+                                        <div class="level-right has-text-weight-bold">
+                                            {{ grupo.totalDevueltoNormal | number:'2.2-2' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- CONSUMIDO -->
+                        <div class="column is-12">
+                            <article class="message is-success">
+                                <div class="message-header">
+                                    <p>Consumido</p>
+                                </div>
+                                <div class="message-body">
+                                    <div class="columns">
+                                        <div class="column">
+                                            <div class="has-text-grey">Total</div>
+                                            <div class="title is-5 mb-0">
+                                                {{ grupo.totalConsumido | number:'2.2-2' }}
+                                            </div>
+                                        </div>
+                                        <div class="column">
+                                            <div class="has-text-grey">OP</div>
+                                            <div class="title is-5 mb-0">
+                                                {{ (grupo.totalAsignadoNormal - grupo.totalDevueltoNormal) |
+                                                number:'2.2-2' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+
+                    </div>
+
+
+                    <!-- TABLA -->
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped is-hoverable is-size-7">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th class="has-text-right">Asig. Total</th>
+                                    <th class="has-text-right">Asig. OP</th>
+                                    <th class="has-text-right">Dev. Total</th>
+                                    <th class="has-text-right">Dev. OP</th>
+                                    <th class="has-text-right">Cons. Total</th>
+                                    <th class="has-text-right">Cons. OP</th>
+                                    <th style="width:220px;">Asignaciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let m of grupo.materiales">
+                                    <td>{{ nombreMaterial(m) }}</td>
+
+                                    <td class="has-text-right">{{ m.asignado | number:'2.2-2' }}</td>
+                                    <td class="has-text-right">{{ m.asignado_normal | number:'2.2-2' }}</td>
+
+                                    <td class="has-text-right">{{ m.devuelto | number:'2.2-2' }}</td>
+                                    <td class="has-text-right">{{ m.devuelto_normal | number:'2.2-2' }}</td>
+
+                                    <td class="has-text-right">{{ m.totalConsumido | number:'2.2-2' }}</td>
+                                    <td class="has-text-right">
+                                        {{ (m.asignado_normal - m.devuelto_normal) | number:'2.2-2' }}
+                                    </td>
+
+                                    <td>
+                                        <div style="max-height:80px; overflow-y:auto;">
+                                            <span *ngFor="let a of m.asignacion"
+                                                class="tag is-danger is-light mr-1 mb-1">
+                                                {{ a }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,139 @@
+.table thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 5;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 5;
+}
+
+.titulo {
+    font-size: 50px;
+    font-family: Roboto;
+}
+
+/* GRID PRINCIPAL */
+.acciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+    color: var(--text-main) !important;
+}
+
+/* BOTÓN ESTILIZADO */
+.accion-btn {
+    background-color: var(--bg-main);
+    border: 1px solid #dbdbdb;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+
+    transition: 0.25s ease;
+}
+
+.accion-btn:hover {
+    background: var(--bg-striped);
+    border-color: #3273dc;
+    transform: translateY(-2px);
+}
+
+/* ICONO */
+.accion-icon {
+    width: 28px;
+    opacity: 0.85;
+    margin-bottom: 5px;
+    color: var(--text-main) !important;
+}
+
+/* TEXTO DEL BOTÓN */
+.accion-texto span {
+    display: block;
+    line-height: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main) !important;
+}
+
+/* INDICADOR NUMÉRICO */
+.contador {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #dbdbdb;
+    color: black;
+    padding: 3px 8px;
+    font-size: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* Cuando está en cero */
+.contador.cero {
+    background: #b5b5b5;
+    color: var(--text-main) !important;
+}
+
+/* Cuando tiene más de 0 (verde) */
+.contador.positivo {
+    background: #23d160;
+    color: var(--text-main) !important;
+    box-shadow: 0 0 8px rgba(35, 209, 96, 0.8);
+    animation: pulso 1.5s infinite;
+}
+
+@keyframes pulso {
+    0% {
+        box-shadow: 0 0 0px rgba(35, 209, 96, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 10px rgba(35, 209, 96, 1);
+    }
+
+    100% {
+        box-shadow: 0 0 0px rgba(35, 209, 96, 0.4);
+    }
+}
+
+/* Botón activo */
+.accion-btn.activo {
+    border-color: var(--Green-color-border);
+    background: var(--Green-color);
+}
+
+.logo-almacen {
+    width: 60px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+/* 100% garantizado */
+/* .acciones-grid .accion-btn,
+.acciones-grid .accion-btn *,
+.acciones-grid .accion-texto span {
+    color: var(--text-main) !important;
+    fill: var(--text-main) !important;
+    background-color: var(--bg-main);
+}
+
+button.accion-btn {
+    color: var(--text-main) !important;
+    background-color: var(--bg-main);
+}
+
+button.accion-btn * {
+    color: var(--text-main) !important;
+    background-color: var(--bg-main);
+} */
