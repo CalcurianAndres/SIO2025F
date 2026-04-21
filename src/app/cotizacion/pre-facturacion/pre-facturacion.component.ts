@@ -269,7 +269,7 @@ export class PreFacturacionComponent implements OnInit {
     }
   }
 
-  generarSubTotalBS(precio?, tasa?) {
+  generarSubTotalBS(precio?, tasa?, destino?) {
     let SubtotalBS
     let precio_millar_Bs: any;
     if (!precio) {
@@ -278,7 +278,7 @@ export class PreFacturacionComponent implements OnInit {
       precio_millar_Bs = (precio * tasa).toFixed(2)
     }
     let Bs: any;
-    if (this.por_cajas) {
+    if (this.por_cajas || destino === "CD Axionlog - Santa Teresa del Tuy") {
       Bs = ((this.Despachos[this.INDEX].despacho.cantidad) * precio_millar_Bs)
     } else {
       Bs = ((this.Despachos[this.INDEX].despacho.cantidad / 1000) * precio_millar_Bs)
@@ -469,7 +469,7 @@ export class PreFacturacionComponent implements OnInit {
               ],
               [
                 new Cell(new Txt('N°').alignment('center').end).end,
-                new Cell(new Txt(`C-25-${pre}`).bold().color('#FF0000').alignment('center').end).end,
+                new Cell(new Txt(`C-26-${pre}`).bold().color('#FF0000').alignment('center').end).end,
               ],
               [
                 new Cell(new Txt('Fecha').alignment('center').end).end,
@@ -660,7 +660,7 @@ export class PreFacturacionComponent implements OnInit {
         new Txt('email: info@poligraficaindustrial.com').italics().fontSize(9).alignment('center').end
       )
 
-      pdf.create().download(`${codigo_name}-C-25-${pre}`)
+      pdf.create().download(`${codigo_name}-C-26-${pre}`)
     }
   }
 

@@ -125,6 +125,63 @@ export class ProductosComponent implements OnInit {
     this.usuario = api.usuario
   }
 
+  clonarProducto(id_producto) {
+    Swal.fire({
+      icon: 'question',
+      title: "¿Seguro que deseas duplicar este producto?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Si, duplicar",
+      denyButtonText: `No, cancelar`,
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.api.clonarProducto(id_producto)
+          .subscribe((resp: any) => {
+            let cliente_id = (<HTMLInputElement>document.getElementById('cliente_Seleccionado')).value;
+            this.buscar_producto(cliente_id);
+          })
+        Swal.fire({
+          title: 'Producto clonado',
+          text: 'El producto fue clonado exitosamente',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000,
+          toast: true,
+          position: 'top-end',
+          timerProgressBar: true,
+        });
+      } else if (result.isDenied) {
+        Swal.fire({
+          title: 'Nada cambió',
+          text: 'El producto no fue clonado',
+          icon: 'info',
+          showConfirmButton: false,
+          timer: 2000,
+          toast: true,
+          position: 'top-end',
+          timerProgressBar: true,
+        });
+      }
+    });
+  }
+
+  eliminarProducto(id_producto) {
+    Swal.fire({
+      title: "¿Seguro que deseas eliminar este producto?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      denyButtonText: `No Eliminar`
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Saved!", "", "success");
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info");
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.obtenerGrupodeMateriales();
     this.BuscarGruposEnAlmacen();

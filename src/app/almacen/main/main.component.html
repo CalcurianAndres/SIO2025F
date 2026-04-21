@@ -190,7 +190,7 @@
                     <select (change)='Almacenes($event.target.value)'>
                         <option value="Almacenada">Inventario</option>
                         <option value="Materiales">Materiales Registrados </option>
-                        <option value="Bobinas">Bobinas</option>
+                        <option value="Bobinas" [disbaled]="cargando_bobinas">Bobinas</option>
                     </select>
                 </div>
             </div>
@@ -238,7 +238,10 @@
                     Wil Projects, C.A.
                 </div>
                 <hr>
-                <table class="table is-fullwidth" *ngIf="Bobillas">
+                <div *ngIf="Bobillas && cargando_bobinas">
+                    Cargando porfavor espere... <i class="fa-solid fa-loader"></i>
+                </div>
+                <table class="table is-fullwidth" *ngIf="Bobillas && !cargando_bobinas">
                     <tr>
                         <th>Material</th>
                         <th>Gramaje (g/m²)</th>
@@ -350,7 +353,10 @@
                     Redispaca Distribuidora de Papel, C.A.
                 </div>
                 <hr>
-                <table class="table is-fullwidth" *ngIf="Bobillas">
+                <div *ngIf="Bobillas && cargando_bobinas">
+                    Cargando porfavor espere... <i class="fa-solid fa-loader"></i>
+                </div>
+                <table class="table is-fullwidth" *ngIf="Bobillas && !cargando_bobinas">
                     <tr>
                         <th>Material</th>
                         <th>Gramaje (g/m²)</th>

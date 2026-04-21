@@ -26,6 +26,10 @@ export class ConsultaOrdenComponent implements OnInit {
   public Despachos = false;
   public despacho: any = []
 
+  public inicio_relacion = '';
+  public fin_relacion = '';
+  public code_relacion = 'ALL';
+
   page = 1;
   limit = 20;
   totalPages = 1;
@@ -37,6 +41,44 @@ export class ConsultaOrdenComponent implements OnInit {
       .subscribe((resp: any) => {
         this.CLIENTES = resp.clientes
       })
+  }
+
+  descarExcelRelacion() {
+    this.api
+      .filtrarOCExcel(
+        this.CLIENTES_ACTUAL,
+        this.code_relacion,
+        this.inicio_relacion,
+        this.fin_relacion
+      )
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_oc.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
+
+  filtrarProductoPorCliente() {
+    const vistos = new Set();
+
+    return this.PRODUCTOS.filter((p: any) => {
+      // Filtramos por cliente (como ya tenías)
+      const esDelCliente = p.cliente._id === this.CLIENTES_ACTUAL;
+
+      // Verificamos si el ID del producto base ya lo vimos
+      const idProductoBase = p.producto; // O p.producto si es un string/ID
+      const esDuplicado = vistos.has(idProductoBase);
+
+      if (esDelCliente && !esDuplicado) {
+        vistos.add(idProductoBase);
+        return true;
+      }
+      return false;
+    });
   }
 
   GetOrdens(page = 1) {
@@ -98,7 +140,7 @@ export class ConsultaOrdenComponent implements OnInit {
 
   }
 
-  public CLIENTES_ACTUAL = ''
+  public CLIENTES_ACTUAL = '#'
   public PorCliente
   filtrarCliente(cliente_id) {
     this.page = 1;
@@ -108,11 +150,14 @@ export class ConsultaOrdenComponent implements OnInit {
       this.all_ = true;
       this.selected = false;
       this.PorCliente = false;
+      this.code_relacion = 'ALL'
+      this.CLIENTES_ACTUAL = '#'
     } else {
       this.page = 1;
       this.CLIENTES_ACTUAL = cliente_id
       this.PorCliente = true;
       this.getPorCliente(this.page, this.limit, cliente_id);
+      this.BuscarProductos(cliente_id);
     }
   }
 

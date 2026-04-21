@@ -85,14 +85,16 @@ export class AsignacionNewComponent implements OnInit {
 
       let material = this.ordenes[i].producto.materiales[this.ordenes[i].montaje][n]
       let parametro
-      parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+      parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
+      console.log(material)
+      console.log(material.producto.grupo.nombre)
       if (material.producto.grupo.nombre === 'Tinta') {
         this.Total = ((material.cantidad * this.ordenes[i].paginas) / 1000).toFixed(2)
-        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
       }
       if (material.producto.grupo.nombre === 'Barniz') {
         this.Total = ((material.cantidad * this.ordenes[i].paginas) / 1000).toFixed(2)
-        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
       }
       if (material.producto.grupo.nombre === 'Sustrato') {
         this.Total = (this.ordenes[i].paginas).toFixed(2)
@@ -100,15 +102,15 @@ export class AsignacionNewComponent implements OnInit {
       }
       if (material.producto.grupo.nombre === 'Soportes de Embalaje') {
         this.Total = Math.ceil(this.cajas_por_id[i] * material.cantidad)
-        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
       }
       if (material.producto.grupo.nombre === 'Cajas Corrugadas') {
         this.Total = Math.ceil(this.ordenes[i].cantidad / material.cantidad)
-        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+        parametro = { nombre: material.producto.nombre, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
       }
       if (material.producto.grupo.nombre === 'Cinta de Embalaje') {
         this.Total = Math.ceil(this.ordenes[i].cantidad / material.cantidad)
-        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }] }
+        parametro = { material: material.producto._id, $and: [{ cantidad: { $gt: 0 } }, { cantidad: { $ne: '0.00' } }, { fuera: { $ne: true } }] }
       }
 
       if (this.ordenes[i].motivo) {
@@ -156,8 +158,10 @@ export class AsignacionNewComponent implements OnInit {
       } else {
         this.api.BUSCARENALMACENPRODUCTO(parametro)
           .subscribe((resp: any) => {
+
+            console.log(parametro, 'parametro')
             this.Lotes_encontrados = resp;
-            // console.log(this.Lotes_encontrados)
+            console.log(this.Lotes_encontrados)
             this.loading_ = false
 
             let ordenes = this.momentaneos.filter(x => x.orden === this.trabajando[0] && x.producto === this.trabajando[1])

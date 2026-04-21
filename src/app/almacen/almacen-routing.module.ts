@@ -12,6 +12,8 @@ import { RepuestosComponent } from './repuestos/repuestos.component';
 import { MovimientoMaterialComponent } from './movimiento-material/movimiento-material.component';
 import { AlmacenMewComponent } from './almacen-mew/almacen-mew.component';
 import { ConsultaEstadisticasComponent } from './almacen-mew/consulta-estadisticas/consulta-estadisticas.component';
+import { ConsultaEstadisticasPorPeriodoComponent } from './almacen-mew/consulta-estadisticas-por-periodo/consulta-estadisticas-por-periodo.component';
+import { CortesInventarioComponent } from './almacen-mew/cortes-inventario/cortes-inventario.component';
 
 const routes: Routes = [
   {
@@ -57,6 +59,14 @@ const routes: Routes = [
       {
         path: 'consulta',
         component: ConsultaEstadisticasComponent
+      },
+      {
+        path: 'consulta-periodo',
+        component: ConsultaEstadisticasPorPeriodoComponent
+      },
+      {
+        path: 'cortes-inventario',
+        component: CortesInventarioComponent
       }
     ]
   }]

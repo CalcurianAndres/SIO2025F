@@ -63,7 +63,7 @@
                                 {{producto.edicion}}</td>
                             <td>{{producto.producto}}</td>
                             <td>
-                                <button class="button is-info is-outlined" (click)='verProducto(producto._id)'>
+                                <button class="button is-info is-outlined is-small" (click)='verProducto(producto._id)'>
                                     <span class="icon is-small">
                                         <i class="far fa-eye"></i>
                                     </span>
@@ -72,12 +72,38 @@
                             </td>
                             <td *ngIf='usuario.Maquinaria == 2'>
 
-                                <button class="button is-success is-outlined" (click)='editar(producto._id)'>
-                                    <span class="icon is-small">
-                                        <i class="far fa-edit"></i>
-                                    </span>
-                                    <span>Editar</span>
-                                </button>
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <button class="button is-success is-outlined is-small"
+                                            (click)='editar(producto._id)'>
+                                            <span class="icon is-small">
+                                                <i class="far fa-edit"></i>
+                                            </span>
+                                            <span>Editar</span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-info is-outlined is-small"
+                                            (click)='clonarProducto(producto._id)'>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-clone"></i>
+                                            </span>
+                                            <span>
+                                                Clonar
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
+                                        <button class="button is-danger is-outlined is-small"
+                                            (click)='eliminarProducto(producto._id)'>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                            <span>Eliminar</span>
+                                        </button>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                     </tbody>

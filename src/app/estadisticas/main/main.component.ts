@@ -2,21 +2,633 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import Swal from 'sweetalert2';
-import Chart from 'chart.js/auto';
+import { Chart, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels'; // Importar el plugin
+
+import { HttpClient } from '@angular/common/http';
+
+Chart.register(...registerables, ChartDataLabels); // Registrarlo
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
+
+
 export class MainComponent implements OnInit {
 
+  fechaInicio: string = '2025-01-01';
+  fechaFin: string = '2025-12-31';
+  cargado: boolean = false;
+  cargando: boolean = false;
+
+  pilares: any[] = [];
+  gruposDetalle: any[] = []; // Aquí guardamos los grupos para los acordeones
+  resumenOrdenes: any = []
+  private charts: any = {};
+  filtroBusqueda = ''
+  NroOP = '';
+  selectedProducto: string = '';
+  selectedCliente: string = '';
+  reporte: any[] = [];
+  public chartClientes: any;
+
+
+  formularioValido(): boolean {
+    switch (this.filtroBusqueda) {
+      case 'fecha':
+        // Requiere ambas fechas
+        return !!this.fechaInicio && !!this.fechaFin;
+
+      case 'orden':
+        // Requiere que el número de OP no esté vacío
+        return !!this.NroOP && this.NroOP.trim().length > 0;
+
+      case 'cliente':
+        // Requiere Cliente, Fecha Inicio y Fecha Fin
+        // (El producto lo dejo opcional por si quieres ver todo lo del cliente)
+        return !!this.selectedCliente && !!this.fechaInicio && !!this.fechaFin;
+
+      default:
+        return false;
+    }
+  }
+
+  // Helper para mostrar/ocultar la sección completa si no hay nada
+  hayAdicionales(): boolean {
+    if (!this.reporte) return false;
+    return this.reporte.some(g => g.total_neto_ad > 0);
+  }
+
+  consultar() {
+    this.cargando = true;
+    this.cargado = false;
+    const base = 'http://192.168.0.27:8080/api';
+    let url = '';
+
+    if (this.filtroBusqueda === 'orden' && this.NroOP) {
+      url = `${base}/inventario-reporte-op?op=${this.NroOP}`;
+    }
+    else if (this.filtroBusqueda === 'cliente') {
+      // Nueva lógica para Cliente/Producto
+      url = `${base}/inventario-reporte-filtro?fechaInicio=${this.fechaInicio}&fechaFin=${this.fechaFin}`;
+      if (this.selectedCliente) url += `&clienteId=${this.selectedCliente}`;
+      if (this.selectedProducto) url += `&productoId=${this.selectedProducto}`;
+    }
+    else {
+      url = `${base}/inventario-reporte-detallado?fechaInicio=${this.fechaInicio}&fechaFin=${this.fechaFin}`;
+    }
+
+    this.http.get(url).subscribe({
+      next: (res: any) => {
+        this.procesarData(res.reporte);
+        this.procesarTops(res.reporte);
+        this.resumenOrdenes = res.resumenOrdenes;
+
+        // Renderizar la nueva gráfica
+        if (res.rankingClientes) {
+          this.renderChartClientes(res.rankingClientes);
+        }
+
+        this.cargado = true;
+        this.cargando = false;
+      },
+      error: () => this.cargando = false
+    });
+  }
+
+  renderChartClientes(data: any[]) {
+    if (this.chartClientes) this.chartClientes.destroy();
+
+    // Definimos una paleta de colores vibrantes con 70% de opacidad (alpha 0.7)
+    const coloresVibrantes = [
+      'rgba(255, 99, 132, 0.7)',  // Rosa
+      'rgba(54, 162, 235, 0.7)',  // Azul
+      'rgba(255, 206, 86, 0.7)',  // Amarillo
+      'rgba(75, 192, 192, 0.7)',  // Turquesa
+      'rgba(153, 102, 255, 0.7)', // Morado
+      'rgba(255, 159, 64, 0.7)',  // Naranja
+      'rgba(72, 230, 95, 0.7)',   // Verde lima
+      'rgba(230, 72, 217, 0.7)',  // Fucsia
+    ];
+
+    this.chartClientes = new Chart('chartClientes', {
+      type: 'bar',
+      plugins: [ChartDataLabels],
+      data: {
+        labels: data.map(c => c.nombre),
+        datasets: [{
+          label: 'Órdenes',
+          data: data.map(c => c.cantidad),
+          // Asignamos los colores ciclando el array si hay más de 8 clientes
+          backgroundColor: data.map((_, i) => coloresVibrantes[i % coloresVibrantes.length]),
+          // Bordes sólidos del mismo color pero sin transparencia
+          borderColor: data.map((_, i) => coloresVibrantes[i % coloresVibrantes.length].replace('0.7', '1')),
+          borderWidth: 2,
+          borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0 }, // Bordes redondeados arriba
+          barPercentage: 0.7, // Ancho de la barra (un poco más separadas)
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }, // Ocultamos leyenda (ya cada barra es un cliente)
+
+          // --- CONFIGURACIÓN DE LOS "TAGS" (NÚMEROS SOBRE BARRAS) ---
+          datalabels: {
+            color: '#ffffff', // Texto blanco
+            anchor: 'end',    // Anclado al final de la barra
+            align: 'start',   // Alineado hacia adentro de la barra
+            offset: 10,       // Espaciado del borde
+            font: { weight: 'bold', size: 14 }, // Fuente grande y negrita
+            // Pequeño truco para que parezca un tag: fondo oscuro transparente
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            borderRadius: 4,
+            padding: { top: 4, bottom: 4, left: 8, right: 8 },
+            formatter: (value) => {
+              return `${value}`; // Ejemplo: "Ord: 15"
+            }
+          },
+
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            padding: 12,
+            displayColors: false // Ocultamos el cuadrito de color en el tooltip
+          }
+        },
+
+        scales: {
+          x: {
+            grid: { display: false }, // Ocultamos líneas de cuadrícula verticales
+            ticks: {
+              color: '#1a202c',
+              font: { weight: '600', size: 11 },
+              maxRotation: 45, // Rotación para que no choquen los nombres largos
+              minRotation: 45
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f0f2f5' }, // Líneas horizontales muy tenues
+            ticks: {
+              stepSize: 1, // Solo números enteros
+              color: '#718096',
+              font: { size: 11 }
+            }
+          }
+        },
+        layout: {
+          // Añadimos padding arriba para que el datalabel de la barra más alta no se corte
+          padding: { top: 30 }
+        }
+      }
+    });
+  }
+
+  toggleGrupo(grupo: any, index: number) {
+    grupo.abierto = !grupo.abierto;
+    if (grupo.abierto) {
+      // Esperamos un delay para que el DOM renderice el canvas
+      setTimeout(() => this.renderGraficaDetalle(grupo, index), 100);
+    }
+  }
+
+  renderGraficaDetalle(grupo: any, index: number) {
+    const canvasId = 'chartGrupo' + index;
+    const topMateriales = [...grupo.data.detalleMateriales]
+      .sort((a, b) => b.neto_op - a.neto_op)
+      .slice(0, 5);
+
+    new Chart(canvasId, {
+      type: 'doughnut',
+      plugins: [ChartDataLabels], // <--- IMPORTANTE: Activamos el plugin aquí
+      data: {
+        labels: topMateriales.map(m => {
+          const marca = m.marca ? ` ${m.marca}` : '';
+          const dims = m.dimensiones ? ` [${m.dimensiones}]` : '';
+          return `${m.nombreMaterial}${marca}${dims}`;
+        }),
+        datasets: [{
+          data: topMateriales.map(m => m.neto_op),
+          backgroundColor: ['#485fc7', '#3e8ed0', '#48c78e', '#f2a900', '#f14668'],
+          hoverOffset: 20,
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        // cutout: '82%',
+        plugins: {
+          // CONFIGURACIÓN DE LOS NÚMEROS SOBRE EL GRÁFICO
+          datalabels: {
+            color: '#1a202c', // Color oscuro para que se vea
+            anchor: 'end',    // Los pone justo al borde
+            align: 'start',   // Los mete un poco hacia adentro
+            offset: 10,       // Espaciado
+            formatter: (value) => {
+              // Si el número es muy grande, lo acortamos o le damos formato
+              return value.toLocaleString();
+            },
+            // Solo muestra el número si la porción es lo suficientemente grande
+            // display: (context) => {
+            //   return context.dataset.data[context.dataIndex] > 0;
+            // }
+          },
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 8,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 15,
+              color: '#1a202c',
+              font: {
+                size: 10,
+                weight: '700'
+              }
+            }
+          },
+          tooltip: { enabled: true }
+        },
+        layout: {
+          padding: { right: 30, left: 10, top: 20, bottom: 20 }
+        }
+      }
+    });
+  }
+
+  procesarData(reporte: any[]) {
+
+    this.reporte = reporte.map(g => ({ ...g, abierto: false })); // <--- Línea clave
+
+    const findG = (n: string) => reporte.find(g => g.grupo.toUpperCase().includes(n.toUpperCase())) ||
+      { total_neto_op: 0, total_neto_ad: 0, total_neto_gral: 0, detalleMateriales: [] };
+
+    const gSustrato = findG('SUSTRATOS (CARTÓN)');
+    const gPapel = findG('SUSTRATOS (PAPEL)');
+    const gTinta = findG('TINTA');
+    const gCajas = findG('CAJAS CORRUGADAS');
+    const gBarniz = findG('BARNIZ');
+    const gPega = findG('PEGA');
+    const gBarnizAcuoso = findG('BARNIZ ACUOSO');
+
+    // 1. Estructura para Acordeones
+    this.gruposDetalle = [
+      { nombre: 'Cartón', data: gSustrato, abierto: false },
+      { nombre: 'Papel', data: gPapel, abierto: false },
+      { nombre: 'Tintas', data: gTinta, abierto: false },
+      { nombre: 'Cajas Corrugadas', data: gCajas, abierto: false },
+      { nombre: 'Barniz', data: gBarniz, abierto: false },
+      { nombre: 'Barniz acuoso', data: gBarnizAcuoso, abierto: false },
+      { nombre: 'Pegas', data: gPega, abierto: false }
+    ];
+
+    // 2. Pilares Superiores
+    this.pilares = [
+      { nombre: 'Cartón', total: gSustrato.total_neto_op, peso: gSustrato.total_toneladas_op, unidad: 'Hojas', colorClass: 'is-link', porcentajeOP: this.calcPerc(gSustrato) },
+      { nombre: 'Papel', total: gPapel.total_neto_op, peso: gPapel.total_toneladas_op, unidad: 'Hojas', colorClass: 'is-primary', porcentajeOP: this.calcPerc(gPapel) },
+      { nombre: 'Tinta', total: gTinta.total_neto_op, unidad: 'Kg', colorClass: 'is-info', porcentajeOP: this.calcPerc(gTinta) },
+      { nombre: 'Barniz', total: gBarniz.total_neto_op, unidad: 'Kg', colorClass: 'is-success', porcentajeOP: this.calcPerc(gBarniz) },
+      { nombre: 'Cajas', total: gCajas.total_neto_op, unidad: 'Unds', colorClass: 'is-warning', porcentajeOP: this.calcPerc(gCajas) },
+      { nombre: 'Barniz acuoso', total: gBarnizAcuoso.total_neto_gral, unidad: 'Unds', colorClass: 'is-primary', porcentajeOP: 0 },
+      { nombre: 'Pega', total: gPega.total_neto_gral, unidad: 'Kg', colorClass: 'is-danger', porcentajeOP: 0 }
+    ];
+  }
+
+  private calcPerc(g: any) {
+    return g.total_neto_gral > 0 ? Math.round((g.total_neto_op / g.total_neto_gral) * 100) : 0;
+  }
+  // TOPS:::::::::::::::::::::::::::::
+  public chartTopSustratos: any;
+  public chartTopColores: any;
+
+  procesarTops(reporte: any[]) {
+    // 1. Obtener todos los materiales de los grupos de Sustratos y Tintas
+    const sustratosRaw = reporte.find(g => g.grupo.toUpperCase().includes('SUSTRATOS (CARTÓN)'))?.detalleMateriales || [];
+    const tintasRaw = reporte.find(g => g.grupo.toUpperCase().includes('TINTA'))?.detalleMateriales || [];
+
+    // 2. Ordenar y sacar el Top 5
+    const topSustratos = [...sustratosRaw].sort((a, b) => b.neto_total - a.neto_total).slice(0, 5);
+    const topTintas = [...tintasRaw].sort((a, b) => b.neto_total - a.neto_total).slice(0, 5);
+
+    this.renderTopCharts(topSustratos, topTintas);
+  }
+
+  renderTopCharts(sustratos: any[], tintas: any[]) {
+    if (this.chartTopSustratos) this.chartTopSustratos.destroy();
+    if (this.chartTopColores) this.chartTopColores.destroy();
+
+    // Gráfico de Sustratos con Nombre Completo
+    this.chartTopSustratos = new Chart('chartTopSustratos', {
+      type: 'bar',
+      data: {
+        labels: sustratos.map(m => {
+          const nombre = m.nombreMaterial || '';
+          const marca = m.marca ? ` ${m.marca}` : '';
+          const dims = m.dimensiones ? ` (${m.dimensiones})` : '';
+          return `${nombre}${marca}${dims}`; // Ejemplo: "Cartulina Maule (70x100)"
+        }),
+        datasets: [{
+          label: 'Cantidad Total (Hojas)',
+          data: sustratos.map(m => m.neto_total.toFixed(2) || 0),
+          backgroundColor: 'rgba(72, 95, 199, 0.6)',
+          borderColor: 'rgba(72, 95, 199, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false } // Ocultamos leyenda para ganar espacio
+        },
+        scales: {
+          x: { beginAtZero: true },
+          y: {
+            ticks: {
+              autoSkip: false, // Forzamos a que muestre todos los nombres
+              font: { size: 10 } // Bajamos un poco la fuente si el nombre es muy largo
+            }
+          }
+        }
+      }
+    });
+
+    // Gráfico de Tintas con Nombre Completo
+    this.chartTopColores = new Chart('chartTopColores', {
+      type: 'bar',
+      data: {
+        labels: tintas.map(m => {
+          const nombre = m.nombreMaterial || '';
+          const marca = m.marca ? ` ${m.marca}` : '';
+          return `${nombre}${marca}`;
+        }),
+        datasets: [{
+          label: 'Kilos Gastados',
+          data: tintas.map(m => m.neto_total.toFixed(2)),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  }
+  // FIN ESTADISITCAS GENERALES ::::::::::::::::::::::::.
+
+
+  apiData: any = null;
+  loading: boolean = true;
+
+  // Estados para el cálculo
+  metricaSeleccionada: string = 'procesadoHojas';
+  sustratosSeleccionados: boolean[] = [];
+  mostrarMateriaPrima: boolean = false;
+
+  rendimientoFinal: number = 0;
+  totalDenominador: number = 0;
+  rendimientoNeto: number = 0;
+
+
+
+
+  orden_selected = '';
+
+  public rendimiento = false;
+
+  chartCumplimiento: any = null;
+  porcentajeCumplimiento: number = 0;
+
   constructor(private api: RestApiService,
-    private router: Router,) { }
+    private router: Router,
+    private http: HttpClient) { }
 
   ngOnInit(): void {
   }
 
+  MostrarRendimiento(orden) {
+    this.orden_selected = orden;
+    this.obtenerDatos();
+    this.rendimiento = true;
+  }
+
+  chart_planificado: any = null;
+  rendimientoPlanificado: number = 0;
+  calcularPlanificado() {
+    if (!this.apiData) return;
+
+    const base = this.apiData.planificacion.unidadesBase || 0;
+    const paginas = this.apiData.planificacion.paginasTotales || 1;
+
+    // Nueva fórmula: Unidades Base / Paginas Totales
+    this.rendimientoPlanificado = (base / paginas) * 100;
+
+    setTimeout(() => {
+      this.updateChartPlanificado(base, paginas);
+    }, 100);
+  }
+
+  updateChartPlanificado(base: number, paginas: number) {
+    const ctx = document.getElementById('chartPlanificado') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    const datoVisual = base > paginas ? paginas : base;
+    const faltante = paginas > base ? paginas - base : 0;
+
+    // Color: Si el planificado es 100% o más, verde. Si no, turquesa.
+    let colorBarra = this.rendimientoPlanificado >= 100 ? '#48c774' : '#00d1b2';
+
+    if (this.chart_planificado) {
+      this.chart_planificado.data.datasets[0].data = [datoVisual, faltante];
+      this.chart_planificado.data.datasets[0].backgroundColor = [colorBarra, '#eeeeee'];
+      this.chart_planificado.update();
+    } else {
+      this.chart_planificado = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [datoVisual, faltante],
+            backgroundColor: [colorBarra, '#eeeeee'],
+            borderWidth: 0,
+            circumference: 180,
+            rotation: 270,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            datalabels: { display: false } // <--- ESTO MATA LOS NÚMEROS ESCRITOS
+          }
+          // // plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+      });
+    }
+  }
+
+  calcularCumplimiento() {
+    if (!this.apiData) return;
+    const solicitado = this.apiData.cantidadSolicitada || 0;
+    const despachado = this.apiData.metricas.unidadesTotalesDespachadas || 0;
+    this.porcentajeCumplimiento = solicitado > 0 ? (despachado / solicitado) * 100 : 0;
+
+    setTimeout(() => {
+      this.updateChartCumplimiento(despachado, solicitado);
+    }, 100);
+  }
+
+  updateChartCumplimiento(despachado: number, solicitado: number) {
+    const ctx = document.getElementById('chartCumplimiento') as HTMLCanvasElement;
+    if (!ctx) return;
+    const dataGrafico = despachado > solicitado ? solicitado : despachado;
+    const faltante = solicitado > despachado ? solicitado - despachado : 0;
+    let colorBarra = this.porcentajeCumplimiento >= 100 ? '#48c774' : (despachado > solicitado ? '#ffdd57' : '#209cee');
+
+    if (this.chartCumplimiento) {
+      this.chartCumplimiento.data.datasets[0].data = [dataGrafico, faltante];
+      this.chartCumplimiento.data.datasets[0].backgroundColor = [colorBarra, '#eeeeee'];
+      this.chartCumplimiento.update();
+    } else {
+      this.chartCumplimiento = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [dataGrafico, faltante],
+            backgroundColor: [colorBarra, '#eeeeee'],
+            borderWidth: 0,
+            circumference: 180,
+            rotation: 270,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            datalabels: { display: false } // <--- ESTO MATA LOS NÚMEROS ESCRITOS
+          }
+          // plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+      });
+    }
+  }
+
+  obtenerDatos() {
+    const url = `http://192.168.0.27:8080/api/rendimiento/${this.orden_selected}`;
+    this.http.get(url).subscribe((res: any) => {
+      this.apiData = res;
+      this.sustratosSeleccionados = new Array(res.detallesSustratos.length).fill(true);
+      this.loading = false;
+      this.calcular();
+      this.calcularCumplimiento();
+      this.calcularPlanificado();
+    });
+  }
+
+  chart_: any;
+  chart_real: any;
+
+  cerrarModal() {
+    this.rendimiento = false;
+    if (this.chart_) this.chart_.destroy();
+    if (this.chart_real) this.chart_real.destroy();
+    if (this.chart_planificado) this.chart_planificado.destroy(); // <--- LIMPIEZA
+    if (this.chartCumplimiento) this.chartCumplimiento.destroy();
+
+    this.chart_ = null;
+    this.chart_real = null;
+    this.chart_planificado = null;
+    this.chartCumplimiento = null;
+  }
+
+  calcular() {
+    if (!this.apiData) return;
+    const numerador = this.apiData.metricas[this.metricaSeleccionada];
+    let totalConDemasia = this.apiData.detallesSustratos.reduce((acc: number, s: any, i: number) => {
+      return this.sustratosSeleccionados[i] ? acc + s.usado : acc;
+    }, 0);
+    let totalReal = totalConDemasia - (this.apiData.planificacion.hojasDemasia || 0);
+    this.totalDenominador = totalConDemasia;
+    this.rendimientoFinal = (numerador / totalConDemasia) * 100;
+    this.rendimientoNeto = (numerador / totalReal) * 100; // Variable para el HTML
+
+    setTimeout(() => {
+      this.updateCharts(numerador, totalConDemasia, totalReal);
+    }, 50);
+  }
+
+  updateCharts(bueno: number, totalPresupuesto: number, totalReal: number) {
+    if (!this.chart_) {
+      const ctx = document.getElementById('chartRendimiento') as HTMLCanvasElement;
+      if (ctx) this.initChart(ctx);
+    }
+    this.applyChartData(bueno, totalPresupuesto, this.chart_);
+
+    if (!this.chart_real) {
+      const ctx_ = document.getElementById('chartRendimientoreal') as HTMLCanvasElement;
+      if (ctx_) this.initChartReal(ctx_);
+    }
+    this.applyChartData(bueno, totalReal, this.chart_real);
+  }
+  initChart(ctx: HTMLCanvasElement) {
+    this.chart_ = new Chart(ctx, {
+      type: 'doughnut',
+      data: { datasets: [{ data: [0, 0], backgroundColor: ['#00d1b2', '#eeeeee'], borderWidth: 0, circumference: 180, rotation: 270 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          datalabels: { display: false } // <--- ESTO MATA LOS NÚMEROS ESCRITOS
+        }
+      },
+      // plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+    });
+  }
+
+  initChartReal(ctx: HTMLCanvasElement) {
+    this.chart_real = new Chart(ctx, {
+      type: 'doughnut',
+      data: { datasets: [{ data: [0, 0], backgroundColor: ['#00d1b2', '#eeeeee'], borderWidth: 0, circumference: 180, rotation: 270 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          datalabels: { display: false } // <--- ESTO MATA LOS NÚMEROS ESCRITOS
+        }
+      }
+      // plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+    });
+  }
+
+  applyChartData(bueno: number, total: number, chartObj: any) {
+    if (!chartObj) return;
+    const datoVisual = bueno > total ? total : bueno;
+    const faltante = total > bueno ? total - bueno : 0;
+    const porcentaje = (bueno / total) * 100;
+    let color = porcentaje >= 100 ? '#48c774' : (bueno > total ? '#ffdd57' : '#00d1b2');
+
+    chartObj.data.datasets[0].data = [datoVisual, faltante];
+    chartObj.data.datasets[0].backgroundColor = [color, '#eeeeee'];
+    chartObj.update();
+  }
+
+  toggleMateriaPrima() {
+    this.mostrarMateriaPrima = !this.mostrarMateriaPrima;
+  }
 
 
 
@@ -31,7 +643,7 @@ export class MainComponent implements OnInit {
   public adicionales = []
 
 
-  public cargando = false;
+  // public cargando = false;
   public sinBusqueda = true;
   public vacio = false;
 
@@ -337,6 +949,14 @@ export class MainComponent implements OnInit {
   public busqueda_clientes;
   public busqueda_orden;
   public clientes_form: boolean = false;
+
+  busquedaCliente() {
+    this.api.GetClientes()
+      .subscribe((resp: any) => {
+        this.busqueda_clientes = resp;
+        this.clientes_form = true
+      })
+  }
   busquedaInteligente(e) {
     if (e === 'cliente') {
       this.api.GetClientes()

@@ -40,7 +40,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this._createSnowfall();
+    // this._createSnowfall();
   }
 
   private _createSnowfall() {

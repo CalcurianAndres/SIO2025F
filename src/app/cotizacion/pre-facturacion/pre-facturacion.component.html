@@ -143,8 +143,14 @@
                         Subtotal (USD):
                     </th>
                     <td>
-                        {{puntoYcoma_(Despachos[INDEX].despacho.cantidad / 1000 * (Despachos[INDEX].despacho.precio !=
-                        null ? Despachos[INDEX].despacho.precio : Escala.precio))}}
+                        {{puntoYcoma_(
+                        (Despachos[INDEX].despacho.destino === "CD Axionlog - Santa Teresa del Tuy"
+                        ? Despachos[INDEX].despacho.cantidad
+                        : Despachos[INDEX].despacho.cantidad / 1000)
+                        * (Despachos[INDEX].despacho.precio != null
+                        ? Despachos[INDEX].despacho.precio
+                        : Escala.precio)
+                        )}}
                     </td>
                 </tr>
                 <tr>
@@ -154,7 +160,8 @@
                     <td>
                         {{generarSubTotalBS(Despachos[INDEX].despacho.precio != null ? Despachos[INDEX].despacho.precio
                         : Escala.precio,
-                        Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa)}}
+                        Despachos[INDEX].despacho.tasa != null ? Despachos[INDEX].despacho.tasa : Tasa,
+                        Despachos[INDEX].despacho.destino)}}
                     </td>
                 </tr>
             </table>

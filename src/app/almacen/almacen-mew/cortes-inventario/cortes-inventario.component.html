@@ -1,0 +1,176 @@
+<section class="hero is-bold mb-5">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                <i class="fas fa-warehouse mr-3"></i>Control de Inventario
+            </h1>
+            <h2 class="subtitle">
+                Gestión de Cortes Mensuales y Auditoría de Stock
+            </h2>
+        </div>
+    </div>
+</section>
+
+<div class="container px-4">
+    <div class="card">
+        <div class="card-content">
+            <div class="columns is-vcentered">
+                <div class="column is-5">
+                    <label class="label">Historial de Cortes</label>
+                    <div class="field has-addons">
+                        <div class="control is-expanded has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select [(ngModel)]="idCorteSeleccionado">
+                                    <option value="">Seleccione un periodo...</option>
+                                    <option *ngFor="let corte of cortesHistoricos" [value]="corte._id">
+                                        {{ corte.fechaCorte | date:'dd/MM/yyyy' }} — {{ corte.etiqueta }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="icon is-small is-left">
+                                <i class="fas fa-history"></i>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <button class="button is-info" (click)="consultarComparativa()"
+                                [disabled]="!idCorteSeleccionado">
+                                <span class="icon"><i class="fas fa-search"></i></span>
+                                <span>Consultar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column is-offset-2 has-text-right">
+                    <button class="button is-success" (click)="ejecutarCorteNuevo()"
+                        [ngClass]="{'is-loading': loading}">
+                        <span class="icon"><i class="fas fa-camera"></i></span>
+                        <span>Generar Corte de Mes</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <progress *ngIf="loading" class="progress is-small is-primary" max="100">Cargando...</progress>
+
+    <div *ngIf="infoCorte && !loading" class="animate__animated animate__fadeIn">
+
+        <div class="card">
+            <div class="card-content">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading">Etiqueta del Corte</p>
+                            <p class="title is-4">{{ infoCorte.etiqueta }}</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div class="level-item has-text-centered px-4">
+                            <div>
+                                <p class="heading">Items Registrados</p>
+                                <p class="title is-5">{{ infoCorte.totalItemsEnSnapshot }}</p>
+                            </div>
+                        </div>
+                        <button class="button is-info is-outlined" (click)="descargarExcel()">
+                            <span class="icon"><i class="fas fa-file-excel"></i></span>
+                            <span>Descargar Excel</span>
+                        </button>
+                        <!-- <div class="level-item has-text-centered">
+                            <button class="button is-small is-outlined is-link">
+                                <span class="icon"><i class="fas fa-file-export"></i></span>
+                                <span>Exportar PDF</span>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card shadow-sm">
+            <header class="card-header has-background-dark">
+                <p class="card-header-title has-text-white">
+                    <span class="icon mr-2"><i class="fas fa-boxes"></i></span>
+                    Auditoría Detallada de Inventario
+                </p>
+            </header>
+            <div class="card-content p-0">
+                <div class="table-container">
+                    <table class="table is-fullwidth is-hoverable mb-0">
+                        <thead>
+                            <tr class="has-background-white-ter">
+                                <th style="width: 50px"></th>
+                                <th>Producto / Especificaciones</th>
+                                <th>Marca</th>
+                                <th class="has-text-centered">Antes</th>
+                                <th class="has-text-centered">Hoy</th>
+                                <th class="has-text-centered">Variación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let item of comparativaConsolidada">
+                                <tr (click)="toggleAcordeon(item.llaveLogica)" class="is-clickable">
+                                    <td class="has-text-centered">
+                                        <i class="fas"
+                                            [ngClass]="itemsAbiertos[item.llaveLogica] ? 'fa-chevron-down has-text-link' : 'fa-chevron-right has-text-grey-light'"></i>
+                                    </td>
+                                    <td>
+                                        <p class="title is-6 mb-0">{{ item.nombre }} <ng-container
+                                                *ngIf="item.especificaciones !== '()'"> {{ item.especificaciones
+                                                }}</ng-container> </p>
+                                    </td>
+                                    <td><span>{{ item.marca }}</span></td>
+                                    <td class="has-text-centered">{{ item.totalAntes | number:'1.2-2' }}</td>
+                                    <td class="has-text-centered">{{ item.totalHoy | number:'1.2-2' }}</td>
+                                    <td class="has-text-centered">
+                                        <strong
+                                            [ngClass]="item.totalDiferencia < 0 ? 'has-text-danger' : 'has-text-success'">
+                                            {{ item.totalDiferencia > 0 ? '+' : '' }}{{ item.totalDiferencia |
+                                            number:'1.2-2' }}
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                                <tr *ngIf="itemsAbiertos[item.llaveLogica]">
+                                    <td colspan="6" class="has-background-white-bis p-4">
+                                        <div class="box is-shadowless border-left-blue py-2">
+                                            <p class="subtitle is-7 has-text-weight-bold mb-3">DESGLOSE POR LOTES Y
+                                                CODIGOS:</p>
+                                            <table class="table is-fullwidth is-narrow is-striped is-size-7">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Código / N° lata / Paleta</th>
+                                                        <th>Lote</th>
+                                                        <th class="has-text-centered">Antes</th>
+                                                        <th class="has-text-centered">Hoy</th>
+                                                        <th class="has-text-centered">Dif.</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let lote of obtenerLotesDeItem(item)">
+                                                        <td class="has-text-weight-bold">{{ lote.codigo }}</td>
+                                                        <td>{{ lote.lote }}</td>
+                                                        <td class="has-text-centered">{{ lote.antes | number:'1.2-2' }}
+                                                        </td>
+                                                        <td class="has-text-centered">{{ lote.hoy | number:'1.2-2' }}
+                                                        </td>
+                                                        <td class="has-text-centered"
+                                                            [ngClass]="(lote.hoy - lote.antes) < 0 ? 'has-text-danger' : 'has-text-success'">
+                                                            {{ (lote.hoy - lote.antes) | number:'1.2-2' }}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -63,10 +63,14 @@ export class ConsultaFacturacionComponent implements OnInit {
 
 
   puntoYcoma(n) {
-    if (!n) {
-      return 0
+    if (n === null || n === undefined || isNaN(n)) {
+      return "0,00";
     }
-    return n = new Intl.NumberFormat('de-DE').format(n)
+
+    return new Intl.NumberFormat('de-DE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(n);
   }
 
   // Formatea con separador de miles (puntos) y coma decimal, con EXACTAMENTE 4 decimales

@@ -14,29 +14,29 @@ import Swal from 'sweetalert2';
 })
 export class EtiquetaComponent implements OnInit {
 
-  constructor(private api:RestApiService) { }
+  constructor(private api: RestApiService) { }
 
   public ordenes = []
-  public valido:boolean = false;
+  public valido: boolean = false;
   public orden;
 
   ngOnInit(): void {
 
-    
+
 
     this.api.getOrden()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.ordenes = resp.reverse()
       })
 
     this.api.getDespachados()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.Despachados = resp
       })
 
   }
 
-  Despachado(n){
+  Despachado(n) {
     return this.Despachados.indexOf(n)
   }
 
@@ -49,21 +49,21 @@ export class EtiquetaComponent implements OnInit {
   public hoy
   public sustrato
   public Despachados
-  public cargando:boolean = false;
+  public cargando: boolean = false;
   public __orden__
-  seleccionar_orden(e){
+  seleccionar_orden(e) {
     // console.log(e,'<- e')
     this.__orden__ = e;
-    let id = this.ordenes.find(x=> x.sort === e)
+    let id = this.ordenes.find(x => x.sort === e)
     // // console.log(id)
     e = id._id
 
-    if(e != '#'){
+    if (e != '#') {
       this.visto = false
       this.loaded = false;
       this.api.getOrdenById2(e)
-      .subscribe((resp:any)=>{
-        this.__Cajas = null
+        .subscribe((resp: any) => {
+          this.__Cajas = null
           this.__orden = resp.ordenes
           this.__gestiones = resp.gestiones
           this.fecha = resp.trabajos;
@@ -72,44 +72,44 @@ export class EtiquetaComponent implements OnInit {
           this.orden = e;
           // console.log(this.orden, '<-- this.orden')
           // this.__orden = this.ordenes.find(x=> x._id === e)
-          for(let i=0;i<this.__orden.producto.materiales[this.__orden.montaje].length;i++){
-            
+          for (let i = 0; i < this.__orden.producto.materiales[this.__orden.montaje].length; i++) {
+
             let material = this.__orden.producto.materiales[this.__orden.montaje][i]
-            if(material.producto.presentacion === 'Caja'){
+            if (material.producto.presentacion === 'Caja') {
               this.__producto_por_caja = material.cantidad
-              this. __Cajas = Math.ceil(this.__orden.cantidad_o / material.cantidad);
-              
+              this.__Cajas = Math.ceil(this.__orden.cantidad_o / material.cantidad);
+
             }
-            if(this.__orden.producto.materiales[this.__orden.montaje][i].producto.ancho){
+            if (this.__orden.producto.materiales[this.__orden.montaje][i].producto.ancho) {
               this.sustrato = `${this.__orden.producto.materiales[this.__orden.montaje][i].producto.nombre}, Cal ${this.__orden.producto.materiales[this.__orden.montaje][i].producto.calibre}, Gramaje ${this.__orden.producto.materiales[this.__orden.montaje][i].producto.gramaje}`
             }
-            
-            if(i === this.__orden.producto.materiales[this.__orden.montaje].length -1){
+
+            if (i === this.__orden.producto.materiales[this.__orden.montaje].length - 1) {
               this.loaded = true
               this.valido = true;
             }
           }
         })
-      
-      
-    }else{
+
+
+    } else {
       this.valido = false
     }
   }
-  
-  EtiquetasAImprimir(x,y){
-    let z = x/y
 
-   if( Number.isInteger(x / y)){
-     return z
-   }else{
-    return z
-   }
-    
+  EtiquetasAImprimir(x, y) {
+    let z = x / y
+
+    if (Number.isInteger(x / y)) {
+      return z
+    } else {
+      return z
+    }
+
   }
 
-  formatear(x,y){
-    let z = x/y;
+  formatear(x, y) {
+    let z = x / y;
     return Math.trunc(z)
   }
 
@@ -118,12 +118,12 @@ export class EtiquetaComponent implements OnInit {
   public unidades__;
   public gestion
   public resto
-  verEtiqueta(x,y,z, gestion,resto){
+  verEtiqueta(x, y, z, gestion, resto) {
 
     this.visto = true
-    
-    let c = x/y
-    
+
+    let c = x / y
+
     c = Math.trunc(c)
     this.cantidad__ = c
     this.unidades__ = z
@@ -135,56 +135,55 @@ export class EtiquetaComponent implements OnInit {
     // // window.open("http://localhost:4200/pruebas")
   }
 
-  generarpdf()
-  {
+  generarpdf() {
     this.cargando = true;
     let data = {
-      orden:this.__orden,
-      fecha:this.fecha,
-      hoy:this.hoy,
-      value:`${this.__orden.producto.producto}\nOP: ${this.__orden.sort}\nOC: ${this.__orden.orden}\n${this.unidades__} Und.`,
-      sustrado:this.sustrato,
-      cantidad:this.puntoYcoma(this.unidades__),
-      copias:this.cantidad__,
-      gestion:this.gestion,
-      resto:this.resto
+      orden: this.__orden,
+      fecha: this.fecha,
+      hoy: this.hoy,
+      value: `${this.__orden.producto.producto}\nOP: ${this.__orden.sort}\nOC: ${this.__orden.orden}\n${this.unidades__} Und.`,
+      sustrado: this.sustrato,
+      cantidad: this.puntoYcoma(this.unidades__),
+      copias: this.cantidad__,
+      gestion: this.gestion,
+      resto: this.resto
     }
     this.api.ImprimirPDF(data)
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         // console.log(resp)
         // console.log('---> ',this.orden)
         this.seleccionar_orden(this.__orden__)
         this.visto = false
-        this.api.copyTags(this.__orden.sort, this.unidades__)
-          .subscribe((resp:any)=>{
-           this.cargando = false;
+        this.api.copyTags(this.__orden.sort, this.unidades__, this.__orden.producto.producto)
+          .subscribe((resp: any) => {
+            this.cargando = false;
             // console.log('done')
           })
       })
-    
+
   }
 
-  test_print(){
+  test_print() {
     this.api.imprimirTest()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         Swal.fire({
           position: 'top-end',
-          icon:'success',
+          icon: 'success',
           title: 'Se imprimió etiqueta de prueba',
           showConfirmButton: false,
           timer: 1500,
-          timerProgressBar:true,
-          toast:true,
+          timerProgressBar: true,
+          toast: true,
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           }
         })
       })
-}
+  }
 
-  puntoYcoma(n){
+  puntoYcoma(n) {
     return n = new Intl.NumberFormat('de-DE').format(n)
-   }
+  }
 
 }

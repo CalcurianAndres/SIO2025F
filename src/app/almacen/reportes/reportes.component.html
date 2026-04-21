@@ -29,6 +29,15 @@
             <!-- Tabla de resultados -->
             <div class="table-container fade-in-up" *ngIf="!loading && data.length"
                 style="max-height: 70vh; overflow-y: auto;">
+                <hr>
+                <div class="container">
+                    <button class="button is-success is-rounded has-text-weight-semibold" (click)="exportarExcel()"
+                        [disabled]="!data.length">
+                        <span class="icon"><i class="fas fa-file-excel"></i></span>
+                        <span>Descargar Excel</span>
+                    </button>
+                </div>
+                <hr>
                 <table class="table is-hoverable is-fullwidth has-text-centered">
                     <thead class="has-background-info-dark">
                         <tr>

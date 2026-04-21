@@ -33,17 +33,17 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
 
   public numero_tintas = 0
-  public sustrato = []
-  public grupos = []
-  public maquinas = []
-  public gruposMP = []
-  public materiales = []
+  public sustrato: any = []
+  public grupos: any = []
+  public maquinas: any = []
+  public gruposMP: any = []
+  public materiales: any = []
 
   public sustrato_selected = ''
   public grupo_selected = ''
   public grupo_selected2 = ''
-  public Materiales_Agregados = []
-  public material_selected;
+  public Materiales_Agregados: any[] = []
+  public material_selected: any;
   public cantidad_added = 0
 
   public cantidad_escalas = 0
@@ -55,10 +55,10 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   public kilos_tintas = 0
   public cantidad_planchas = 0
   public planchas_precio = 0
-  public planchas
-  public cajas_utilizar = []
+  public planchas: any
+  public cajas_utilizar: any = []
 
-  public metros_cinta_necesarios = []
+  public metros_cinta_necesarios: any = []
 
   public barniz_existente = 0
 
@@ -77,6 +77,9 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
   public cliente_selected = ''
   public producto = []
+  public _producto = {
+    producto: ''
+  }
   public producto_selected = ''
   public aumento_sustrato = 0;
   public condicion_pago = 'Crédito 15 días a partir de la fecha de entrega.'
@@ -102,9 +105,9 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
   margenGananciaMaquinas: number = 20; // valor inicial
 
-  public Cliente_selected = ''
+  public Cliente_selected: any = ''
   ObtenerElCliente() {
-    this.Cliente_selected = this.Clientes.find(c => c._id === this.cliente_selected)
+    this.Cliente_selected = this.Clientes.find((c: any) => c._id === this.cliente_selected)
   }
 
   ObtenerClientes() {
@@ -144,7 +147,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   getTotalMaquinasPorEscala(i: number): number {
     let total = 0;
     this.maquinas_selected.forEach((maq, y) => {
-      const data = this.calcularPreciosMaquina(this.cantidad_por_escala[i], y);
+      const data = this.calcularPreciosMaquina(this.cantidad_por_escala[i], y, i);
       total += data.precio;
     });
     return total + this.maquinaLitografica().precio;
@@ -186,18 +189,71 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
     return total;
   }
+  onDesperdicioChange(event: any, i: number) {
+    const input = event.target;
+    let value = input.value;
 
+    // 1. Guardar posición del cursor
+    const selectionStart = input.selectionStart;
+    const dotsBefore = (value.substring(0, selectionStart).match(/\./g) || []).length;
+
+    // 2. Limpiar el valor (quitar puntos) y convertir a número
+    const cleanValue = value.replace(/\./g, '');
+    const numValue = Number(cleanValue) || 0;
+
+    // 3. Actualizar tu array de desperdicio
+    this.cantidad_desperdicio[i] = numValue;
+
+    // 4. Formatear visualmente el input
+    const formatted = this.formatNumber(numValue);
+    input.value = formatted;
+
+    // 5. Ajustar posición del cursor tras el formateo
+    const dotsAfter = (formatted.substring(0, selectionStart).match(/\./g) || []).length;
+    const diff = dotsAfter - dotsBefore;
+    const newPosition = selectionStart + diff;
+    input.setSelectionRange(newPosition, newPosition);
+
+    // 6. Disparar cálculos automáticos
+    // El desperdicio suele afectar materiales y planchas
+    this.calcularPreciosMateriales(this.cantidad_por_escala[i], i);
+    this.planchas_precio = this.calcularPlanchas();
+  }
 
   // Se ejecuta cada vez que cambia el input
   onInputChange(event: any, i: number) {
-    const value = event.target.value.replace(/\./g, ''); // eliminamos separadores
-    this.cantidad_por_escala[i] = Number(value) || 0; // guardamos como número
-    event.target.value = this.formatNumber(this.cantidad_por_escala[i]); // mostramos formateado
+    const input = event.target;
+    let value = input.value;
 
+    // 1. Guardar posición del cursor y contar cuántos puntos hay antes
+    const selectionStart = input.selectionStart;
+    const dotsBefore = (value.substring(0, selectionStart).match(/\./g) || []).length;
 
-    this.calcularPreciosMaquina(this.cantidad_por_escala[i], i)
-    this.calcularPreciosMateriales(this.cantidad_por_escala[i], i)
-    this.planchas_precio = this.calcularPlanchas()
+    // 2. Limpiar y guardar el número real
+    const cleanValue = value.replace(/\./g, '');
+    const numValue = Number(cleanValue) || 0;
+    this.cantidad_por_escala[i] = numValue;
+
+    // 3. Formatear para mostrar
+    const formatted = this.formatNumber(numValue);
+    input.value = formatted;
+
+    // 4. Calcular nueva posición del cursor
+    const dotsAfter = (formatted.substring(0, selectionStart).match(/\./g) || []).length;
+    const diff = dotsAfter - dotsBefore;
+
+    const newPosition = selectionStart + diff;
+    input.setSelectionRange(newPosition, newPosition);
+
+    // 5. Ejecutar tus cálculos de SIO
+    this.ejecutarCalculos(numValue, i);
+  }
+
+  // Función auxiliar para no repetir código
+  ejecutarCalculos(valor: number, i: number) {
+    this.calcularPreciosMaquina(valor, i, i);
+    this.calcularPreciosMateriales(valor, i);
+    this.planchas_precio = this.calcularPlanchas();
   }
 
   calculoPrecioSustrato(cantidad: number, i: number) {
@@ -236,7 +292,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
    *   1. Calcula `hojas_a_usar = (cantidad / this.ejemplares) + this.cantidad_desperdicio`.
    *   2. Por defecto: horas = hojas_a_usar / cph.
    *      Para máquinas de tipo especial (TROQUELAR, CORTAR, DOBLAR Y PEGAR, REVISAR Y ENFAJILLAR)
-   *      las horas se calculan como: horas = cantidad / cph (tal como en tu lógica original).
+   *      las horas se calculan como: horas = cantidad / cph
    *   3. Redondea las horas al paso de 0.5 más cercano (ej: 1.10 → 1.0, 1.30 → 1.5).
    *   4. Impone un mínimo de **1 hora** (si el resultado redondeado < 1, se usa 1).
    *   5. Recalcula precio_neto = tarifa * horasRedondeadas.
@@ -249,14 +305,20 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
    *   - Si `cph` es 0 o inválido, la función devuelve { precio: 0, cantidad: 0 } y muestra un warning.
    *   - Devuelve un objeto { precio: number, cantidad: number } donde `cantidad` = horas redondeadas.
    */
-  calcularPreciosMaquina(cantidad: number, i: number) {
+  calcularPreciosMaquina(cantidad: number, i: number, y: number) {
     // valores base
-    const hojas_a_usar = (cantidad / this.ejemplares) + this.cantidad_desperdicio[i];
+    const hojas_a_usar = (cantidad / this.ejemplares) + this.cantidad_desperdicio[y];
     const maquina: any = this.maquinas_selected[i];
+
+    console.log(this.cantidad_desperdicio, '=> cantidad_desperdicio[y]', this.cantidad_desperdicio[y])
+    console.log(`calcularPreciosMaquina: entrada => cantidad=${cantidad}, ejemplares=${this.ejemplares}, desperdicio=${this.cantidad_desperdicio[y]}, hojas_a_usar=${hojas_a_usar}`);
+    console.log(`calcularPreciosMaquina: cantidad=${cantidad}, hojas_a_usar=${hojas_a_usar}, máquina index ${i} =>`, maquina);
 
     // guardas y parseos seguros
     const cph = Number(maquina?.cph) || 0;
     const tarifa = Number(maquina?.precio) || 0;
+
+    console.log(`calcularPreciosMaquina: cph=${cph}, tarifa=${tarifa}`);
 
     // validación: evitar división por cero
     if (cph <= 0) {
@@ -268,12 +330,14 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
     const roundToNearestHalf = (v: number) => Math.round(v * 2) / 2;
 
     // tipos que usan la fórmula alternativa
-    const tiposEspeciales = ['TROQUELAR', 'CORTAR', 'DOBLAR Y PEGAR', 'REVISAR Y ENFAJILLAR'];
+    const tiposEspeciales = ['CORTAR', 'DOBLAR Y PEGAR', 'REVISAR Y ENFAJILLAR'];
 
     // cálculo de horas según tipo
     let horas = tiposEspeciales.includes(maquina?.tipo)
       ? (cantidad / cph)
       : (hojas_a_usar / cph);
+
+    console.log(`calcularPreciosMaquina: horas sin redondear=${horas}`);
 
     // redondeo y mínimo 1
     let horasRedondeadas = roundToNearestHalf(horas);
@@ -289,7 +353,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   }
 
 
-  calculoPrecioMaterial(cantidad: number, i, n?) {
+  calculoPrecioMaterial(cantidad: number, i: any, n?: any) {
 
     let material = this.Materiales_Agregados[i].material
     let grupo = material.grupo.nombre
@@ -384,7 +448,18 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
 
   formatNumber(value: number): string {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // separador de miles con "."
+    if (!value && value !== 0) return '';
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  updateAlltransporte(event: any) {
+    this.precios_transporte.forEach((_, i) => {
+      this.precios_transporte[i] = Number(event.value) || 0;
+    });
+  }
+
+  calcularPrecioBase(precio) {
+    this.precio_base_sustrato = precio.value
   }
 
   public precio_base_sustrato = 0;
@@ -480,7 +555,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
 
   maquinaLitografica() {
     // Obtener la máquina de pre-impresión
-    let pre_impresion: any = this.maquinas.find(m => m.tipo === 'PRE-IMPRESIÓN');
+    let pre_impresion: any = this.maquinas.find((m: any) => m.tipo === 'PRE-IMPRESIÓN');
 
     let cph = pre_impresion.cph;     // trabajos por hora
     let precioHora = pre_impresion.precio; // precio por hora
@@ -545,7 +620,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   GetGrupoMp() {
     this.api.GetGrupoMp()
       .subscribe((response: any) => {
-        this.gruposMP = response.filter(g => g.nombre !== 'Sustrato' && g.nombre !== 'Tinta');
+        this.gruposMP = response.filter((g: any) => g.nombre !== 'Sustrato' && g.nombre !== 'Tinta');
       })
   }
 
@@ -699,23 +774,85 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
   }
 
 
-  DescargarPDF() {
+  public cliente = {
+    nombre: '',
+    direccion: '',
+    rif: '',
+    codigo: '',
+    contactos: [
+      {
+        nombre: '',
+      }
+    ]
+  }
 
-    const cliente = this.Clientes.find(c => c._id === this.cliente_selected)
-    const producto = this.producto.find(p => p._id === this.producto_selected)
+
+  getBase64ImageFromURL(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'anonymous');
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataURL);
+      };
+      img.onerror = error => reject(error);
+      img.src = url;
+    });
+  }
+
+  sustrato_Nuevo = {
+    nombre: '',
+    gramaje: '',
+    calibre: '',
+    ancho: '',
+    largo: '',
+
+  }
+
+  DescargarPDF = async () => {
+
+    var cliente: any = this.Clientes.find((c: any) => c._id === this.cliente_selected)
+    if (!cliente) {
+      cliente = this.cliente
+    }
+    var producto: any = this.producto.find((p: any) => p._id === this.producto_selected)
+    if (!producto) {
+      producto = this._producto
+    }
     const tipos = this.grupos[this.grupo_selected].tipos
     const escalas_ = this.cantidad_por_escala;
     const precios: any = [];
     const condicion = this.condicion_pago;
     const almacen = this.almacen_selected;
-    const sustrato: any = this.sustrato.find((s: any) => s._id === this.sustrato_selected)
+    let sustrato: any = this.sustrato.find((s: any) => s._id === this.sustrato_selected)
+    if (!sustrato) {
+      sustrato = this.sustrato_Nuevo
+    }
     let colores = ''
     const dias = this.dias_validez;
     const usuario = `${this.api.usuario.Nombre} ${this.api.usuario.Apellido}`;
     const departamento = this.api.usuario.Departamento;
-    const fecha = moment().format('DD/MM/YYYY');
+    const fecha = new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(new Date());
     const firma = `../../assets/firmas/${this.api.usuario._id}.png`;
     const nota = this.nota;
+
+    const division = this.division;
+    const backgroundBase64 = await this.getBase64ImageFromURL(
+      '../../assets/HOJA_MEMBRETE_POLIGRAFICA.jpg'
+    );
+
+
 
     if (this.barniz_existente > 0) {
       colores = `${this.cantidad_planchas} Colores + Barniz`
@@ -734,36 +871,41 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
     async function generarPDF() {
 
       // ==================== ENCABEZADO ====================
-      pdf.add(
-        new Table([
-          [
-            new Cell(await new Img('../../assets/poli_cintillo.png').width(85).margin([20, 5, 0, -5]).build()).rowSpan(4).end,
-            new Cell(new Txt(`
-              COTIZACIÓN
-              `).bold().end).alignment('center').fontSize(13).rowSpan(4).end,
-            new Cell(new Txt('Código: FDE-001').end).fillColor('#dedede').fontSize(7).alignment('center').end,
-          ],
-          [
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('N° de Revisión: 0').end).fillColor('#dedede').fontSize(7).alignment('center').end,
-          ],
-          [
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('Fecha de Revisión: 14/04/2023').end).fillColor('#dedede').fontSize(7).alignment('center').end,
-          ],
-          [
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('').end).end,
-            new Cell(new Txt('Página: 1 de 1').end).fillColor('#dedede').fontSize(7).alignment('center').end,
-          ],
-        ])
-          .widths(['25%', '50%', '25%'])
-          .end
-      );
+      // pdf.add(
+      //   new Table([
+      //     [
+      //       new Cell(await new Img('../../assets/poli_cintillo.png').width(85).margin([20, 5, 0, -5]).build()).rowSpan(4).end,
+      //       new Cell(new Txt(`
+      //         COTIZACIÓN
+      //         `).bold().end).alignment('center').fontSize(13).rowSpan(4).end,
+      //       new Cell(new Txt('Código: FDE-001').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+      //     ],
+      //     [
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('N° de Revisión: 0').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+      //     ],
+      //     [
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('Fecha de Revisión: 14/04/2023').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+      //     ],
+      //     [
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('').end).end,
+      //       new Cell(new Txt('Página: 1 de 1').end).fillColor('#dedede').fontSize(7).alignment('center').end,
+      //     ],
+      //   ])
+      //     .widths(['25%', '50%', '25%'])
+      //     .end
+      // );
 
-      pdf.add(pdf.ln(1));
+      // pdf.add(pdf.ln(1));
+      pdf.background({
+        image: backgroundBase64,
+        width: 595.28,   // A4
+        height: 841.89
+      });
 
       // ==================== TABLA DE CABECERA DE LA COTIZACIÓN (NUEVO ESTILO) ====================
       pdf.add(
@@ -783,7 +925,7 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
                 [
                   new Cell(new Txt('N°').bold().alignment('center').color('#000000').end)
                     .fillColor('#cccccc').end,
-                  new Cell(new Txt('AR-25-xx').bold().color('#e74c3c').alignment('center').end)
+                  new Cell(new Txt(`${cliente.codigo}-26-xx`).bold().color('#e74c3c').alignment('center').end)
                     .fillColor('#ededed').end,
                 ],
                 [
@@ -812,6 +954,8 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
           .layout('noBorders')
           .end
       );
+
+      pdf.add(pdf.ln(1));
 
       // ==================== INFO DEL CLIENTE (ESTILIZADA) ====================
       pdf.add(
@@ -885,19 +1029,6 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
                       .alignment('right')
                       .end
                   ).end
-                ],
-                [
-                  new Cell(
-                    new Txt(
-                      (cliente.contactos && cliente.contactos[0] && cliente.contactos[0].cargo) ||
-                      ''
-                    )
-                      .italics()
-                      .fontSize(9)
-                      .color('#000000')
-                      .alignment('right')
-                      .end
-                  ).end
                 ]
               ])
                 .widths(['100%'])
@@ -932,7 +1063,6 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
                 .lineHeight(0.6) // interlineado más pequeño
                 .end
             )
-              .fillColor('#ffffff')
               .end
           ],
           [
@@ -946,7 +1076,6 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
                 .lineHeight(0.6)
                 .end
             )
-              .fillColor('#ffffff')
               .end
           ],
           [
@@ -957,7 +1086,6 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
                 .lineHeight(0.6)
                 .end
             )
-              .fillColor('#ffffff')
               .end
           ],
           [
@@ -972,10 +1100,8 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
         ])
           .widths(['100%'])
           .layout({
-            hLineWidth: () => 0.7,
-            vLineWidth: () => 0.7,
-            hLineColor: () => '#ffffff',
-            vLineColor: () => '#ffffff',
+            hLineWidth: () => 0,
+            vLineWidth: () => 0,
             paddingLeft: () => 6,
             paddingRight: () => 6,
             paddingTop: () => 3, // puedes bajar también el padding si quieres más compacto
@@ -1000,16 +1126,22 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
         new Cell(new Txt('Escala').bold().color('#ffffff').alignment('center').fontSize(10).end)
           .fillColor('#000000').end,
         ...escalas.map(e =>
-          new Cell(new Txt(e.toLocaleString('es-VE')).bold().color('#ffffff').alignment('center').fontSize(10).end)
+          new Cell(new Txt(e.toLocaleString('es-VE', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          })).bold().color('#ffffff').alignment('center').fontSize(10).end)
             .fillColor('#000000').end
         )
       ];
 
       const priceRow = [
-        new Cell(new Txt(`Precio/1000 (USD)`).bold().color('#000000').alignment('center').fontSize(9).end)
+        new Cell(new Txt(`Precio/${division} und (USD)`).bold().color('#000000').alignment('center').fontSize(9).end)
           .fillColor('#cccccc').end,
-        ...precios_.map(p =>
-          new Cell(new Txt(p.toLocaleString('es-VE')).bold().color('#000000').alignment('center').fontSize(10).end)
+        ...precios_.map((p: any) =>
+          new Cell(new Txt(p.toLocaleString('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })).bold().color('#000000').alignment('center').fontSize(10).end)
             .fillColor('#cccccc').end
         )
       ];
@@ -1113,17 +1245,17 @@ export class CotizacionCarrouselComponent implements AfterViewInit {
       pdf.add(pdf.ln(2));
 
       // ==================== PIE DE PÁGINA ====================
-      pdf.add(
-        new Txt('Calle Pantín,  Local Galpón Nro 29, Urb. Chacao-Caracas, Miranda, Venezuela. ZP: 1060,')
-          .italics().fontSize(9).alignment('center').end
-      );
-      pdf.add(
-        new Txt('email: info@poligraficaindustrial.com')
-          .italics().fontSize(9).alignment('center').end
-      );
+      // pdf.add(
+      //   new Txt('Calle Pantín,  Local Galpón Nro 29, Urb. Chacao-Caracas, Miranda, Venezuela. ZP: 1060,')
+      //     .italics().fontSize(9).alignment('center').end
+      // );
+      // pdf.add(
+      //   new Txt('email: info@poligraficaindustrial.com')
+      //     .italics().fontSize(9).alignment('center').end
+      // );
 
       // ==================== DESCARGA ====================
-      pdf.create().download(`nn-C-25-xx`);
+      pdf.create().download(`nn-C-26-xx`);
     }
 
     generarPDF();

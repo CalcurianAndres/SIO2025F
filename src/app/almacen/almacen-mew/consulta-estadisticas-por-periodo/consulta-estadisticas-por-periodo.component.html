@@ -1,0 +1,46 @@
+<div class="container">
+
+    <!-- FILTROS -->
+    <div class="box">
+        <div class="columns is-vcentered">
+            <div class="column is-3">
+                <label class="label">Desde</label>
+                <input type="date" class="input" [(ngModel)]="from">
+            </div>
+
+            <div class="column is-3">
+                <label class="label">Hasta</label>
+                <input type="date" class="input" [(ngModel)]="to">
+            </div>
+
+            <div class="column is-3">
+                <button class="button is-danger is-fullwidth" (click)="consultar()">
+                    Consultar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="cargando" class="has-text-centered has-text-grey">
+        Cargando datos…
+    </div>
+
+    <!-- GRAFICAS -->
+    <div *ngIf="data.length" class="box">
+
+        <h4 class="title is-5">Consumo OP – Evolución Mensual</h4>
+
+        <canvas id="lineChart" height="120"></canvas>
+
+    </div>
+
+    <div *ngIf="data.length" class="box">
+
+        <h4 class="title is-5">Asignado vs Devuelto (OP)</h4>
+
+        <canvas id="barChart" height="120"></canvas>
+
+    </div>
+
+</div>

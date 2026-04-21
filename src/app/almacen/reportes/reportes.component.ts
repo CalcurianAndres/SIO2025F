@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { RestApiService } from 'src/app/services/rest-api.service';
 import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx-js-style';
+import { saveAs } from 'file-saver';
+
 
 @Component({
   selector: 'app-reportes',
@@ -38,6 +41,162 @@ export class ReportesComponent implements OnInit {
   hasta = '';
   data: any = [];
   loading = false;
+
+
+
+  exportarExcel() {
+    if (!this.data?.length) return;
+
+    const rows = [];
+    let totalInicial = 0;
+    let totalEntradas = 0;
+    let totalSalidas = 0;
+    let totalDevoluciones = 0;
+    let totalFinal = 0;
+
+    // Encabezados
+    rows.push([
+      'Material',
+      'Saldo Inicial',
+      'Entradas',
+      'Salidas',
+      'Devoluciones',
+      'Saldo Final'
+    ]);
+
+    // Data
+    this.data.forEach(item => {
+      totalInicial += item.saldo_inicial;
+      totalEntradas += item.entradas;
+      totalSalidas += item.salidas;
+      totalDevoluciones += item.devoluciones;
+      totalFinal += item.saldo_final;
+
+      rows.push([
+        this.formatearMaterial(item),
+        item.saldo_inicial,
+        item.entradas,
+        item.salidas,
+        item.devoluciones,
+        item.saldo_final
+      ]);
+    });
+
+    // Totales
+    // rows.push([
+    //   'TOTALES',
+    //   totalInicial,
+    //   totalEntradas,
+    //   totalSalidas,
+    //   totalDevoluciones,
+    //   totalFinal
+    // ]);
+
+    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+
+    // 🧊 Freeze header
+    worksheet['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+    // 📐 Columnas
+    worksheet['!cols'] = [
+      { wch: 45 },
+      { wch: 16 },
+      { wch: 14 },
+      { wch: 14 },
+      { wch: 18 },
+      { wch: 16 }
+    ];
+
+    const headerStyle = {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '1F4E78' } },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: this.bordes()
+    };
+
+    const numberStyle = {
+      numFmt: '#,##0.00',
+      alignment: { horizontal: 'right' },
+      border: this.bordes()
+    };
+
+    const positiveStyle = {
+      ...numberStyle,
+      font: { color: { rgb: '006100' } }
+    };
+
+    const negativeStyle = {
+      ...numberStyle,
+      font: { color: { rgb: '9C0006' } }
+    };
+
+    // const totalStyle = {
+    //   font: { bold: true },
+    //   fill: { fgColor: { rgb: 'D9E1F2' } },
+    //   border: this.bordes(),
+    //   numFmt: '#,##0.00'
+    // };
+
+    const range = XLSX.utils.decode_range(worksheet['!ref']!);
+
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cell = worksheet[XLSX.utils.encode_cell({ r: 0, c: C })];
+      if (cell) cell.s = headerStyle;
+    }
+
+    for (let R = 1; R <= range.e.r; R++) {
+      worksheet[XLSX.utils.encode_cell({ r: R, c: 1 })].s = numberStyle;
+      worksheet[XLSX.utils.encode_cell({ r: R, c: 2 })].s = positiveStyle;
+      worksheet[XLSX.utils.encode_cell({ r: R, c: 3 })].s = negativeStyle;
+      worksheet[XLSX.utils.encode_cell({ r: R, c: 4 })].s = positiveStyle;
+      worksheet[XLSX.utils.encode_cell({ r: R, c: 5 })].s = numberStyle;
+    }
+
+    // Totales fila final
+    const lastRow = range.e.r;
+    for (let C = 0; C <= range.e.c; C++) {
+      const cell = worksheet[XLSX.utils.encode_cell({ r: lastRow, c: C })];
+      // if (cell) cell.s = totalStyle;
+    }
+
+    const workbook: XLSX.WorkBook = {
+      Sheets: { Inventario: worksheet },
+      SheetNames: ['Inventario']
+    };
+
+    const buffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+
+    saveAs(
+      new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }),
+      `Reporte_Inventario_${this.desde}_al_${this.hasta}.xlsx`
+    );
+  }
+
+  bordes() {
+    return {
+      top: { style: 'thin' },
+      bottom: { style: 'thin' },
+      left: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+  }
+
+  formatearMaterial(item: any): string {
+    let texto = item.nombre;
+
+    if (item.marca) texto += ` (${item.marca})`;
+    if (item.ancho && item.largo) texto += ` (${item.ancho} x ${item.largo})`;
+    if (item.gramaje) texto += ` ${item.gramaje} g/m²`;
+    if (item.calibre) texto += ` (${item.calibre} pt)`;
+
+    return texto;
+  }
+
 
   buscar() {
     if (!this.desde || !this.hasta) {

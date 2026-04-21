@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { RestApiService } from 'src/app/services/rest-api.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-nuevo-inventario-new',
@@ -24,10 +26,10 @@ export class NuevoInventarioNewComponent implements OnInit {
     codigo: '',
     lote: '',
     cantidad: '',
-    producto: ''
+    material: ''
   }
 
-  constructor() { }
+  constructor(public api: RestApiService) { }
 
   ngOnInit(): void {
   }
@@ -54,7 +56,35 @@ export class NuevoInventarioNewComponent implements OnInit {
   }
 
   almacenar() {
-    console.log(this.data)
+    // console.log(this.data)
+    this.api.postAlmacenado(this.data)
+      .subscribe((resp: any) => {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Nueva materia prima agregada',
+          showConfirmButton: false,
+          timer: 1500
+        })
+        this.data = {
+          pedido: '',
+          precio: '',
+          codigo: '',
+          lote: '',
+          cantidad: '',
+          material: ''
+        }
+
+        this.cerrar();
+      }, err => {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'Lote y código ya existe',
+          text: 'Este N° de Lote, junto a este código ya se encuentra registrado en Sio. Es necesario que cada producto almacenado sea único en el sistema.',
+          showConfirmButton: false,
+        })
+      })
   }
 
   GrupoNombre() {

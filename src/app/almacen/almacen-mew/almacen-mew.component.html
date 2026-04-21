@@ -7,7 +7,7 @@
 
 <app-nuevo-inventario-new [Inventario]="Nuevo_inventario" [grupos]="grupos" [Materiales]="Materiales_registrados"
     (onCargarMateriales)="CargarMaterialesRegistrados('sin_cambiar_pantalla')"
-    (onCloseModal)="Nuevo_inventario = !Nuevo_inventario">
+    (onCloseModal)="Nuevo_inventario = !Nuevo_inventario;cargarAlmacer()">
 
 </app-nuevo-inventario-new>
 
@@ -143,6 +143,15 @@
                         <img src="../../../assets/list_1187525.png" class="accion-icon">
                         <div class="accion-texto">
                             <span>Reporte</span>
+                            <span>Inventario</span>
+                        </div>
+                        <span class="estado neutro"></span>
+                    </button>
+
+                    <button class="accion-btn" routerLink="/almacen/cortes-inventario">
+                        <img src="../../../assets/mes.png" class="accion-icon">
+                        <div class="accion-texto">
+                            <span>Cortes</span>
                             <span>Inventario</span>
                         </div>
                         <span class="estado neutro"></span>

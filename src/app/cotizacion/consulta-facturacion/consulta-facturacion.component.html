@@ -160,12 +160,12 @@
                             <td class="data__">{{despacho.producto}}</td>
                             <td style="text-align: center;" class="data__">{{despacho.op}}</td>
                             <td style="text-align: center;" class="data__">
-                                <ng-container *ngIf="!despacho.parcial">
-                                    {{despacho.fecha}}
+                                {{despacho.status}}
+                                <!-- <ng-container *ngIf="!despacho.parcial">
                                 </ng-container>
                                 <ng-container *ngIf="despacho.parcial">
                                     {{despacho.parcial}}
-                                </ng-container>
+                                </ng-container> -->
                             </td>
                             <td style="text-align: center;" class="data__">{{puntoYcoma4(despacho.tasa)}}</td>
                             <td style="text-align: center;" class="data__">{{puntoYcoma(despacho.cantidad)}}</td>

@@ -20,7 +20,7 @@ export class MainComponent implements OnInit {
   public ORDENES;
   public ESTADOS;
   public TRABAJOS;
-  public detalle:boolean = false;
+  public detalle: boolean = false;
   public orden_detalle;
   public orden_id;
   public cantidad_d;
@@ -28,41 +28,41 @@ export class MainComponent implements OnInit {
   public ejemplares_montados;
   public ordenes_todas
 
-  public despacho:boolean = false;
+  public despacho: boolean = false;
 
-  public loading:boolean = true;
-  
-  
-  constructor(private api:RestApiService,
-    private router:Router,
-    ) {
-      this.usuario = api.usuario
-    }
-    
-    ngOnInit(): void {
-      this.getOrdenes();
-      this.obtenerTrabajos();
-      this.getOrdenesTodas();
-    }
-    public usuario
+  public loading: boolean = true;
 
 
-  getOrdenesTodas(){
+  constructor(private api: RestApiService,
+    private router: Router,
+  ) {
+    this.usuario = api.usuario
+  }
+
+  ngOnInit(): void {
+    this.getOrdenes();
+    this.obtenerTrabajos();
+    this.getOrdenesTodas();
+  }
+  public usuario
+
+
+  getOrdenesTodas() {
     this.api.getOrdenesTodas()
-      .subscribe((resp:any) =>{
+      .subscribe((resp: any) => {
         this.ordenes_todas = resp
       })
   }
 
-  getOrdenes(){
+  getOrdenes() {
     this.api.getOrden()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.ORDENES = resp;
         this.ORDENES = this.ORDENES.reverse();
       })
   }
 
-  detallar(id,sort, x, y, montajes){
+  detallar(id, sort, x, y, montajes) {
     this.ejemplares_montados = montajes;
     this.detalle = true;
     this.orden_detalle = sort;
@@ -72,40 +72,40 @@ export class MainComponent implements OnInit {
     // // console.log(y)
   }
 
-  despacho_(){
+  despacho_() {
     this.despacho = true;
   }
 
-  alert(id){
+  alert(id) {
     this.router.navigateByUrl(`orden-produccion/${id}`)
   }
 
-  getEstados(id){
+  getEstados(id) {
     let estado = this.TRABAJOS.find(x => x.orden._id == id && x.maquina.tipo === 'IMPRIMIR')
     let hoy = moment().format('yyyy-MM-DD');
 
     // // // console.log(estado)
-    if(estado){
-      if(hoy < estado.fechaI){
+    if (estado) {
+      if (hoy < estado.fechaI) {
         let date = moment(estado.fechaI).format('yyyy-MM-DD')
         date = moment('yyyy-MM-DD').format('DD-MM-yyyy')
         return `Impresión Comienza el: ${estado.fechaI}`
       }
     }
 
-      let estado2 = this.TRABAJOS.find(x => x.orden._id == id && x.fechaI<= hoy && x.fecha >= hoy)
-    if(estado2){
+    let estado2 = this.TRABAJOS.find(x => x.orden._id == id && x.fechaI <= hoy && x.fecha >= hoy)
+    if (estado2) {
       // // console.log(estado2, 'this is')
-        return `En proceso de: ${estado2.maquina.tipo}`
-    }else{
+      return `En proceso de: ${estado2.maquina.tipo}`
+    } else {
       return `ORDEN FINALIZADA`
     }
 
   }
 
-  obtenerTrabajos(){
+  obtenerTrabajos() {
     this.api.getTrabajos()
-      .subscribe((resp:any)=>{
+      .subscribe((resp: any) => {
         this.TRABAJOS = resp;
         // // console.log(this.TRABAJOS)
         this.loading = false;
@@ -115,9 +115,9 @@ export class MainComponent implements OnInit {
 
   exportarResumenExcel() {
     const ordenesFiltradas = this.ordenes_todas.filter((o: any) =>
-      o.sort?.toString().startsWith('2025')
+      o.sort?.toString().startsWith('2026')
     );
-  
+
     const DescargarResumen = async () => {
       const gestionPromises = ordenesFiltradas.map((orden: any) => {
         return this.api.UltimaGestion({ op: orden._id, cantidad: orden.paginas })
@@ -131,9 +131,9 @@ export class MainComponent implements OnInit {
             paginas_o: 0,
           }));
       });
-  
+
       const resultadosGestion = await Promise.all(gestionPromises);
-  
+
       // Crear los datos en forma de objetos planos (para Excel)
       const dataExcel = ordenesFiltradas.map((orden: any) => {
         const fecha = moment(orden.fecha).format('DD/MM/YYYY');
@@ -142,11 +142,11 @@ export class MainComponent implements OnInit {
         const paginas_a_imprimir = Math.ceil(orden.cantidad / Number(orden.producto.ejemplares[orden.montaje])) || 0;
         const porcentaje = Number(orden.demasia) || 0;
         const hojas_demasia = Math.ceil(paginas_a_imprimir * (porcentaje / 100));
-  
+
         const gestion = resultadosGestion.find((g: any) => g._id === orden._id);
         const paginas_o = (gestion as any)?.paginas_o || 0;
         const cantidad_o = orden.producto.ejemplares[orden.montaje] * paginas_o || 0;
-  
+
         return {
           FECHA: fecha,
           'ORDEN DE PRODUCCIÓN': sort,
@@ -156,35 +156,35 @@ export class MainComponent implements OnInit {
           'PRODUCTOS PROCESADOS': cantidad_o.toLocaleString('es-VE'),
         };
       });
-  
+
       // Convertir a hoja de Excel
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataExcel);
       const workbook: XLSX.WorkBook = {
-        Sheets: { 'Resumen 2025': worksheet },
-        SheetNames: ['Resumen 2025'],
+        Sheets: { 'Resumen 2026': worksheet },
+        SheetNames: ['Resumen 2026'],
       };
-  
+
       const excelBuffer: any = XLSX.write(workbook, {
         bookType: 'xlsx',
         type: 'array',
       });
-  
+
       // Guardar archivo
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-      FileSaver.saveAs(blob, `RESUMEN_2025.xlsx`);
+      FileSaver.saveAs(blob, `RESUMEN_2026.xlsx`);
     };
-  
+
     DescargarResumen();
   }
-  
+
 
 
 
   resumen() {
     const ordenesFiltradas = this.ordenes_todas.filter((o: any) =>
-      o.sort?.toString().startsWith('2025')
+      o.sort?.toString().startsWith('2026')
     );
-  
+
     const DescargarResumen = async () => {
       // Paso 1: Llamar a UltimaGestion por cada orden
       const gestionPromises = ordenesFiltradas.map((orden: any) => {
@@ -199,12 +199,12 @@ export class MainComponent implements OnInit {
             paginas_o: 0,
           }));
       });
-  
+
       const resultadosGestion = await Promise.all(gestionPromises);
-  
+
       const pdf = new PdfMakeWrapper();
       PdfMakeWrapper.setFonts(pdfFonts);
-  
+
       // Paso 2: construir la tabla con datos actualizados
       const tablaDatos = ordenesFiltradas.map((orden: any, index: number) => {
         const fecha = moment(orden.fecha).format('DD/MM/YYYY');
@@ -213,12 +213,12 @@ export class MainComponent implements OnInit {
         const paginas_a_imprimir = Math.ceil(orden.cantidad / Number(orden.producto.ejemplares[orden.montaje])) || 0;
         const porcentaje = Number(orden.demasia) || 0;
         const hojas_demasia = Math.ceil(paginas_a_imprimir * (porcentaje / 100));
-  
+
         // Buscar el resultado de UltimaGestion
-        const gestion = resultadosGestion.find((g:any) => g._id === orden._id);
+        const gestion = resultadosGestion.find((g: any) => g._id === orden._id);
         const paginas_o = (gestion as any)?.paginas_o || 0;
         const cantidad_o = orden.producto.ejemplares[orden.montaje] * paginas_o || 0;
-  
+
         return [
           new Cell(new Txt(fecha).fontSize(9).end).fillColor(index % 2 === 0 ? '#f5f5f5' : null).end,
           new Cell(new Txt(sort).fontSize(9).end).fillColor(index % 2 === 0 ? '#f5f5f5' : null).end,
@@ -228,7 +228,7 @@ export class MainComponent implements OnInit {
           new Cell(new Txt(cantidad_o.toLocaleString('es-VE')).fontSize(9).end).fillColor(index % 2 === 0 ? '#f5f5f5' : null).end,
         ];
       });
-  
+
       const encabezado = [
         new Cell(new Txt('FECHA').bold().end).alignment('center').fillColor('#999999').color('#000000').fontSize(9).end,
         new Cell(new Txt('ORDEN DE PRODUCCIÓN').bold().end).alignment('center').fillColor('#999999').color('#000000').fontSize(9).end,
@@ -237,19 +237,19 @@ export class MainComponent implements OnInit {
         new Cell(new Txt('HOJAS PROCESADAS').bold().end).alignment('center').fillColor('#999999').color('#000000').fontSize(9).end,
         new Cell(new Txt('PRODUCTOS PROCESADOS').bold().end).alignment('center').fillColor('#999999').color('#000000').fontSize(9).end,
       ];
-  
+
       pdf.add(
         new Table([encabezado, ...tablaDatos])
           .widths(['12%', '20%', '18%', '17%', '17%', '16%'])
           .layout('lightHorizontalLines')
           .end
       );
-  
+
       pdf.create().download(`RESUMEN_2025`);
     };
-  
+
     DescargarResumen();
   }
-  
+
 
 }

@@ -49,6 +49,41 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <hr>
+                        <h3>Descargar relación</h3>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <label for="" class="label">Inicio</label>
+                                <input type="date" name="" id="" class="input is-small" [(ngModel)]="inicio_relacion">
+                            </div>
+                            <div class="control">
+                                <label for="" class="label">Fin</label>
+                                <input type="date" name="" id="" class="input is-small" [(ngModel)]="fin_relacion">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Producto</label>
+                                <div class="select is-small">
+                                    <select [(ngModel)]="code_relacion"
+                                        [disabled]="CLIENTES_ACTUAL === '#' || !CLIENTES_ACTUAL">
+                                        <option value="ALL">Todos los productos</option>
+                                        <option value="{{producto.codigo}}"
+                                            *ngFor="let producto of filtrarProductoPorCliente()">
+                                            {{producto.producto}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button class="button is-success is-small"
+                                [disabled]="!CLIENTES_ACTUAL || !inicio_relacion || !fin_relacion || !code_relacion"
+                                (click)="descarExcelRelacion()">
+                                Descargar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

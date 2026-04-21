@@ -26,12 +26,14 @@ import { AprovacionTrasladosNewComponent } from './almacen-mew/aprovacion-trasla
 import { RetornoMaterialNewComponent } from './almacen-mew/retorno-material-new/retorno-material-new.component';
 import { RetornoMaterialPorAprobarNewComponent } from './almacen-mew/retorno-material-por-aprobar-new/retorno-material-por-aprobar-new.component';
 import { ConsultaEstadisticasComponent } from './almacen-mew/consulta-estadisticas/consulta-estadisticas.component';
+import { ConsultaEstadisticasPorPeriodoComponent } from './almacen-mew/consulta-estadisticas-por-periodo/consulta-estadisticas-por-periodo.component';
+import { CortesInventarioComponent } from './almacen-mew/cortes-inventario/cortes-inventario.component';
 
 
 
 
 @NgModule({
-  declarations: [MainComponent, ConfirmacionComponent, AsignacionComponent, ReportesComponent, RecepcionComponent, IndexComponent, InventarioComponent, AsignacionNewComponent, RepuestosComponent, CategoriasComponent, RegistroRepuestoComponent, RepuestoAlmacenadoComponent, MovimientoMaterialComponent, RetornoComponent, AlmacenMewComponent, NuevoMaterialComponent, NuevoInventarioNewComponent, DevolucionesNewComponent, TraspasosNewComponent, AprovacionTrasladosNewComponent, RetornoMaterialNewComponent, RetornoMaterialPorAprobarNewComponent, ConsultaEstadisticasComponent],
+  declarations: [MainComponent, ConfirmacionComponent, AsignacionComponent, ReportesComponent, RecepcionComponent, IndexComponent, InventarioComponent, AsignacionNewComponent, RepuestosComponent, CategoriasComponent, RegistroRepuestoComponent, RepuestoAlmacenadoComponent, MovimientoMaterialComponent, RetornoComponent, AlmacenMewComponent, NuevoMaterialComponent, NuevoInventarioNewComponent, DevolucionesNewComponent, TraspasosNewComponent, AprovacionTrasladosNewComponent, RetornoMaterialNewComponent, RetornoMaterialPorAprobarNewComponent, ConsultaEstadisticasComponent, ConsultaEstadisticasPorPeriodoComponent, CortesInventarioComponent],
   imports: [
     CommonModule,
     AlmacenRoutingModule,

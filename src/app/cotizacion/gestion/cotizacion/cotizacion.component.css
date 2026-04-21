@@ -1,7 +1,7 @@
 /* contenedor general */
 .carousel-root {
   position: relative;
-  max-width: 1100px;
+  /* max-width: 1100px; */
   margin: 1.5rem auto;
   padding: 0 1rem;
 }
@@ -157,4 +157,465 @@ th.col-1 {
 
 .costos {
   font-size: calc(16px - (0.5px * var(--cantidad-escalas)));
+}
+
+/* Reset y Tipografía */
+.super-form-wrapper {
+  background-color: #f8fafc;
+  /* Gris azulado muy tenue de fondo */
+  font-family: 'Inter', sans-serif;
+  /* Tipografía premium */
+  color: #1e293b;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* Header */
+.form-header {
+  margin-bottom: 50px;
+}
+
+.super-title {
+  font-weight: 800;
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+  color: #0f172a;
+}
+
+.super-subtitle {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+.status-badge {
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Secciones Principales */
+.form-section {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+  /* Sombra muy suave */
+  padding: 40px;
+  margin-bottom: 30px;
+  position: relative;
+  border: 1px solid #f1f5f9;
+}
+
+.section-icon {
+  position: absolute;
+  top: -20px;
+  left: 40px;
+  background: #4f46e5;
+  /* Color acento violeta/azul */
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+/* Inputs y Labels Custom */
+.super-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.super-input {
+  border-radius: 10px !important;
+  border: 2px solid #e2e8f0;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  height: 48px;
+}
+
+.super-input:focus {
+  border-color: #4f46e5;
+  background-color: #fefeff;
+}
+
+.super-input.is-large {
+  height: 60px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.super-input.is-small {
+  height: 38px;
+  border-radius: 8px !important;
+  font-size: 0.85rem;
+}
+
+/* Selects Custom */
+.custom-select-wrapper .select:not(.is-multiple):not(.is-loading)::after {
+  border-color: #4f46e5;
+}
+
+.super-input-select select {
+  border-radius: 10px !important;
+  border: 2px solid #e2e8f0;
+  height: 48px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.super-input-select select:focus {
+  border-color: #4f46e5;
+}
+
+.add-new-option {
+  font-weight: 600;
+  color: #4f46e5;
+  background-color: #f0f9ff;
+}
+
+/* Sub-formularios (Paneles) */
+.sub-form-panel {
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.sub-form-panel.is-warning {
+  background-color: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.panel-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* UI Elements */
+.super-hr {
+  background-color: #f1f5f9;
+  height: 2px;
+  margin: 20px 0;
+}
+
+.data-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.v-centered-columns {
+  align-items: center;
+}
+
+/* Dimension Grid */
+.dimension-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+}
+
+.dimension-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dimension-item span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.dimension-divider {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #cbd5e1;
+  margin-top: -25px;
+}
+
+/* Cost Dashboard Table */
+.cost-dashboard {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cost-header {
+  background-color: #f1f5f9;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.cost-bodyColumns {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 20px;
+}
+
+.cost-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cost-col.is-divider {
+  flex: 0 0 40px;
+  color: #cbd5e1;
+  font-size: 1.2rem;
+}
+
+.cost-col.is-total {
+  padding: 20px;
+  border-radius: 10px;
+  margin: -10px 0;
+}
+
+.cost-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.is-total .cost-label {
+  color: #c7d2fe;
+}
+
+.cost-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -1px;
+}
+
+.is-total .cost-value {
+  color: white;
+}
+
+.currency {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-left: 3px;
+}
+
+.is-total .currency {
+  color: #a5b4fc;
+}
+
+/* Super Addons para el % */
+.super-addons .input {
+  border-radius: 10px 0 0 10px !important;
+  height: 48px;
+}
+
+.super-static {
+  border-radius: 0 10px 10px 0 !important;
+  background-color: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  border-left: none;
+  height: 48px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Ink Section */
+.ink-section {
+  background-color: #f8fafc;
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+}
+
+.ink-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.ink-input-group label {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.ink-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ink-result-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.ink-result-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #16a34a;
+  letter-spacing: -1.5px;
+  margin-top: -5px;
+}
+
+/* FontAwesome Icons adjustment */
+.icon.is-left i {
+  color: #94a3b8;
+}
+
+.select select {
+  padding-left: 40px;
+}
+
+.machine-card {
+  border-color: #f1f5f9;
+  background-color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.machine-card:hover {
+  transform: translateY(-2px);
+  border-color: #4f46e5;
+}
+
+.super-static-btn {
+  background-color: #4f46e5 !important;
+  border: none !important;
+  color: white !important;
+  height: 38px !important;
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.rounded-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #f8fafc;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 12px;
+}
+
+.table td {
+  vertical-align: middle !important;
+  padding: 12px !important;
+}
+
+/* Pequeño ajuste para que los labels largos no rompan el diseño */
+.super-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Asegura que el input nunca sea más ancho que su contenedor padre */
+.super-input {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajuste para el icono de la papelera en inputs pequeños */
+.control.has-icons-right .icon {
+  pointer-events: none;
+  /* Para que no interfiera con el click en el input */
+}
+
+.scale-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 15px 15px 15px;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.scale-card:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
+}
+
+.scale-badge {
+  position: absolute;
+  top: -12px;
+  left: 15px;
+  background: #8b5cf6;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+}
+
+.scale-card .super-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+/* Animación de entrada escalonada */
+.animate__zoomIn {
+  animation-duration: 0.4s;
 }

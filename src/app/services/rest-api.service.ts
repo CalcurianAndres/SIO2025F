@@ -623,8 +623,8 @@ export class RestApiService {
     return this.http.get(url)
   }
 
-  copyTags(orden, cantidad) {
-    const url = `${this.api_url}/copy/${orden}/${cantidad}`
+  copyTags(orden, cantidad, producto) {
+    const url = `${this.api_url}/copy/${orden}/${cantidad}/${producto}s`
     return this.http.get(url)
   }
 
@@ -1031,6 +1031,45 @@ export class RestApiService {
     return this.http.get(url)
   }
 
+  clonarProducto(id_producto: any) {
+    const url = `${this.api_url}/producto-clonar/${id_producto}`
+    return this.http.get(url)
+  }
+
+  filtrarOCExcel(cliente: string, codigo: string, inicio: string, fin: string) {
+
+    if (cliente === '#') {
+      cliente = 'ALL';
+    }
+    return this.http.get(
+      `${this.api_url}/ordenes/reporte`,
+      {
+        params: { cliente, codigo, inicio, fin },
+        responseType: 'blob'
+      }
+    );
+  }
+
+
+  // Generar el corte (Snapshot)
+  generarCorte(etiqueta: string): Observable<any> {
+    // Aunque es un POST en el backend, si lo dejamos como GET para pruebas:
+    return this.http.get(`${this.api_url}/snapshot`, { params: { etiqueta } });
+  }
+
+  // Obtener lista de todos los cortes (sin los items pesados)
+  obtenerHistoricoCortes(): Observable<any> {
+    return this.http.get(`${this.api_url}/snapshot-list`); // Asegúrate de tener esta ruta que devuelve solo la lista
+  }
+
+  // Obtener la comparativa técnica
+  compararCorte(snapshotId: string): Observable<any> {
+    return this.http.get(`${this.api_url}/comparar-stock/${snapshotId}`);
+  }
+
+  getReporte(inicio: string, fin: string): Observable<any> {
+    return this.http.get(`${this.api_url}/inventario-reporte-detallado?fechaInicio=${inicio}&fechaFin=${fin}`);
+  }
 
 
 

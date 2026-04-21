@@ -233,7 +233,7 @@ export class MainComponent implements OnInit {
     this.totalizar_materiales()
     this.Gs = (<HTMLInputElement>document.getElementById('selected')).value
     this.Buscar_conversiones()
-    this.getbobinas();
+    // this.getbobinas();
     this.getOrdenes();
     this.buscarPendientes();
     this.buscarRepuestos();
@@ -1892,61 +1892,65 @@ export class MainComponent implements OnInit {
 
   public SUSTRATO_CONVERSION = [];
   public BobinasSencillas = [];
+  cargando_bobinas = true;
+
   getbobinas() {
     this.I_f = 0;
     this.I_r = 0;
-    this.BobinasSencillas = [];
-    this.api.getBobina()
-      .subscribe((resp: any) => {
-        this.BOBINAS_ = resp;
-        let Almacen = this.ALMACEN;
-        for (let i = 0; i < this.BOBINAS_.length; i++) {
-          let bobina = this.BOBINAS_[i]
-          if (bobina.convertidora === 'Convertidora Finlandia, C.A.') {
-            this.I_f++;
-          } else {
-            this.I_r++;
-          }
-          let sumada = this.BobinasSencillas.findIndex(x => x.material === this.BOBINAS_[i].material && x.marca === this.BOBINAS_[i].marca && x.ancho === this.BOBINAS_[i].ancho && x.gramaje === this.BOBINAS_[i].gramaje && x.calibre === this.BOBINAS_[i].calibre && x.convertidora === this.BOBINAS_[i].convertidora)
+    this.cargando_bobinas = true;
 
-          if (sumada < 0) {
-            let data = {
-              material: this.BOBINAS_[i].material,
-              marca: this.BOBINAS_[i].marca,
-              calibre: this.BOBINAS_[i].calibre,
-              gramaje: this.BOBINAS_[i].gramaje,
-              ancho: this.BOBINAS_[i].ancho,
-              convertidora: this.BOBINAS_[i].convertidora,
-              peso: this.BOBINAS_[i].peso
-            }
-            this.BobinasSencillas.push(data)
-          }
-          else {
-            let peso = Number(this.BobinasSencillas[sumada].peso) + Number(this.BOBINAS_[i].peso)
-            this.BobinasSencillas[sumada].peso = peso
-          }
+    this.api.getBobina().subscribe((resp: any) => {
+      this.BOBINAS_ = resp;
 
-          // // console.log(this.BobinasSencillas)
+      const mapBobinas = new Map<string, any>();
 
-          let sustrato = this.ALMACEN.find(x => x.nombre == bobina.material && x.marca == bobina.marca && x.ancho == bobina.ancho && x.gramaje == bobina.gramaje)
+      for (let i = 0; i < this.BOBINAS_.length; i++) {
+        let bobina = this.BOBINAS_[i];
 
-          // // console.log(sustrato)
-          if (sustrato) {
-
-            let existe = this.SUSTRATO_CONVERSION.find(x => x._id == sustrato._id)
-            if (!existe) {
-              this.SUSTRATO_CONVERSION.push(sustrato)
-            }
-          }
-
-          // let sustrato = this.ALMACEN.find(x => x.nombre == bobina.material && x.gramaje == bobina.gramaje && x.ancho == bobina.ancho)
-          // // console.log(sustrato, 'bobina')
-          // if(sustrato){
-          //   // console.log( this.SUSTRATO_CONVERSION,'bOBINAS')
-
-          // }
+        // Contadores
+        if (bobina.convertidora === 'Convertidora Finlandia, C.A.') {
+          this.I_f++;
+        } else {
+          this.I_r++;
         }
-      })
+
+        // 🔑 clave única (no cambia tu lógica)
+        const key = `${bobina.material}|${bobina.marca}|${bobina.ancho}|${bobina.gramaje}|${bobina.calibre}|${bobina.convertidora}`;
+
+        if (!mapBobinas.has(key)) {
+          mapBobinas.set(key, {
+            material: bobina.material,
+            marca: bobina.marca,
+            calibre: bobina.calibre,
+            gramaje: bobina.gramaje,
+            ancho: bobina.ancho,
+            convertidora: bobina.convertidora,
+            peso: Number(bobina.peso)
+          });
+        } else {
+          mapBobinas.get(key).peso += Number(bobina.peso);
+        }
+
+        // Sustrato (igual que antes)
+        let sustrato = this.ALMACEN.find(x =>
+          x.nombre == bobina.material &&
+          x.marca == bobina.marca &&
+          x.ancho == bobina.ancho &&
+          x.gramaje == bobina.gramaje
+        );
+
+        if (sustrato) {
+          let existe = this.SUSTRATO_CONVERSION.find(x => x._id == sustrato._id);
+          if (!existe) {
+            this.SUSTRATO_CONVERSION.push(sustrato);
+          }
+        }
+      }
+
+      // ✅ UNA sola asignación → Angular renderiza bien
+      this.BobinasSencillas = Array.from(mapBobinas.values());
+      this.cargando_bobinas = false;
+    });
   }
 
 

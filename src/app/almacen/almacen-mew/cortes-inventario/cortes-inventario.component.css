@@ -1,0 +1,22 @@
+/* Borde izquierdo para resaltar el status */
+.border-left-info {
+    border-left: 5px solid #3273dc;
+}
+
+/* Efecto hover suave en tablas */
+.table td {
+    vertical-align: middle !important;
+}
+
+/* Tipografía técnica para códigos */
+.is-family-monospace {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+/* Sombra suave para las cajas */
+.box,
+.card {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 8px;
+}

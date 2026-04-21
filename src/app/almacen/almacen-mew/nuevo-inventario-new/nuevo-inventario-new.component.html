@@ -23,7 +23,7 @@
                         <label class="label">Producto:</label>
                         <div class="select">
                             <select name="" id="Producto_select" [disabled]="!grupo_selected"
-                                [(ngModel)]="data.producto">
+                                [(ngModel)]="data.material">
                                 <option value="0">Selecciona Producto</option>
                                 <ng-container *ngFor='let producto of materiales_filtrados'>
                                     <option value="{{producto._id}}">{{producto.nombre}} <ng-container
@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <div class="columns" *ngIf='data.producto'>
+            <div class="columns" *ngIf='data.material'>
                 <div class="column is-4">
                     <div class="field">
                         <label class="label">N° de pedido</label>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <div class="columns" *ngIf='data.producto'>
+            <div class="columns" *ngIf='data.material'>
                 <div class="column">
                     <div class="field">
                         <label class="label">Código</label>
